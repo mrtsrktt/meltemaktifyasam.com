@@ -1,0 +1,189 @@
+{
+  "nav": {
+    "home": "Home",
+    "shop": "Shop",
+    "blog": "Blog",
+    "about": "About",
+    "contact": "Contact",
+    "vki": "BMI Analysis",
+    "cart": "Cart",
+    "account": "My Account",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout"
+  },
+  "hero": {
+    "title1": "Transform Your Body,",
+    "title2": "Rewrite Your Life",
+    "subtitle": "Holistic health & life transformation for entrepreneurial minds",
+    "cta": "Get Free BMI Analysis",
+    "ctaShop": "Explore Products"
+  },
+  "features": {
+    "title": "My Services",
+    "subtitle": "How can I help you?",
+    "nutrition": {
+      "title": "Functional Nutrition Consulting",
+      "description": "Boost your metabolism and increase your energy with personalized nutrition programs."
+    },
+    "products": {
+      "title": "Herbalife Products",
+      "description": "Reach your goals with scientifically backed, quality nutrition supplements."
+    },
+    "mentoring": {
+      "title": "Holistic Life Mentoring",
+      "description": "Start a sustainable life transformation by achieving body and mind harmony."
+    }
+  },
+  "products": {
+    "title": "Featured Products",
+    "subtitle": "Most preferred Herbalife products",
+    "viewAll": "View All Products",
+    "addToCart": "Add to Cart",
+    "outOfStock": "Out of Stock",
+    "category": "Category",
+    "allCategories": "All Categories",
+    "weightManagement": "Weight Management",
+    "sportNutrition": "Sports Nutrition",
+    "vitaminMineral": "Vitamins & Minerals",
+    "price": "Price",
+    "relatedProducts": "Related Products",
+    "description": "Product Description",
+    "usage": "How to Use",
+    "ingredients": "Ingredients"
+  },
+  "testimonials": {
+    "title": "Success Stories",
+    "subtitle": "Inspiring results on the transformation journey"
+  },
+  "newsletter": {
+    "title": "Healthy Recipes & Tips",
+    "subtitle": "Subscribe to our free newsletter for weekly healthy recipes and nutrition tips.",
+    "placeholder": "Your email address",
+    "button": "Subscribe",
+    "success": "Successfully subscribed!",
+    "error": "An error occurred, please try again."
+  },
+  "instagram": {
+    "title": "From Instagram",
+    "subtitle": "Follow @meltem.tanik",
+    "follow": "Follow"
+  },
+  "about": {
+    "title": "About Me",
+    "role": "Functional Nutrition Expert & Holistic Health / Life Mentor",
+    "story": "My Story",
+    "expertise": "Areas of Expertise",
+    "certifications": "Certifications & Training",
+    "team": "My Team",
+    "ctaTitle": "Let's Work Together",
+    "ctaDescription": "Start your healthy living journey today.",
+    "ctaButton": "Contact via WhatsApp"
+  },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "Articles and tips about healthy living",
+    "readMore": "Read More",
+    "readTime": "min read",
+    "related": "Related Articles",
+    "categories": {
+      "all": "All",
+      "nutrition": "Functional Nutrition",
+      "sports": "Sports Nutrition",
+      "thyroid": "Thyroid & Chronic Disease",
+      "motivation": "Motivation & Mindset",
+      "recipes": "Recipes",
+      "herbalife": "Herbalife"
+    }
+  },
+  "vki": {
+    "title": "BMI Analysis",
+    "subtitle": "Calculate your Body Mass Index and get personalized recommendations",
+    "name": "Full Name",
+    "phone": "Phone Number",
+    "email": "Email Address",
+    "age": "Age",
+    "height": "Height (cm)",
+    "weight": "Weight (kg)",
+    "goal": "Your Goal",
+    "goals": {
+      "lose": "Lose Weight",
+      "gain": "Gain Weight",
+      "maintain": "Stay Fit"
+    },
+    "calculate": "Calculate BMI",
+    "result": "Your Result",
+    "bmiValue": "Your BMI",
+    "categories": {
+      "underweight": "Underweight",
+      "normal": "Normal",
+      "overweight": "Overweight",
+      "obese": "Obese"
+    },
+    "whatsappCta": "Get Free Consultation via WhatsApp",
+    "consent": "I allow communication via WhatsApp"
+  },
+  "contact": {
+    "title": "Contact",
+    "subtitle": "Reach out to us with your questions",
+    "name": "Your Name",
+    "email": "Email",
+    "phone": "Phone",
+    "message": "Your Message",
+    "send": "Send",
+    "success": "Your message has been sent!",
+    "whatsapp": "Write on WhatsApp",
+    "hours": "Working Hours",
+    "hoursDetail": "Monday - Saturday: 09:00 AM - 06:00 PM"
+  },
+  "cart": {
+    "title": "My Cart",
+    "empty": "Your cart is empty",
+    "continueShopping": "Continue Shopping",
+    "total": "Total",
+    "checkout": "Proceed to Checkout",
+    "remove": "Remove",
+    "quantity": "Quantity"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "shippingInfo": "Shipping Information",
+    "fullName": "Full Name",
+    "address": "Address",
+    "city": "City",
+    "district": "District",
+    "zipCode": "Zip Code",
+    "phone": "Phone",
+    "orderSummary": "Order Summary",
+    "placeOrder": "Place Order",
+    "paymentNote": "Payment integration will be active soon."
+  },
+  "account": {
+    "title": "My Account",
+    "profile": "My Profile",
+    "orders": "My Orders",
+    "orderHistory": "Order History",
+    "noOrders": "You don't have any orders yet.",
+    "updateProfile": "Update Profile",
+    "saved": "Changes saved."
+  },
+  "footer": {
+    "description": "Functional nutrition consulting, Herbalife products and holistic health programs.",
+    "quickLinks": "Quick Links",
+    "support": "Support",
+    "followUs": "Follow Us",
+    "rights": "All rights reserved.",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "tryAgain": "Try Again",
+    "back": "Back",
+    "save": "Save",
+    "cancel": "Cancel",
+    "search": "Search",
+    "close": "Close"
+  }
+}

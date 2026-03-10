@@ -1,0 +1,189 @@
+{
+  "nav": {
+    "home": "Ana Sayfa",
+    "shop": "Mağaza",
+    "blog": "Blog",
+    "about": "Hakkımda",
+    "contact": "İletişim",
+    "vki": "VKİ Analiz",
+    "cart": "Sepet",
+    "account": "Hesabım",
+    "login": "Giriş Yap",
+    "register": "Kayıt Ol",
+    "logout": "Çıkış Yap"
+  },
+  "hero": {
+    "title1": "Bedenini Dönüştür,",
+    "title2": "Hayatını Yeniden Yaz",
+    "subtitle": "Girişimci zihinler için bütünsel sağlık & yaşam dönüşümü",
+    "cta": "Ücretsiz VKİ Analizi Al",
+    "ctaShop": "Ürünleri Keşfet"
+  },
+  "features": {
+    "title": "Hizmetlerim",
+    "subtitle": "Size nasıl yardımcı olabilirim?",
+    "nutrition": {
+      "title": "Fonksiyonel Beslenme Danışmanlığı",
+      "description": "Kişiye özel beslenme programları ile metabolizmanızı hızlandırın, enerjinizi artırın."
+    },
+    "products": {
+      "title": "Herbalife Ürünleri",
+      "description": "Bilimsel formüllerle desteklenmiş, kaliteli beslenme takviyeleri ile hedeflerinize ulaşın."
+    },
+    "mentoring": {
+      "title": "Bütünsel Yaşam Mentörlüğü",
+      "description": "Beden ve zihin uyumunu sağlayarak sürdürülebilir bir yaşam dönüşümü başlatın."
+    }
+  },
+  "products": {
+    "title": "Öne Çıkan Ürünler",
+    "subtitle": "En çok tercih edilen Herbalife ürünleri",
+    "viewAll": "Tüm Ürünleri Gör",
+    "addToCart": "Sepete Ekle",
+    "outOfStock": "Stokta Yok",
+    "category": "Kategori",
+    "allCategories": "Tüm Kategoriler",
+    "weightManagement": "Kilo Yönetimi",
+    "sportNutrition": "Spor Beslenmesi",
+    "vitaminMineral": "Vitamin & Mineral",
+    "price": "Fiyat",
+    "relatedProducts": "İlgili Ürünler",
+    "description": "Ürün Açıklaması",
+    "usage": "Kullanım Şekli",
+    "ingredients": "İçindekiler"
+  },
+  "testimonials": {
+    "title": "Başarı Hikayeleri",
+    "subtitle": "Dönüşüm yolculuğunda ilham veren sonuçlar"
+  },
+  "newsletter": {
+    "title": "Sağlıklı Tarifler & İpuçları",
+    "subtitle": "Ücretsiz bültenimize kaydolun, her hafta sağlıklı tarifler ve beslenme ipuçları alın.",
+    "placeholder": "E-posta adresiniz",
+    "button": "Kaydol",
+    "success": "Başarıyla kaydoldunuz!",
+    "error": "Bir hata oluştu, tekrar deneyin."
+  },
+  "instagram": {
+    "title": "Instagram'dan",
+    "subtitle": "@meltem.tanik'i takip edin",
+    "follow": "Takip Et"
+  },
+  "about": {
+    "title": "Hakkımda",
+    "role": "Fonksiyonel Beslenme Uzmanı & Bütünsel Sağlık / Yaşam Mentörü",
+    "story": "Hikayem",
+    "expertise": "Uzmanlık Alanlarım",
+    "certifications": "Sertifikalar & Eğitimler",
+    "team": "Ekibim",
+    "ctaTitle": "Birlikte Çalışalım",
+    "ctaDescription": "Sağlıklı yaşam yolculuğunuza bugün başlayın.",
+    "ctaButton": "WhatsApp'tan Ulaşın"
+  },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "Sağlıklı yaşam hakkında yazılar ve ipuçları",
+    "readMore": "Devamını Oku",
+    "readTime": "dk okuma",
+    "related": "İlgili Yazılar",
+    "categories": {
+      "all": "Tümü",
+      "nutrition": "Fonksiyonel Beslenme",
+      "sports": "Sporcu Beslenmesi",
+      "thyroid": "Tiroit & Kronik Hastalık",
+      "motivation": "Motivasyon & Zihin",
+      "recipes": "Tarifler",
+      "herbalife": "Herbalife"
+    }
+  },
+  "vki": {
+    "title": "VKİ Analiz",
+    "subtitle": "Vücut Kitle İndeksinizi hesaplayın ve kişiselleştirilmiş öneriler alın",
+    "name": "Adınız Soyadınız",
+    "phone": "Telefon Numaranız",
+    "email": "E-posta Adresiniz",
+    "age": "Yaşınız",
+    "height": "Boyunuz (cm)",
+    "weight": "Kilonuz (kg)",
+    "goal": "Hedefiniz",
+    "goals": {
+      "lose": "Kilo Ver",
+      "gain": "Kilo Al",
+      "maintain": "Formda Kal"
+    },
+    "calculate": "VKİ Hesapla",
+    "result": "Sonucunuz",
+    "bmiValue": "VKİ Değeriniz",
+    "categories": {
+      "underweight": "Zayıf",
+      "normal": "Normal",
+      "overweight": "Fazla Kilolu",
+      "obese": "Obez"
+    },
+    "whatsappCta": "WhatsApp'tan Ücretsiz Danışmanlık Al",
+    "consent": "WhatsApp üzerinden iletişime izin veriyorum"
+  },
+  "contact": {
+    "title": "İletişim",
+    "subtitle": "Sorularınız için bize ulaşın",
+    "name": "Adınız",
+    "email": "E-posta",
+    "phone": "Telefon",
+    "message": "Mesajınız",
+    "send": "Gönder",
+    "success": "Mesajınız gönderildi!",
+    "whatsapp": "WhatsApp'tan Yazın",
+    "hours": "Çalışma Saatleri",
+    "hoursDetail": "Pazartesi - Cumartesi: 09:00 - 18:00"
+  },
+  "cart": {
+    "title": "Sepetim",
+    "empty": "Sepetiniz boş",
+    "continueShopping": "Alışverişe Devam Et",
+    "total": "Toplam",
+    "checkout": "Ödemeye Geç",
+    "remove": "Kaldır",
+    "quantity": "Adet"
+  },
+  "checkout": {
+    "title": "Ödeme",
+    "shippingInfo": "Teslimat Bilgileri",
+    "fullName": "Ad Soyad",
+    "address": "Adres",
+    "city": "Şehir",
+    "district": "İlçe",
+    "zipCode": "Posta Kodu",
+    "phone": "Telefon",
+    "orderSummary": "Sipariş Özeti",
+    "placeOrder": "Siparişi Tamamla",
+    "paymentNote": "Ödeme entegrasyonu yakında aktif olacaktır."
+  },
+  "account": {
+    "title": "Hesabım",
+    "profile": "Profilim",
+    "orders": "Siparişlerim",
+    "orderHistory": "Sipariş Geçmişi",
+    "noOrders": "Henüz siparişiniz yok.",
+    "updateProfile": "Profili Güncelle",
+    "saved": "Değişiklikler kaydedildi."
+  },
+  "footer": {
+    "description": "Fonksiyonel beslenme danışmanlığı, Herbalife ürünleri ve bütünsel sağlık programları.",
+    "quickLinks": "Hızlı Linkler",
+    "support": "Destek",
+    "followUs": "Bizi Takip Edin",
+    "rights": "Tüm hakları saklıdır.",
+    "privacy": "Gizlilik Politikası",
+    "terms": "Kullanım Koşulları"
+  },
+  "common": {
+    "loading": "Yükleniyor...",
+    "error": "Bir hata oluştu",
+    "tryAgain": "Tekrar Dene",
+    "back": "Geri",
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "search": "Ara",
+    "close": "Kapat"
+  }
+}
