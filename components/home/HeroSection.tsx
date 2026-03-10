@@ -63,10 +63,6 @@ export default function HeroSection() {
             {/* Stats */}
             <div className="mt-12 flex gap-8">
               <div>
-                <p className="text-2xl font-bold text-brand-dark">2.400+</p>
-                <p className="text-sm text-muted-foreground">Takipçi</p>
-              </div>
-              <div>
                 <p className="text-2xl font-bold text-brand-dark">500+</p>
                 <p className="text-sm text-muted-foreground">Mutlu Danışan</p>
               </div>
