@@ -24,7 +24,7 @@ interface VKIResult {
 }
 
 const WHATSAPP_NUMBER =
-  process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "905XXXXXXXXX";
+  process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "905412523421";
 
 function calculateBMI(weight: number, heightCm: number): VKIResult {
   const heightM = heightCm / 100;

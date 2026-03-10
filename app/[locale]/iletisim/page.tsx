@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 
 const WHATSAPP_NUMBER =
-  process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "905XXXXXXXXX";
+  process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "905412523421";
 
 export default function ContactPage() {
   const t = useTranslations("contact");

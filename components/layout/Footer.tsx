@@ -34,7 +34,7 @@ export default function Footer() {
                 <Instagram className="h-4 w-4" />
               </a>
               <a
-                href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "905XXXXXXXXX"}`}
+                href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "905412523421"}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded-full bg-white/10 p-2 transition-colors hover:bg-brand-green"

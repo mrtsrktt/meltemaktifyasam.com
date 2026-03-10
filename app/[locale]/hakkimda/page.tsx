@@ -28,7 +28,7 @@ const expertise = [
 ];
 
 const WHATSAPP_NUMBER =
-  process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "905XXXXXXXXX";
+  process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "905412523421";
 
 export default function AboutPage() {
   const t = useTranslations("about");
