@@ -73,7 +73,7 @@ export default function AboutPage() {
             >
               <div className="relative mx-auto aspect-[3/4] max-w-sm overflow-hidden rounded-3xl bg-gradient-to-br from-brand-green/20 to-brand-orange/10">
                 <Image
-                  src="/images/meltem-tanik-profile.jpg"
+                  src="/images/profilfoto-1.png"
                   alt="Meltem Tanık - Fonksiyonel Beslenme Uzmanı"
                   fill
                   className="object-cover object-top"

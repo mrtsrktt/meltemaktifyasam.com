@@ -82,7 +82,7 @@ export default function HeroSection() {
           >
             <div className="relative mx-auto aspect-[4/5] max-w-md overflow-hidden rounded-3xl bg-gradient-to-br from-brand-green/20 to-brand-orange/20">
               <Image
-                src="/images/meltem-tanik-profile.jpg"
+                src="/images/profilfoto-1.png"
                 alt="Meltem Tanık - Fonksiyonel Beslenme Uzmanı"
                 fill
                 className="object-cover object-top"
