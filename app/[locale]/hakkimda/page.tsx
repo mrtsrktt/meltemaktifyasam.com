@@ -17,6 +17,7 @@ import {
   Salad,
   Activity,
 } from "lucide-react";
+import Image from "next/image";
 
 const expertise = [
   { icon: Salad, label: "Fonksiyonel Beslenme" },
@@ -68,15 +69,17 @@ export default function AboutPage() {
               initial={{ opacity: 0, x: 40 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="relative mx-auto aspect-[3/4] max-w-sm overflow-hidden rounded-3xl bg-gradient-to-br from-brand-green/20 to-brand-orange/10"
+              className="relative"
             >
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-brand-green/20">
-                    <Sparkles className="h-10 w-10 text-brand-green" />
-                  </div>
-                  <p className="text-sm text-muted-foreground">Meltem Tanık</p>
-                </div>
+              <div className="relative mx-auto aspect-[3/4] max-w-sm overflow-hidden rounded-3xl bg-gradient-to-br from-brand-green/20 to-brand-orange/10">
+                <Image
+                  src="/images/meltem-tanik-profile.jpg"
+                  alt="Meltem Tanık - Fonksiyonel Beslenme Uzmanı"
+                  fill
+                  className="object-cover object-top"
+                  priority
+                  sizes="(max-width: 768px) 100vw, 384px"
+                />
               </div>
             </motion.div>
           </div>

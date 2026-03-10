@@ -5,6 +5,7 @@ import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ArrowRight, Sparkles } from "lucide-react";
+import Image from "next/image";
 
 export default function HeroSection() {
   const t = useTranslations("hero");
@@ -84,16 +85,14 @@ export default function HeroSection() {
             className="relative"
           >
             <div className="relative mx-auto aspect-[4/5] max-w-md overflow-hidden rounded-3xl bg-gradient-to-br from-brand-green/20 to-brand-orange/20">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-brand-green/20">
-                    <Sparkles className="h-12 w-12 text-brand-green" />
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Meltem Tanık
-                  </p>
-                </div>
-              </div>
+              <Image
+                src="/images/meltem-tanik-profile.jpg"
+                alt="Meltem Tanık - Fonksiyonel Beslenme Uzmanı"
+                fill
+                className="object-cover object-top"
+                priority
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 448px"
+              />
               {/* Decorative floating cards */}
               <motion.div
                 className="absolute -right-4 top-20 rounded-2xl bg-white p-4 shadow-lg"
