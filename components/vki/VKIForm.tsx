@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { MessageCircle, Calculator, Loader2, RotateCcw } from "lucide-react";
+import { MessageCircle, Loader2, RotateCcw, CheckCircle } from "lucide-react";
 
 interface VKIResult {
   bmi: number;
@@ -43,7 +43,6 @@ function calculateBMI(weight: number, heightCm: number): VKIResult {
 }
 
 function getGaugeRotation(bmi: number): number {
-  // Map BMI 10-45 to 0-180 degrees
   const clamped = Math.min(Math.max(bmi, 10), 45);
   return ((clamped - 10) / 35) * 180;
 }
@@ -58,7 +57,7 @@ export default function VKIForm() {
     height: "",
     weight: "",
     goal: "",
-    consent: false,
+    consent: true,
   });
   const [result, setResult] = useState<VKIResult | null>(null);
   const [loading, setLoading] = useState(false);
@@ -77,7 +76,6 @@ export default function VKIForm() {
 
     const vkiResult = calculateBMI(weight, height);
 
-    // Save lead to API
     try {
       await fetch("/api/vki", {
         method: "POST",
@@ -92,7 +90,6 @@ export default function VKIForm() {
       // Continue even if API fails
     }
 
-    // Simulate loading for animation
     setTimeout(() => {
       setResult(vkiResult);
       setLoading(false);
@@ -109,7 +106,7 @@ export default function VKIForm() {
       height: "",
       weight: "",
       goal: "",
-      consent: false,
+      consent: true,
     });
   };
 
@@ -130,6 +127,11 @@ export default function VKIForm() {
           onSubmit={handleSubmit}
           className="space-y-6"
         >
+          {/* Banner */}
+          <div className="rounded-lg bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-800 text-center">
+            🎁 Analizi tamamlayanlara ücretsiz &apos;İdeal Kilo Rehberi&apos; PDF&apos;i hediye!
+          </div>
+
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <Label htmlFor="name">{t("name")}</Label>
@@ -225,12 +227,14 @@ export default function VKIForm() {
               }
             >
               <SelectTrigger className="mt-1">
-                <SelectValue placeholder={t("goal")} />
+                <SelectValue placeholder="Hedefiniz (seçiniz)" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="kilo_ver">{t("goals.lose")}</SelectItem>
-                <SelectItem value="kilo_al">{t("goals.gain")}</SelectItem>
-                <SelectItem value="form_koru">{t("goals.maintain")}</SelectItem>
+                <SelectItem value="kilo_ver">Kilo vermek istiyorum</SelectItem>
+                <SelectItem value="form_koru">Kilomu korumak istiyorum</SelectItem>
+                <SelectItem value="kilo_al">Kilo almak / kas yapmak istiyorum</SelectItem>
+                <SelectItem value="saglikli_beslenme">Sağlıklı beslenme alışkanlığı edinmek istiyorum</SelectItem>
+                <SelectItem value="kronik_destek">Kronik hastalığım var, destek arıyorum</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -246,7 +250,7 @@ export default function VKIForm() {
               className="rounded border-border"
             />
             <Label htmlFor="consent" className="text-sm font-normal">
-              {t("consent")}
+              WhatsApp&apos;tan ücretsiz danışmanlık almak istiyorum
             </Label>
           </div>
 
@@ -258,11 +262,13 @@ export default function VKIForm() {
           >
             {loading ? (
               <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-            ) : (
-              <Calculator className="mr-2 h-5 w-5" />
-            )}
-            {t("calculate")}
+            ) : null}
+            Ücretsiz Analizimi Başlat →
           </Button>
+
+          <p className="text-xs text-gray-400 text-center">
+            🔒 Bilgileriniz güvende · Spam yok · İstediğiniz zaman çıkabilirsiniz
+          </p>
         </motion.form>
       ) : (
         <motion.div
@@ -270,14 +276,11 @@ export default function VKIForm() {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.9 }}
-          className="text-center space-y-8"
+          className="text-center space-y-6"
         >
-          <h2 className="text-2xl font-bold text-brand-dark">{t("result")}</h2>
-
           {/* BMI Gauge */}
           <div className="relative mx-auto w-64 h-32 overflow-hidden">
             <div className="absolute bottom-0 left-0 right-0 h-32">
-              {/* Gauge background */}
               <svg viewBox="0 0 200 100" className="w-full">
                 <path
                   d="M 10 100 A 90 90 0 0 1 190 100"
@@ -286,44 +289,13 @@ export default function VKIForm() {
                   strokeWidth="12"
                   strokeLinecap="round"
                 />
-                {/* Colored sections */}
-                <path
-                  d="M 10 100 A 90 90 0 0 1 52 30"
-                  fill="none"
-                  stroke="#3B82F6"
-                  strokeWidth="12"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M 52 30 A 90 90 0 0 1 100 10"
-                  fill="none"
-                  stroke="#2ECC71"
-                  strokeWidth="12"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M 100 10 A 90 90 0 0 1 148 30"
-                  fill="none"
-                  stroke="#E67E22"
-                  strokeWidth="12"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M 148 30 A 90 90 0 0 1 190 100"
-                  fill="none"
-                  stroke="#EF4444"
-                  strokeWidth="12"
-                  strokeLinecap="round"
-                />
-                {/* Needle */}
+                <path d="M 10 100 A 90 90 0 0 1 52 30" fill="none" stroke="#3B82F6" strokeWidth="12" strokeLinecap="round" />
+                <path d="M 52 30 A 90 90 0 0 1 100 10" fill="none" stroke="#2ECC71" strokeWidth="12" strokeLinecap="round" />
+                <path d="M 100 10 A 90 90 0 0 1 148 30" fill="none" stroke="#E67E22" strokeWidth="12" strokeLinecap="round" />
+                <path d="M 148 30 A 90 90 0 0 1 190 100" fill="none" stroke="#EF4444" strokeWidth="12" strokeLinecap="round" />
                 <motion.line
-                  x1="100"
-                  y1="100"
-                  x2="100"
-                  y2="20"
-                  stroke="#1A1A2E"
-                  strokeWidth="2"
-                  strokeLinecap="round"
+                  x1="100" y1="100" x2="100" y2="20"
+                  stroke="#1A1A2E" strokeWidth="2" strokeLinecap="round"
                   initial={{ rotate: 0 }}
                   animate={{ rotate: getGaugeRotation(result.bmi) - 90 }}
                   transition={{ duration: 1.5, type: "spring" }}
@@ -334,8 +306,8 @@ export default function VKIForm() {
             </div>
           </div>
 
+          {/* BMI Score */}
           <div>
-            <p className="text-sm text-muted-foreground">{t("bmiValue")}</p>
             <motion.p
               className={`text-5xl font-bold ${result.color}`}
               initial={{ scale: 0 }}
@@ -344,17 +316,24 @@ export default function VKIForm() {
             >
               {result.bmi}
             </motion.p>
-            <p className={`text-xl font-semibold mt-2 ${result.color}`}>
-              {t(`categories.${result.categoryKey}`)}
+            <div className="flex items-center justify-center gap-2 mt-2">
+              <CheckCircle className={`h-5 w-5 ${result.color}`} />
+              <p className={`text-xl font-semibold ${result.color}`}>
+                {t(`categories.${result.categoryKey}`)}
+              </p>
+            </div>
+            <p className="text-sm text-muted-foreground mt-2">
+              {result.categoryKey === "normal"
+                ? "Harika! VKİ değeriniz normal aralıkta. Formunuzu korumak için kişiselleştirilmiş bir program oluşturalım."
+                : "VKİ değerinize göre kişiselleştirilmiş bir beslenme programı ile hedeflerinize ulaşmanızı sağlayabiliriz."}
             </p>
           </div>
 
-          <Card className="border-0 shadow-md bg-brand-green/5">
+          {/* Success Message */}
+          <Card className="border-0 shadow-md bg-green-50">
             <CardContent className="p-6">
-              <p className="text-muted-foreground">
-                {result.categoryKey === "normal"
-                  ? "Harika! VKİ değeriniz normal aralıkta. Formunuzu korumak için kişiselleştirilmiş bir program oluşturalım."
-                  : "VKİ değerinize göre kişiselleştirilmiş bir beslenme programı ile hedeflerinize ulaşmanızı sağlayabiliriz."}
+              <p className="text-green-800 font-medium">
+                🎉 Analiziniz tamamlandı! Meltem Hanım&apos;ın ekibi en kısa sürede WhatsApp üzerinden sizi arayacak.
               </p>
             </CardContent>
           </Card>
@@ -370,7 +349,7 @@ export default function VKIForm() {
                 className="w-full bg-[#25D366] hover:bg-[#20BD5A] text-white sm:w-auto"
               >
                 <MessageCircle className="mr-2 h-5 w-5" />
-                {t("whatsappCta")}
+                📲 WhatsApp&apos;tan Hemen Ulaşın
               </Button>
             </a>
             <Button

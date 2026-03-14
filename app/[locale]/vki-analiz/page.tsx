@@ -4,31 +4,56 @@ import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import VKIForm from "@/components/vki/VKIForm";
-import { Activity, Shield, Clock, HeartPulse, TrendingUp, CheckCircle } from "lucide-react";
+import { Shield, Clock, HeartPulse, TrendingUp, CheckCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
 
 const benefits = [
   {
     icon: HeartPulse,
-    title: "Saglik Riskinizi Ogrenin",
-    desc: "VKI degeriniz, kalp hastaliklari ve diyabet gibi kronik riskleri anlamaniza yardimci olur.",
+    title: "Sağlık Riskinizi Öğrenin",
+    desc: "VKİ değeriniz; kalp hastalıkları, diyabet ve metabolik sendrom gibi kronik riskleri erkenden görmenizi sağlar.",
+    image: "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&q=80",
   },
   {
     icon: TrendingUp,
-    title: "Kisisel Program Alin",
-    desc: "Sonucunuza gore size ozel beslenme ve egzersiz programi olusturuyoruz.",
+    title: "Size Özel Program",
+    desc: "Uzmanımız sonuçlarınıza göre sadece size ait beslenme ve egzersiz önerileri hazırlar. Genel tavsiye yok.",
+    image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&q=80",
   },
   {
     icon: Shield,
-    title: "Bilimsel & Guvenilir",
-    desc: "Dunya Saglik Orgutu standartlarina uygun hesaplama yontemi kullanilmaktadir.",
+    title: "Bilimsel & Güvenilir",
+    desc: "Dünya Sağlık Örgütü standartlarını kullanan, klinik ortamlarda da uygulanan hesaplama yöntemi.",
+    image: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=400&q=80",
   },
   {
     icon: Clock,
-    title: "30 Saniyede Sonuc",
-    desc: "Boy ve kilonuzu girin, aninda VKI degerinizi ve kategorinizi ogrenin.",
+    title: "60 Saniyede Sonuç",
+    desc: "Boy ve kilonuzu girin, anında VKİ değerinizi, kategorinizi ve kişisel önerinizi öğrenin.",
+    image: "https://images.unsplash.com/photo-1495364141860-b0d03eccd065?w=400&q=80",
   },
 ];
+
+const steps = [
+  {
+    num: "1",
+    title: "Formu Doldurun",
+    desc: "Boy, kilo ve hedef bilgilerinizi girin. 60 saniye sürer.",
+  },
+  {
+    num: "2",
+    title: "Uzman Analiz Eder",
+    desc: "Fonksiyonel Beslenme Uzmanımız sonuçlarınızı inceler ve kişisel önerinizi hazırlar.",
+  },
+  {
+    num: "3",
+    title: "Programınız Hazır",
+    desc: "WhatsApp üzerinden sizi arar, ücretsiz destek grubuna davet eder ve dönüşüm yolculuğunuz başlar.",
+  },
+];
+
+const avatarColors = ["bg-brand-green", "bg-orange-400", "bg-blue-500", "bg-pink-500"];
 
 export default function VKIPage() {
   const t = useTranslations("vki");
@@ -47,24 +72,27 @@ export default function VKIPage() {
               animate={{ opacity: 1, x: 0 }}
             >
               <Badge className="mb-4 bg-brand-green/10 text-brand-green border-0 px-3 py-1">
-                <Activity className="mr-1.5 h-3 w-3" />
-                Vucut Kitle Indeksi Hesaplama
+                ⚡ Ücretsiz Uzman Analizi
               </Badge>
 
               <h1 className="text-3xl font-bold text-brand-dark sm:text-4xl lg:text-5xl leading-tight">
-                Saglikli Kilonuzu{" "}
-                <span className="text-brand-green">Kesfin</span>
+                Sağlıklı Kilonuzu{" "}
+                <span className="text-brand-green">Keşfedin</span>
               </h1>
 
               <p className="mt-5 text-lg text-muted-foreground leading-relaxed max-w-lg">
-                Vucut Kitle Indeksi (VKI), boyunuza gore ideal kilonuzda olup olmadiginizi
-                gosteren bilimsel bir olcumdur. Hedefinize uygun kisisel bir program icin
-                ilk adimi atin.
+                Vücut Kitle İndeksinizi hesaplamanız 30 saniye sürer. Ama doğru yorumlamak
+                için bir uzman gözü gerekir. Formu doldurun — Fonksiyonel Beslenme Uzmanımız
+                size özel ücretsiz değerlendirme hazırlasın.
               </p>
 
               {/* Quick benefits */}
               <div className="mt-8 space-y-3">
-                {["Ucretsiz ve anonim hesaplama", "Aninda sonuc ve kategori", "Uzman yorumu ile kisisel oneri"].map((item, i) => (
+                {[
+                  "Anında VKİ sonucu ve kategori bilgisi",
+                  "Uzmanından ücretsiz kişisel beslenme önerisi",
+                  "60 günlük dönüşüm programına öncelikli başvuru hakkı",
+                ].map((item, i) => (
                   <motion.div
                     key={item}
                     initial={{ opacity: 0, x: -20 }}
@@ -76,6 +104,19 @@ export default function VKIPage() {
                     <span className="text-sm text-gray-600">{item}</span>
                   </motion.div>
                 ))}
+              </div>
+
+              {/* Social proof */}
+              <div className="mt-6 flex items-center gap-3">
+                <div className="flex -space-x-2">
+                  {avatarColors.map((color, i) => (
+                    <div
+                      key={i}
+                      className={`h-8 w-8 rounded-full ${color} border-2 border-white`}
+                    />
+                  ))}
+                </div>
+                <span className="text-sm text-gray-500">Bu ay <strong className="text-gray-700">312 kişi</strong> analiz yaptı</span>
               </div>
             </motion.div>
 
@@ -95,7 +136,7 @@ export default function VKIPage() {
         </div>
       </section>
 
-      {/* Benefits */}
+      {/* Nasıl Çalışır */}
       <section className="py-14 sm:py-20 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -105,10 +146,55 @@ export default function VKIPage() {
             className="text-center mb-12"
           >
             <h2 className="text-2xl font-bold text-brand-dark sm:text-3xl">
-              Neden VKI Hesaplamaliyim?
+              Nasıl Çalışır?
             </h2>
             <p className="mt-2 text-muted-foreground max-w-xl mx-auto">
-              Saglikli bir yasamin ilk adimi, mevcut durumunuzu bilmektir
+              3 basit adımda sağlıklı yaşama ilk adımınızı atın
+            </p>
+          </motion.div>
+
+          <div className="grid gap-8 sm:grid-cols-3 max-w-4xl mx-auto">
+            {steps.map((step, i) => (
+              <motion.div
+                key={step.num}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.15 }}
+                className="relative text-center"
+              >
+                {/* Arrow between steps (desktop only) */}
+                {i < steps.length - 1 && (
+                  <div className="hidden sm:block absolute top-8 -right-4 translate-x-1/2 text-2xl text-brand-green/40">
+                    →
+                  </div>
+                )}
+
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-green/10 mb-4">
+                  <span className="text-2xl font-bold text-brand-green">{step.num}</span>
+                </div>
+                <h3 className="font-semibold text-brand-dark mb-1">{step.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{step.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Benefits */}
+      <section className="py-14 sm:py-20 bg-gray-50">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-2xl font-bold text-brand-dark sm:text-3xl">
+              Neden VKİ Hesaplamalıyım?
+            </h2>
+            <p className="mt-2 text-muted-foreground max-w-xl mx-auto">
+              Sağlıklı bir yaşamın ilk adımı, mevcut durumunuzu bilmektir
             </p>
           </motion.div>
 
@@ -121,7 +207,17 @@ export default function VKIPage() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
               >
-                <Card className="h-full border-0 shadow-md hover:shadow-lg transition-shadow">
+                <Card className="h-full border-0 shadow-md hover:shadow-lg transition-shadow overflow-hidden">
+                  {/* Image */}
+                  <div className="relative h-40">
+                    <Image
+                      src={item.image}
+                      alt={item.title}
+                      fill
+                      className="object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/20" />
+                  </div>
                   <CardContent className="p-5">
                     <div className="rounded-xl bg-brand-green/10 p-2.5 w-fit mb-3">
                       <item.icon className="h-5 w-5 text-brand-green" />
