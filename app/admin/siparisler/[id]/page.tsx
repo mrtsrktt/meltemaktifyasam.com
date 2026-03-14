@@ -332,7 +332,16 @@ export default function SiparisDetayPage({
               {order.order_items.map((item) => (
                 <tr key={item.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-6 py-4 text-sm text-gray-900">
-                    {item.product_name}
+                    {item.product_name.startsWith("[SET]") ? (
+                      <div className="flex items-center gap-2">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-orange-100 text-orange-700">
+                          SET
+                        </span>
+                        <span>{item.product_name.replace("[SET] ", "")}</span>
+                      </div>
+                    ) : (
+                      item.product_name
+                    )}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-700 text-center">
                     {item.quantity}

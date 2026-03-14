@@ -53,9 +53,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Create order items
-    const orderItems = items.map((item: { product_id: string; name_tr: string; quantity: number; unit_price: number }) => ({
+    const orderItems = items.map((item: { product_id: string | null; name_tr: string; quantity: number; unit_price: number }) => ({
       order_id: order.id,
-      product_id: item.product_id,
+      product_id: item.product_id || null,
       product_name: item.name_tr,
       quantity: item.quantity,
       unit_price: item.unit_price,
