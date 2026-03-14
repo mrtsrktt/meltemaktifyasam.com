@@ -1,113 +1,248 @@
-"use client";
+"use client"
 
-import { motion } from "framer-motion";
-import { Link } from "@/i18n/navigation";
-import { Button } from "@/components/ui/button";
-import { Activity, ArrowRight, CheckCircle } from "lucide-react";
+import { motion, useAnimationControls, useMotionValue, animate } from "framer-motion"
+import { useEffect } from "react"
+import Link from "next/link"
 
-export default function VKISection() {
+/* ─── İkon bileşenleri (lucide-react yoksa buradan kullan) ─── */
+function CheckIcon() {
   return (
-    <section className="py-14 sm:py-20 bg-gradient-to-br from-gray-50 to-brand-light relative overflow-hidden">
-      <div className="absolute top-0 right-0 w-72 h-72 bg-brand-green/5 rounded-full blur-3xl" />
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+      className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0">
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+      <polyline points="22 4 12 14.01 9 11.01" />
+    </svg>
+  )
+}
 
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid gap-10 lg:grid-cols-2 items-center">
-          {/* Visual */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="relative"
-          >
-            <div className="bg-white rounded-2xl shadow-xl p-8 sm:p-10 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-brand-green/5 rounded-bl-full" />
+function PulseIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+      className="w-3.5 h-3.5">
+      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+    </svg>
+  )
+}
 
-              {/* Gauge illustration */}
-              <div className="flex justify-center mb-6">
-                <svg viewBox="0 0 200 110" className="w-48 sm:w-56">
-                  <path d="M 10 100 A 90 90 0 0 1 52 30" fill="none" stroke="#3B82F6" strokeWidth="10" strokeLinecap="round" />
-                  <path d="M 52 30 A 90 90 0 0 1 100 10" fill="none" stroke="#2ECC71" strokeWidth="10" strokeLinecap="round" />
-                  <path d="M 100 10 A 90 90 0 0 1 148 30" fill="none" stroke="#E67E22" strokeWidth="10" strokeLinecap="round" />
-                  <path d="M 148 30 A 90 90 0 0 1 190 100" fill="none" stroke="#EF4444" strokeWidth="10" strokeLinecap="round" />
-                  <motion.line
-                    x1="100" y1="100" x2="100" y2="22"
-                    stroke="#1A1A2E" strokeWidth="2.5" strokeLinecap="round"
-                    initial={{ rotate: -90 }}
-                    whileInView={{ rotate: 10 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 2, type: "spring", delay: 0.5 }}
-                    style={{ transformOrigin: "100px 100px" }}
-                  />
-                  <circle cx="100" cy="100" r="4" fill="#1A1A2E" />
-                </svg>
-              </div>
+/* ─── Gauge SVG bileşeni ─── */
+function GaugeSVG() {
+  // Her arc segmenti için ayrı kontrol
+  const arcControls = [
+    useAnimationControls(),
+    useAnimationControls(),
+    useAnimationControls(),
+    useAnimationControls(),
+  ]
 
-              <div className="text-center">
-                <p className="text-3xl font-bold text-brand-dark">??.?</p>
-                <p className="text-sm text-muted-foreground mt-1">Senin VKI degerin kac?</p>
-              </div>
+  // Needle için motion value
+  const rotate = useMotionValue(-90)
 
-              <div className="mt-6 grid grid-cols-4 gap-2 text-center text-[10px]">
-                <div className="bg-blue-50 rounded-lg py-1.5 text-blue-600 font-medium">Zayif</div>
-                <div className="bg-green-50 rounded-lg py-1.5 text-green-600 font-medium">Normal</div>
-                <div className="bg-orange-50 rounded-lg py-1.5 text-orange-600 font-medium">Kilolu</div>
-                <div className="bg-red-50 rounded-lg py-1.5 text-red-600 font-medium">Obez</div>
-              </div>
-            </div>
-          </motion.div>
+  useEffect(() => {
+    // 1) Arc'lar sırayla açılır
+    arcControls.forEach((ctrl, i) => {
+      ctrl.start({
+        pathLength: 1,
+        transition: { duration: 0.45, delay: 0.15 + i * 0.18, ease: "easeOut" },
+      })
+    })
 
-          {/* Content */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-          >
-            <div className="inline-flex items-center gap-2 rounded-full bg-brand-green/10 px-4 py-2 text-sm font-medium text-brand-green mb-4">
-              <Activity className="h-4 w-4" />
-              Ucretsiz VKI Analizi
-            </div>
+    // 2) İbre sağa süpürür
+    const seq = async () => {
+      await new Promise((r) => setTimeout(r, 350))
+      await animate(rotate, 80, {
+        duration: 1.8,
+        ease: [0.34, 1.56, 0.64, 1],
+      })
+      // 3) Normal zonuna yerleşir
+      await animate(rotate, -22, {
+        duration: 0.75,
+        ease: [0.4, 0, 0.2, 1],
+      })
+      // 4) Hafif titreşimli idle
+      animate(rotate, [-22, -16, -22], {
+        duration: 3.5,
+        repeat: Infinity,
+        ease: "easeInOut",
+      })
+    }
+    seq()
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-            <h2 className="text-2xl font-bold text-brand-dark sm:text-3xl lg:text-4xl leading-tight">
-              Ideal Kilonuzu{" "}
-              <span className="text-brand-green">Ogrenin</span>
-            </h2>
+  /* Gauge geometrisi:
+     Merkez: cx=100 cy=110  Yarıçap: 80
+     180° → 0° (math), üstten geçen yarı çember
+     Segmentler: 4 × 45°  */
+  const arcs = [
+    { d: "M 20 110 A 80 80 0 0 1 43.43 53.43", stroke: "#3b82f6" }, // Zayıf
+    { d: "M 43.43 53.43 A 80 80 0 0 1 100 30",   stroke: "#16a34a" }, // Normal
+    { d: "M 100 30 A 80 80 0 0 1 156.57 53.43",  stroke: "#f59e0b" }, // Kilolu
+    { d: "M 156.57 53.43 A 80 80 0 0 1 180 110", stroke: "#ef4444" }, // Obez
+  ]
 
-            <p className="mt-4 text-muted-foreground leading-relaxed">
-              30 saniyede vucut kitle indeksinizi hesaplayin, saglik durumunuzu ogrenin
-              ve size ozel beslenme programi icin ilk adimi atin.
-            </p>
+  return (
+    <svg viewBox="0 0 200 135" className="w-full max-w-[260px] mx-auto">
+      {/* Arka plan izi */}
+      <path
+        d="M 20 110 A 80 80 0 0 1 180 110"
+        fill="none" stroke="#f1f5f9" strokeWidth="16" strokeLinecap="round"
+      />
 
-            <div className="mt-6 space-y-2.5">
-              {[
-                "Boy ve kilonuzu girin, aninda sonuc alin",
-                "Sonucunuza gore kisisel beslenme onerisi",
-                "Tamamen ucretsiz, kayit gerektirmez",
-              ].map((item, i) => (
-                <motion.div
-                  key={item}
-                  initial={{ opacity: 0, x: 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.2 + i * 0.1 }}
-                  className="flex items-center gap-2.5"
+      {/* Renkli arc segmentleri */}
+      {arcs.map((arc, i) => (
+        <motion.path
+          key={i}
+          d={arc.d}
+          fill="none"
+          stroke={arc.stroke}
+          strokeWidth="14"
+          strokeLinecap="round"
+          initial={{ pathLength: 0 }}
+          animate={arcControls[i]}
+        />
+      ))}
+
+      {/* Parlak ibre */}
+      <motion.g style={{ transformOrigin: "100px 110px", rotate }}>
+        {/* Gölge çizgisi */}
+        <line x1="100" y1="110" x2="100" y2="36"
+          stroke="#1e293b" strokeWidth="2.5" strokeLinecap="round" />
+        {/* Merkez nokta */}
+        <circle cx="100" cy="110" r="6.5" fill="#1e293b" />
+        <circle cx="100" cy="110" r="10" fill="none" stroke="#1e293b" strokeWidth="1" opacity="0.15" />
+        {/* İbre ucu parlak nokta */}
+        <circle cx="100" cy="39" r="3" fill="#16a34a" />
+      </motion.g>
+
+      {/* Değer metni */}
+      <text x="100" y="91" textAnchor="middle"
+        fontSize="24" fontWeight="800" fill="#0f172a" letterSpacing="-0.5">
+        ??.?
+      </text>
+      <text x="100" y="128" textAnchor="middle"
+        fontSize="9.5" fill="#94a3b8" letterSpacing="0.2">
+        Senin VKİ değerin kaç?
+      </text>
+    </svg>
+  )
+}
+
+/* ─── Zone etiketleri ─── */
+const zones = [
+  { label: "Zayıf",   bg: "#eff6ff", text: "#1e40af" },
+  { label: "Normal",  bg: "#f0fdf4", text: "#14532d" },
+  { label: "Kilolu",  bg: "#fffbeb", text: "#78350f" },
+  { label: "Obez",    bg: "#fef2f2", text: "#7f1d1d" },
+]
+
+/* ─── Faydalar listesi ─── */
+const benefits = [
+  "Saniyeler içinde VKİ değerinizi öğrenin, sağlık durumunuzu anlayın",
+  "Fonksiyonel Beslenme Uzmanından ücretsiz kişisel değerlendirme alın",
+  "Ücretsiz destek grubuna katılarak dönüşüm yolculuğunuza hemen başlayın",
+]
+
+/* ─── Ana bileşen ─── */
+export function VkiSection() {
+  return (
+    <section className="relative overflow-hidden bg-gradient-to-br from-green-50 via-white to-orange-50 py-16 px-6">
+      {/* Arka plan dekoratif blob'lar */}
+      <div className="pointer-events-none absolute -top-24 left-1/3 h-80 w-80 rounded-full bg-green-100/50 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-24 right-1/4 h-72 w-72 rounded-full bg-orange-100/40 blur-3xl" />
+
+      <div className="relative mx-auto flex max-w-5xl flex-col items-center gap-12 md:flex-row">
+
+        {/* ── Sol: Gauge kartı ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 28 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="relative flex-shrink-0"
+        >
+          {/* Dekoratif dashed çerçeve */}
+          <div className="absolute inset-0 translate-x-2 translate-y-2 rounded-3xl border-2 border-dashed border-yellow-300" />
+
+          <div className="relative rounded-3xl bg-white p-8 shadow-xl shadow-green-100/60 min-w-[270px] text-center">
+            <GaugeSVG />
+
+            {/* Zone etiketleri */}
+            <div className="mt-3 flex justify-between gap-1 px-1">
+              {zones.map((z) => (
+                <span
+                  key={z.label}
+                  className="rounded-full px-2.5 py-1 text-xs font-semibold"
+                  style={{ backgroundColor: z.bg, color: z.text }}
                 >
-                  <CheckCircle className="h-4 w-4 text-brand-green shrink-0" />
-                  <span className="text-sm text-gray-600">{item}</span>
-                </motion.div>
+                  {z.label}
+                </span>
               ))}
             </div>
+          </div>
+        </motion.div>
 
-            <div className="mt-8">
-              <Link href="/vki-analiz">
-                <Button size="lg" className="bg-brand-green hover:bg-brand-green-dark text-white text-base px-8">
-                  VKI Hesapla
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-            </div>
-          </motion.div>
-        </div>
+        {/* ── Sağ: Metin alanı ── */}
+        <motion.div
+          initial={{ opacity: 0, x: 28 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.15 }}
+          className="flex-1 max-w-lg"
+        >
+          {/* Rozet */}
+          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-green-200 bg-green-50 px-4 py-1.5 text-sm font-semibold text-green-700">
+            <PulseIcon />
+            Ücretsiz Uzman Analizi
+          </div>
+
+          {/* Başlık */}
+          <h2 className="mb-4 text-4xl font-extrabold leading-tight tracking-tight text-gray-900">
+            İdeal Kilonuzu{" "}
+            <span className="text-green-600">Öğrenin</span>
+          </h2>
+
+          {/* Alt metin */}
+          <p className="mb-6 text-lg leading-relaxed text-gray-600">
+            Çoğu insan yıllarca yanlış beslenme stratejisiyle vakit kaybeder.
+            VKİ analizinizi tamamlayın —{" "}
+            <strong className="text-gray-800">Fonksiyonel Beslenme Uzmanımız</strong>{" "}
+            size özel ücretsiz değerlendirme ve kişisel beslenme rehberi hazırlasın.
+          </p>
+
+          {/* Faydalar */}
+          <ul className="mb-8 space-y-3.5">
+            {benefits.map((b) => (
+              <li key={b} className="flex items-start gap-3">
+                <CheckIcon />
+                <span className="text-gray-700">{b}</span>
+              </li>
+            ))}
+          </ul>
+
+          {/* CTA butonu */}
+          <Link href="/vki-analizi">
+            <motion.button
+              whileHover={{ scale: 1.025 }}
+              whileTap={{ scale: 0.975 }}
+              className="group inline-flex items-center gap-3 rounded-2xl bg-green-600 px-8 py-4 text-lg font-bold text-white shadow-lg shadow-green-200 transition-colors duration-200 hover:bg-green-700"
+            >
+              Ücretsiz Analizimi Başlat
+              <span className="inline-block transition-transform duration-200 group-hover:translate-x-1">
+                →
+              </span>
+            </motion.button>
+          </Link>
+
+          {/* Güven notu */}
+          <p className="mt-4 text-sm text-gray-400">
+            ✓ Kayıt gerekmez &nbsp;·&nbsp; ✓ Kredi kartı istenmez &nbsp;·&nbsp; ✓ 1 dakikada tamamlanır
+          </p>
+        </motion.div>
+
       </div>
     </section>
-  );
+  )
 }
+
+export default VkiSection
