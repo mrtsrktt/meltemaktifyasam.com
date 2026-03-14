@@ -85,7 +85,7 @@ export default function VKIPage() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.1 }}
             >
-              <Card className="border-0 shadow-2xl shadow-brand-green/5">
+              <Card id="vki-form" className="border-0 shadow-2xl shadow-brand-green/5">
                 <CardContent className="p-6 sm:p-8">
                   <VKIForm />
                 </CardContent>
@@ -133,6 +133,108 @@ export default function VKIPage() {
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-14 sm:py-20 bg-gradient-to-br from-gray-50 to-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-10"
+          >
+            <h2 className="text-2xl font-bold text-brand-dark sm:text-3xl">
+              Dönüşümünüze Hemen Başlayın
+            </h2>
+            <p className="mt-2 text-muted-foreground">
+              Size en uygun yolu seçin — ikisi de tamamen ücretsiz.
+            </p>
+          </motion.div>
+
+          <div className="grid gap-6 sm:grid-cols-2 max-w-4xl mx-auto">
+            {/* WhatsApp Kartı */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              whileHover={{ y: -6 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            >
+              <Card className="h-full border-2 border-green-200 hover:border-green-400 transition-colors shadow-md">
+                <CardContent className="p-6 sm:p-8 flex flex-col h-full">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-green-50 text-green-700 text-xs font-semibold px-3 py-1 w-fit mb-4">
+                    ✨ Hızlı Yol
+                  </span>
+
+                  <h3 className="text-xl font-bold text-brand-dark mb-2">
+                    WhatsApp&apos;tan Ulaşın
+                  </h3>
+
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-6 flex-1">
+                    Meltem Hanım&apos;a direkt mesaj atın, size özel programınızı ve ücretsiz
+                    destek grubunu birlikte konuşalım. Mesajınız hazır, tek tıkla gönderiliyor.
+                  </p>
+
+                  <div>
+                    <a
+                      href="https://wa.me/905412523421?text=Merhaba%20Meltem%20Han%C4%B1m%2C%20hedeflerime%20ula%C5%9Fmak%20i%C3%A7in%20dan%C4%B1%C5%9Fmanl%C4%B1k%20hizmetiniz%20hakk%C4%B1nda%20bilgi%20almak%20istiyorum.%20Te%C5%9Fekk%C3%BCr%20ederim.%20%F0%9F%8C%BF"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center w-full rounded-xl bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 transition-colors"
+                    >
+                      Şimdi Mesaj At →
+                    </a>
+                    <p className="text-xs text-gray-400 text-center mt-2">
+                      Yanıt süresi genellikle 1-2 saat içinde
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* Form Kartı */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              whileHover={{ y: -6 }}
+            >
+              <Card className="h-full border-2 border-orange-200 hover:border-orange-400 transition-colors shadow-md">
+                <CardContent className="p-6 sm:p-8 flex flex-col h-full">
+                  <h3 className="text-xl font-bold text-brand-dark mb-2 mt-4">
+                    Başvuru Formu Doldurun
+                  </h3>
+
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-6 flex-1">
+                    Kısa bir form doldurun, sizi tanıyalım. Ekibimiz en kısa sürede iletişime
+                    geçerek hedeflerinize en uygun kişisel planı birlikte hazırlayalım.
+                  </p>
+
+                  <div>
+                    <button
+                      onClick={() => {
+                        document.getElementById("vki-form")?.scrollIntoView({ behavior: "smooth" });
+                      }}
+                      className="inline-flex items-center justify-center w-full rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-6 transition-colors"
+                    >
+                      Formu Doldur →
+                    </button>
+                    <p className="text-xs text-gray-400 text-center mt-2">
+                      İş günlerinde 24 saat içinde dönüş yapılır
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </div>
+
+          {/* Güven notu */}
+          <p className="text-center text-sm text-gray-400 mt-8">
+            🔒 Bilgileriniz güvendedir · Spam gönderilmez · İstediğiniz zaman çıkabilirsiniz
+          </p>
         </div>
       </section>
     </>
