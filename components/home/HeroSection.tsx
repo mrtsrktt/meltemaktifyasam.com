@@ -161,11 +161,10 @@ export default function HeroSection() {
                 <Link href={slide.ctaSecondaryLink}>
                   <Button
                     size="lg"
-                    variant="outline"
                     className={`text-base px-8 ${
                       current === 0
-                        ? "border-white/30 text-white hover:bg-white/10"
-                        : "border-brand-green text-brand-green hover:bg-brand-green/10"
+                        ? "bg-white/10 border border-white/30 text-white hover:bg-white/20"
+                        : "bg-transparent border border-brand-green text-brand-green hover:bg-brand-green/10"
                     }`}
                   >
                     {slide.ctaSecondary}
