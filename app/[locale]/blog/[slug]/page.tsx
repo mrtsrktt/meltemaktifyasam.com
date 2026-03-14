@@ -27,53 +27,6 @@ const CATEGORY_LABELS: Record<string, string> = {
   herbalife: "Herbalife",
 };
 
-function renderMarkdown(text: string): string {
-  let html = text
-    .replace(/^### (.+)$/gm, '<h3 class="text-xl font-bold text-brand-dark mt-8 mb-3">$1</h3>')
-    .replace(/^## (.+)$/gm, '<h2 class="text-2xl font-bold text-brand-dark mt-10 mb-4">$1</h2>')
-    .replace(/\*\*(.+?)\*\*/g, '<strong class="font-semibold text-brand-dark">$1</strong>')
-    .replace(/\*(.+?)\*/g, "<em>$1</em>")
-    .replace(
-      /!\[([^\]]*)\]\(([^)]+)\)/g,
-      '<img src="$2" alt="$1" class="w-full rounded-xl my-6 shadow-md" loading="lazy" />'
-    )
-    .replace(
-      /\[([^\]]+)\]\(([^)]+)\)/g,
-      '<a href="$2" class="text-brand-green underline hover:text-brand-green-dark" target="_blank" rel="noopener noreferrer">$1</a>'
-    )
-    .replace(/^- (.+)$/gm, '<li class="ml-4 list-disc text-muted-foreground leading-relaxed">$1</li>')
-    .replace(/^---$/gm, '<hr class="my-8 border-gray-200" />');
-
-  html = html.replace(
-    /(<li[^>]*>.*?<\/li>\n?)+/g,
-    (match) => `<ul class="my-4 space-y-1">${match}</ul>`
-  );
-
-  const lines = html.split("\n");
-  const result: string[] = [];
-  for (const line of lines) {
-    const trimmed = line.trim();
-    if (!trimmed) {
-      result.push("");
-      continue;
-    }
-    if (
-      trimmed.startsWith("<h") ||
-      trimmed.startsWith("<ul") ||
-      trimmed.startsWith("<li") ||
-      trimmed.startsWith("<img") ||
-      trimmed.startsWith("<hr") ||
-      trimmed.startsWith("</")
-    ) {
-      result.push(trimmed);
-    } else {
-      result.push(`<p class="text-muted-foreground leading-relaxed mb-4">${trimmed}</p>`);
-    }
-  }
-
-  return result.join("\n");
-}
-
 export default function BlogDetailPage({
   params,
 }: {
@@ -175,8 +128,6 @@ export default function BlogDetailPage({
     );
   }
 
-  const contentHtml = renderMarkdown(post.content_tr || "");
-
   return (
     <section className="py-8 sm:py-12">
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
@@ -246,11 +197,29 @@ export default function BlogDetailPage({
             </motion.div>
           )}
 
-          {/* Content - Markdown rendered */}
+          {/* Content */}
           <div
-            className="mt-10 max-w-none"
-            dangerouslySetInnerHTML={{ __html: contentHtml }}
+            className="mt-10 max-w-none blog-content"
+            dangerouslySetInnerHTML={{ __html: post.content_tr || "" }}
           />
+
+          <style jsx global>{`
+            .blog-content h2 { font-size: 1.5rem; font-weight: 700; margin-top: 2rem; margin-bottom: 0.75rem; color: #1a1a2e; }
+            .blog-content h3 { font-size: 1.25rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; color: #1a1a2e; }
+            .blog-content p { margin-bottom: 1rem; line-height: 1.8; color: #6b7280; }
+            .blog-content ul, .blog-content ol { padding-left: 1.5rem; margin-bottom: 1rem; color: #6b7280; }
+            .blog-content ul { list-style-type: disc; }
+            .blog-content ol { list-style-type: decimal; }
+            .blog-content li { margin-bottom: 0.25rem; line-height: 1.7; }
+            .blog-content blockquote { border-left: 3px solid #2ecc71; padding-left: 1rem; margin: 1.5rem 0; color: #6b7280; font-style: italic; }
+            .blog-content hr { border: none; border-top: 1px solid #e5e7eb; margin: 2rem 0; }
+            .blog-content img { max-width: 100%; border-radius: 0.75rem; margin: 1.5rem 0; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+            .blog-content a { color: #2ecc71; text-decoration: underline; }
+            .blog-content a:hover { color: #27ae60; }
+            .blog-content strong { font-weight: 600; color: #1a1a2e; }
+            .blog-content em { font-style: italic; }
+            .blog-content u { text-decoration: underline; }
+          `}</style>
         </motion.article>
 
         {/* Prev/Next Navigation */}

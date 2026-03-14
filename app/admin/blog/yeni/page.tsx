@@ -1,27 +1,22 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { slugify } from "@/lib/utils";
-import {
-  ArrowLeft,
-  Save,
-  Loader2,
-  Upload,
-  X,
-  Bold,
-  Italic,
-  Heading2,
-  List,
-  Link2,
-  Copy,
-  Check,
-  ImagePlus,
-  Trash2,
-} from "lucide-react";
+import { ArrowLeft, Save, Loader2, Upload, X } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import dynamic from "next/dynamic";
+
+const RichTextEditor = dynamic(() => import("@/components/admin/RichTextEditor"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-[300px] rounded-lg border border-gray-300 flex items-center justify-center">
+      <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+    </div>
+  ),
+});
 
 const CATEGORY_LABELS: Record<string, string> = {
   nutrition: "Fonksiyonel Beslenme",
@@ -34,217 +29,76 @@ const CATEGORY_LABELS: Record<string, string> = {
 
 const CATEGORIES = Object.keys(CATEGORY_LABELS);
 
-function calculateReadTime(text: string): number {
-  const wordCount = text.trim().split(/\s+/).filter(Boolean).length;
+function calculateReadTime(html: string): number {
+  const text = html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+  const wordCount = text.split(/\s+/).filter(Boolean).length;
   return Math.max(1, Math.ceil(wordCount / 200));
 }
 
 export default function NewBlogPostPage() {
   const router = useRouter();
-  const contentRef = useRef<HTMLTextAreaElement>(null);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [uploadingContent, setUploadingContent] = useState(false);
-  const [coverImageUrl, setCoverImageUrl] = useState<string>("");
-  const [contentImages, setContentImages] = useState<
-    { url: string; name: string }[]
-  >([]);
-  const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
+  const [coverImageUrl, setCoverImageUrl] = useState("");
+  const [content, setContent] = useState("");
   const [form, setForm] = useState({
     title_tr: "",
     excerpt_tr: "",
-    content_tr: "",
     category: "nutrition",
     is_published: false,
   });
 
   const slug = slugify(form.title_tr);
-  const readTime = calculateReadTime(form.content_tr);
+  const readTime = calculateReadTime(content);
 
-  const handleChange = useCallback(
-    (
-      e: React.ChangeEvent<
-        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-      >
-    ) => {
-      const { name, value, type } = e.target;
-      setForm((prev) => ({
-        ...prev,
-        [name]:
-          type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
-      }));
-    },
-    []
-  );
-
-  // Markdown toolbar helpers
-  const insertMarkdown = (before: string, after: string = "") => {
-    const textarea = contentRef.current;
-    if (!textarea) return;
-
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const text = form.content_tr;
-    const selectedText = text.substring(start, end);
-
-    const newText =
-      text.substring(0, start) +
-      before +
-      selectedText +
-      after +
-      text.substring(end);
-
-    setForm((prev) => ({ ...prev, content_tr: newText }));
-
-    // Restore cursor position after state update
-    setTimeout(() => {
-      textarea.focus();
-      const cursorPos = selectedText
-        ? start + before.length + selectedText.length + after.length
-        : start + before.length;
-      textarea.setSelectionRange(cursorPos, cursorPos);
-    }, 0);
-  };
-
-  const handleBold = () => insertMarkdown("**", "**");
-  const handleItalic = () => insertMarkdown("*", "*");
-  const handleHeading = () => insertMarkdown("## ");
-  const handleList = () => insertMarkdown("- ");
-  const handleLink = () => insertMarkdown("[", "](url)");
-
-  // Cover image upload
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setUploading(true);
     const supabase = createClient();
-    const fileExt = file.name.split(".").pop();
-    const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
-    const filePath = `covers/${fileName}`;
+    const ext = file.name.split(".").pop();
+    const fileName = `covers/${Date.now()}-${Math.random().toString(36).substring(2)}.${ext}`;
 
-    const { error: uploadError } = await supabase.storage
-      .from("blog-images")
-      .upload(filePath, file);
-
-    if (uploadError) {
-      console.error("Gorsel yukleme hatasi:", uploadError);
-      alert("Gorsel yuklenirken bir hata olustu.");
+    const { error } = await supabase.storage.from("blog-images").upload(fileName, file);
+    if (error) {
+      alert("Gorsel yuklenirken hata olustu: " + error.message);
       setUploading(false);
       return;
     }
 
-    const {
-      data: { publicUrl },
-    } = supabase.storage.from("blog-images").getPublicUrl(filePath);
-
+    const { data: { publicUrl } } = supabase.storage.from("blog-images").getPublicUrl(fileName);
     setCoverImageUrl(publicUrl);
     setUploading(false);
   };
 
-  const handleRemoveImage = () => {
-    setCoverImageUrl("");
-  };
-
-  // Content image upload
-  const handleContentImageUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
-
-    setUploadingContent(true);
-    const supabase = createClient();
-
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
-      const filePath = `content/${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from("blog-images")
-        .upload(filePath, file);
-
-      if (uploadError) {
-        console.error("Icerik gorseli yukleme hatasi:", uploadError);
-        alert(`"${file.name}" yuklenirken hata olustu.`);
-        continue;
-      }
-
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from("blog-images").getPublicUrl(filePath);
-
-      setContentImages((prev) => [
-        ...prev,
-        { url: publicUrl, name: file.name },
-      ]);
-    }
-
-    setUploadingContent(false);
-    // Reset input
-    e.target.value = "";
-  };
-
-  const handleRemoveContentImage = (url: string) => {
-    setContentImages((prev) => prev.filter((img) => img.url !== url));
-  };
-
-  const handleCopyImageMarkdown = async (url: string) => {
-    try {
-      await navigator.clipboard.writeText(`![](${url})`);
-      setCopiedUrl(url);
-      setTimeout(() => setCopiedUrl(null), 2000);
-    } catch {
-      // Fallback
-      const textarea = document.createElement("textarea");
-      textarea.value = `![](${url})`;
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand("copy");
-      document.body.removeChild(textarea);
-      setCopiedUrl(url);
-      setTimeout(() => setCopiedUrl(null), 2000);
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!form.title_tr.trim()) {
       alert("Baslik alani zorunludur.");
       return;
     }
 
-    if (!form.category) {
-      alert("Kategori secimi zorunludur.");
-      return;
-    }
-
     setSaving(true);
-
     const supabase = createClient();
-    const postData = {
+
+    const { error } = await supabase.from("blog_posts").insert({
       title_tr: form.title_tr.trim(),
       title_en: null,
       slug,
       excerpt_tr: form.excerpt_tr.trim() || null,
       excerpt_en: null,
-      content_tr: form.content_tr.trim(),
+      content_tr: content,
       content_en: null,
       category: form.category,
       cover_image: coverImageUrl || null,
       read_time: readTime,
       is_published: form.is_published,
       published_at: form.is_published ? new Date().toISOString() : null,
-    };
-
-    const { error } = await supabase.from("blog_posts").insert(postData);
+    });
 
     if (error) {
-      console.error("Kayit hatasi:", error);
-      alert("Yazi kaydedilirken bir hata olustu.");
+      alert("Kayit hatasi: " + error.message);
       setSaving(false);
       return;
     }
@@ -253,46 +107,32 @@ export default function NewBlogPostPage() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
+    <div className="max-w-4xl mx-auto space-y-6">
       <div className="flex items-center gap-4">
-        <Link
-          href="/admin/blog"
-          className="inline-flex items-center justify-center rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
-        >
-          <ArrowLeft className="h-5 w-5" />
+        <Link href="/admin/blog" className="p-2 hover:bg-gray-100 rounded-lg">
+          <ArrowLeft size={20} />
         </Link>
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Yeni Blog Yazisi</h1>
-          <p className="text-sm text-gray-500 mt-1">
-            Yeni bir blog yazisi olusturun
-          </p>
+          {slug && <p className="text-xs text-gray-400 mt-0.5">/{slug}</p>}
         </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Content */}
+        {/* Title & Excerpt */}
         <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-gray-900">Icerik</h2>
-
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Baslik <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
-              name="title_tr"
-              value={form.title_tr}
-              onChange={handleChange}
               required
-              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-900 focus:border-emerald-500 focus:ring-emerald-500 focus:outline-none"
+              value={form.title_tr}
+              onChange={(e) => setForm({ ...form, title_tr: e.target.value })}
+              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-emerald-500 focus:ring-emerald-500 outline-none"
               placeholder="Yazi basligi"
             />
-            {slug && (
-              <p className="mt-1 text-xs text-gray-400">
-                Slug: <span className="font-mono">{slug}</span>
-              </p>
-            )}
           </div>
 
           <div>
@@ -300,154 +140,22 @@ export default function NewBlogPostPage() {
               Ozet
             </label>
             <textarea
-              name="excerpt_tr"
               value={form.excerpt_tr}
-              onChange={handleChange}
+              onChange={(e) => setForm({ ...form, excerpt_tr: e.target.value })}
               rows={2}
-              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-900 focus:border-emerald-500 focus:ring-emerald-500 focus:outline-none resize-none"
-              placeholder="Kisa ozet metni"
+              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-emerald-500 focus:ring-emerald-500 outline-none resize-none"
+              placeholder="Kisa ozet metni (listeleme sayfasinda gorunur)"
             />
           </div>
+        </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Icerik
-            </label>
-
-            {/* Markdown Toolbar */}
-            <div className="flex items-center gap-1 mb-2 p-2 bg-gray-50 rounded-t-lg border border-gray-300 border-b-0">
-              <button
-                type="button"
-                onClick={handleBold}
-                className="inline-flex items-center justify-center rounded-md p-2 text-gray-600 hover:bg-white hover:text-gray-900 transition-colors"
-                title="Kalin (Bold)"
-              >
-                <Bold className="h-4 w-4" />
-              </button>
-              <button
-                type="button"
-                onClick={handleItalic}
-                className="inline-flex items-center justify-center rounded-md p-2 text-gray-600 hover:bg-white hover:text-gray-900 transition-colors"
-                title="Italik (Italic)"
-              >
-                <Italic className="h-4 w-4" />
-              </button>
-              <button
-                type="button"
-                onClick={handleHeading}
-                className="inline-flex items-center justify-center rounded-md p-2 text-gray-600 hover:bg-white hover:text-gray-900 transition-colors"
-                title="Baslik (Heading)"
-              >
-                <Heading2 className="h-4 w-4" />
-              </button>
-              <button
-                type="button"
-                onClick={handleList}
-                className="inline-flex items-center justify-center rounded-md p-2 text-gray-600 hover:bg-white hover:text-gray-900 transition-colors"
-                title="Liste (List)"
-              >
-                <List className="h-4 w-4" />
-              </button>
-              <button
-                type="button"
-                onClick={handleLink}
-                className="inline-flex items-center justify-center rounded-md p-2 text-gray-600 hover:bg-white hover:text-gray-900 transition-colors"
-                title="Baglanti (Link)"
-              >
-                <Link2 className="h-4 w-4" />
-              </button>
-            </div>
-
-            <textarea
-              ref={contentRef}
-              name="content_tr"
-              value={form.content_tr}
-              onChange={handleChange}
-              rows={12}
-              className="w-full rounded-b-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-900 focus:border-emerald-500 focus:ring-emerald-500 focus:outline-none resize-y font-mono"
-              placeholder="Yazi icerigi (Markdown desteklenir)"
-            />
-            <p className="mt-1 text-xs text-gray-400">
-              Tahmini okuma suresi: {readTime} dk
-            </p>
+        {/* Content Editor */}
+        <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-2">
+          <div className="flex items-center justify-between">
+            <label className="block text-sm font-medium text-gray-700">Icerik</label>
+            <span className="text-xs text-gray-400">{readTime} dk okuma</span>
           </div>
-
-          {/* Content Images */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Icerik Gorselleri
-            </label>
-            <p className="text-xs text-gray-400 mb-3">
-              Gorselleri yukleyin, ardından URL kopyalayarak icerige ekleyin.
-            </p>
-
-            {/* Upload Button */}
-            <label className="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-50 transition-colors">
-              {uploadingContent ? (
-                <Loader2 className="h-4 w-4 animate-spin text-emerald-500" />
-              ) : (
-                <ImagePlus className="h-4 w-4 text-gray-500" />
-              )}
-              {uploadingContent ? "Yukleniyor..." : "Gorsel Yukle"}
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handleContentImageUpload}
-                className="hidden"
-                disabled={uploadingContent}
-              />
-            </label>
-
-            {/* Image Grid */}
-            {contentImages.length > 0 && (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mt-4">
-                {contentImages.map((img) => (
-                  <div
-                    key={img.url}
-                    className="group relative border border-gray-200 rounded-lg overflow-hidden"
-                  >
-                    <div className="relative w-full h-24">
-                      <Image
-                        src={img.url}
-                        alt={img.name}
-                        fill
-                        className="object-cover"
-                        sizes="200px"
-                      />
-                    </div>
-                    <div className="flex items-center justify-between p-2 bg-gray-50">
-                      <p className="text-xs text-gray-500 truncate flex-1 mr-2">
-                        {img.name}
-                      </p>
-                      <div className="flex items-center gap-1">
-                        <button
-                          type="button"
-                          onClick={() => handleCopyImageMarkdown(img.url)}
-                          className="inline-flex items-center justify-center rounded p-1 text-gray-400 hover:bg-white hover:text-emerald-600 transition-colors"
-                          title="Markdown URL kopyala"
-                        >
-                          {copiedUrl === img.url ? (
-                            <Check className="h-3.5 w-3.5 text-emerald-500" />
-                          ) : (
-                            <Copy className="h-3.5 w-3.5" />
-                          )}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveContentImage(img.url)}
-                          className="inline-flex items-center justify-center rounded p-1 text-gray-400 hover:bg-white hover:text-red-600 transition-colors"
-                          title="Kaldır"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          <RichTextEditor content={content} onChange={setContent} />
         </div>
 
         {/* Settings */}
@@ -460,24 +168,17 @@ export default function NewBlogPostPage() {
                 Kategori <span className="text-red-500">*</span>
               </label>
               <select
-                name="category"
                 value={form.category}
-                onChange={handleChange}
-                required
-                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-900 focus:border-emerald-500 focus:ring-emerald-500 focus:outline-none"
+                onChange={(e) => setForm({ ...form, category: e.target.value })}
+                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-emerald-500 focus:ring-emerald-500 outline-none"
               >
                 {CATEGORIES.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {CATEGORY_LABELS[cat]}
-                  </option>
+                  <option key={cat} value={cat}>{CATEGORY_LABELS[cat]}</option>
                 ))}
               </select>
             </div>
-
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Okuma Suresi
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Okuma Suresi</label>
               <input
                 type="text"
                 value={`${readTime} dakika`}
@@ -489,24 +190,15 @@ export default function NewBlogPostPage() {
 
           {/* Cover Image */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Kapak Gorseli
-            </label>
-            <p className="text-xs text-gray-400 mb-2">
-              Onerilen boyut: 1200x630px
-            </p>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Kapak Gorseli</label>
+            <p className="text-xs text-gray-400 mb-2">Onerilen boyut: 1200x630px</p>
             {coverImageUrl ? (
               <div className="relative w-full h-48 rounded-lg overflow-hidden border border-gray-200">
-                <Image
-                  src={coverImageUrl}
-                  alt="Kapak gorseli"
-                  fill
-                  className="object-cover"
-                />
+                <Image src={coverImageUrl} alt="Kapak" fill className="object-cover" />
                 <button
                   type="button"
-                  onClick={handleRemoveImage}
-                  className="absolute top-2 right-2 rounded-full bg-white/80 p-1.5 text-gray-600 hover:bg-white hover:text-red-600 transition-colors"
+                  onClick={() => setCoverImageUrl("")}
+                  className="absolute top-2 right-2 rounded-full bg-white/80 p-1.5 text-gray-600 hover:bg-white hover:text-red-600"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -518,39 +210,24 @@ export default function NewBlogPostPage() {
                 ) : (
                   <>
                     <Upload className="h-8 w-8 text-gray-400 mb-2" />
-                    <span className="text-sm text-gray-500">
-                      Gorsel yuklemek icin tiklayin
-                    </span>
-                    <span className="text-xs text-gray-400 mt-1">
-                      PNG, JPG, WebP (max 5MB)
-                    </span>
+                    <span className="text-sm text-gray-500">Gorsel yuklemek icin tiklayin</span>
+                    <span className="text-xs text-gray-400 mt-1">PNG, JPG, WebP</span>
                   </>
                 )}
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="hidden"
-                  disabled={uploading}
-                />
+                <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" disabled={uploading} />
               </label>
             )}
           </div>
 
-          {/* Published */}
           <div className="flex items-center gap-3">
             <input
               type="checkbox"
-              name="is_published"
               id="is_published"
               checked={form.is_published}
-              onChange={handleChange}
+              onChange={(e) => setForm({ ...form, is_published: e.target.checked })}
               className="h-4 w-4 rounded border-gray-300 text-emerald-500 focus:ring-emerald-500"
             />
-            <label
-              htmlFor="is_published"
-              className="text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="is_published" className="text-sm font-medium text-gray-700">
               Hemen yayinla
             </label>
           </div>
@@ -558,22 +235,15 @@ export default function NewBlogPostPage() {
 
         {/* Actions */}
         <div className="flex items-center justify-end gap-3">
-          <Link
-            href="/admin/blog"
-            className="rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
-          >
+          <Link href="/admin/blog" className="rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50">
             Iptal
           </Link>
           <button
             type="submit"
             disabled={saving}
-            className="inline-flex items-center gap-2 rounded-lg bg-emerald-500 px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="inline-flex items-center gap-2 rounded-lg bg-emerald-500 px-6 py-2.5 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-50"
           >
-            {saving ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Save className="h-4 w-4" />
-            )}
+            {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
             {saving ? "Kaydediliyor..." : "Kaydet"}
           </button>
         </div>
