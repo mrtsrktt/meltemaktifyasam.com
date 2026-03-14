@@ -4,7 +4,7 @@ import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import type { Product, Category } from "@/lib/supabase/types";
-import { ArrowLeft, Save, Upload, X } from "lucide-react";
+import { ArrowLeft, Save, Upload, X, Check } from "lucide-react";
 import Link from "next/link";
 
 function slugify(text: string): string {
@@ -24,11 +24,11 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>([]);
   const [form, setForm] = useState({
     name_tr: "",
     description_tr: "",
     price: "",
-    category_id: "",
     sku: "",
     benefits_tr: "",
     usage_tr: "",
@@ -62,7 +62,6 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
           name_tr: p.name_tr,
           description_tr: p.description_tr || "",
           price: String(p.price),
-          category_id: p.category_id || "",
           sku: p.sku || "",
           benefits_tr: p.benefits_tr || "",
           usage_tr: p.usage_tr || "",
@@ -72,10 +71,27 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
         });
         if (p.image_url) setImagePreview(p.image_url);
       }
+
+      // Fetch existing category relations
+      const { data: catData } = await supabase
+        .from("product_categories")
+        .select("category_id")
+        .eq("product_id", id);
+
+      if (catData) {
+        setSelectedCategoryIds(catData.map((c) => c.category_id));
+      }
+
       setLoading(false);
     };
     fetchProduct();
   }, [id]);
+
+  const toggleCategory = (catId: string) => {
+    setSelectedCategoryIds((prev) =>
+      prev.includes(catId) ? prev.filter((c) => c !== catId) : [...prev, catId]
+    );
+  };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -89,6 +105,12 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
     e.preventDefault();
     setError("");
     setSaving(true);
+
+    if (selectedCategoryIds.length === 0) {
+      setError("En az bir kategori secmelisiniz.");
+      setSaving(false);
+      return;
+    }
 
     const supabase = createClient();
     let image_url = form.image_url;
@@ -121,7 +143,6 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
         name_tr: form.name_tr,
         description_tr: form.description_tr || null,
         price: parseFloat(form.price),
-        category_id: form.category_id || null,
         sku: form.sku || null,
         benefits_tr: form.benefits_tr || null,
         usage_tr: form.usage_tr || null,
@@ -136,6 +157,22 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
       setSaving(false);
       return;
     }
+
+    // Update category relations: delete old, insert new
+    await supabase.from("product_categories").delete().eq("product_id", id);
+    const { error: catError } = await supabase
+      .from("product_categories")
+      .insert(selectedCategoryIds.map((catId) => ({
+        product_id: id,
+        category_id: catId,
+      })));
+
+    if (catError) {
+      setError(`Kategoriler guncellenemedi: ${catError.message}`);
+      setSaving(false);
+      return;
+    }
+
     router.push("/admin/urunler");
   };
 
@@ -186,13 +223,27 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Kategori *</label>
-            <select value={form.category_id} onChange={(e) => updateForm("category_id", e.target.value)} className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-sm">
-              <option value="">Kategori secin...</option>
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>{cat.name_tr}</option>
-              ))}
-            </select>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Kategoriler *</label>
+            <div className="flex flex-wrap gap-2">
+              {categories.map((cat) => {
+                const selected = selectedCategoryIds.includes(cat.id);
+                return (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    onClick={() => toggleCategory(cat.id)}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-colors border ${
+                      selected
+                        ? "bg-emerald-500 text-white border-emerald-500"
+                        : "bg-white text-gray-600 border-gray-300 hover:border-emerald-400 hover:text-emerald-600"
+                    }`}
+                  >
+                    {selected && <Check size={14} />}
+                    {cat.name_tr}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           <div className="flex gap-6">

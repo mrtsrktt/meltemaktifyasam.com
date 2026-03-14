@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { ArrowLeft, Save, Upload, X } from "lucide-react";
+import { ArrowLeft, Save, Upload, X, Check } from "lucide-react";
 import Link from "next/link";
 import type { Category } from "@/lib/supabase/types";
 
@@ -22,11 +22,11 @@ export default function NewProductPage() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>([]);
   const [form, setForm] = useState({
     name_tr: "",
     description_tr: "",
     price: "",
-    category_id: "",
     sku: "",
     benefits_tr: "",
     usage_tr: "",
@@ -46,6 +46,12 @@ export default function NewProductPage() {
       });
   }, []);
 
+  const toggleCategory = (id: string) => {
+    setSelectedCategoryIds((prev) =>
+      prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id]
+    );
+  };
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -58,6 +64,12 @@ export default function NewProductPage() {
     e.preventDefault();
     setError("");
     setSaving(true);
+
+    if (selectedCategoryIds.length === 0) {
+      setError("En az bir kategori secmelisiniz.");
+      setSaving(false);
+      return;
+    }
 
     const supabase = createClient();
     let image_url = null;
@@ -85,25 +97,43 @@ export default function NewProductPage() {
 
     const slug = slugify(form.name_tr);
 
-    const { error: insertError } = await supabase.from("products").insert({
-      slug,
-      name_tr: form.name_tr,
-      description_tr: form.description_tr || null,
-      price: parseFloat(form.price),
-      category_id: form.category_id || null,
-      sku: form.sku || null,
-      benefits_tr: form.benefits_tr || null,
-      usage_tr: form.usage_tr || null,
-      image_url,
-      is_active: form.is_active,
-      is_featured: form.is_featured,
-    });
+    const { data: product, error: insertError } = await supabase
+      .from("products")
+      .insert({
+        slug,
+        name_tr: form.name_tr,
+        description_tr: form.description_tr || null,
+        price: parseFloat(form.price),
+        sku: form.sku || null,
+        benefits_tr: form.benefits_tr || null,
+        usage_tr: form.usage_tr || null,
+        image_url,
+        is_active: form.is_active,
+        is_featured: form.is_featured,
+      })
+      .select("id")
+      .single();
 
-    if (insertError) {
-      setError(`Urun kaydedilemedi: ${insertError.message}`);
+    if (insertError || !product) {
+      setError(`Urun kaydedilemedi: ${insertError?.message || "Bilinmeyen hata"}`);
       setSaving(false);
       return;
     }
+
+    // Insert product-category relations
+    const { error: catError } = await supabase
+      .from("product_categories")
+      .insert(selectedCategoryIds.map((catId) => ({
+        product_id: product.id,
+        category_id: catId,
+      })));
+
+    if (catError) {
+      setError(`Kategoriler kaydedilemedi: ${catError.message}`);
+      setSaving(false);
+      return;
+    }
+
     router.push("/admin/urunler");
   };
 
@@ -178,19 +208,29 @@ export default function NewProductPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Kategori *
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Kategoriler *
             </label>
-            <select
-              value={form.category_id}
-              onChange={(e) => updateForm("category_id", e.target.value)}
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-sm"
-            >
-              <option value="">Kategori secin...</option>
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>{cat.name_tr}</option>
-              ))}
-            </select>
+            <div className="flex flex-wrap gap-2">
+              {categories.map((cat) => {
+                const selected = selectedCategoryIds.includes(cat.id);
+                return (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    onClick={() => toggleCategory(cat.id)}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-colors border ${
+                      selected
+                        ? "bg-emerald-500 text-white border-emerald-500"
+                        : "bg-white text-gray-600 border-gray-300 hover:border-emerald-400 hover:text-emerald-600"
+                    }`}
+                  >
+                    {selected && <Check size={14} />}
+                    {cat.name_tr}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           <div className="flex gap-6">

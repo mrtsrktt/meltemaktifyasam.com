@@ -15,8 +15,7 @@ interface FeaturedProduct {
   name_tr: string;
   price: number;
   image_url: string | null;
-  category_id: string | null;
-  categories: { name_tr: string }[] | { name_tr: string } | null;
+  product_categories: { categories: { name_tr: string }[] | { name_tr: string } | null }[];
 }
 
 export default function ProductsPreview() {
@@ -38,7 +37,7 @@ export default function ProductsPreview() {
       const supabase = createClient();
       const { data } = await supabase
         .from("products")
-        .select("id, slug, name_tr, price, image_url, category_id, categories(name_tr)")
+        .select("id, slug, name_tr, price, image_url, product_categories(categories(name_tr))")
         .eq("is_active", true)
         .eq("is_featured", true)
         .order("created_at", { ascending: false })
@@ -224,12 +223,19 @@ export default function ProductsPreview() {
                         )}
                       </div>
                       <CardContent className="p-4">
-                        {product.categories && (
-                          <span className="inline-block mb-2 px-2 py-0.5 rounded-full bg-brand-green/10 text-brand-green text-xs font-medium">
-                            {Array.isArray(product.categories)
-                              ? product.categories[0]?.name_tr
-                              : product.categories.name_tr}
-                          </span>
+                        {product.product_categories?.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mb-2">
+                            {product.product_categories.map((pc, i) => {
+                              if (!pc.categories) return null;
+                              const cat = Array.isArray(pc.categories) ? pc.categories[0] : pc.categories;
+                              if (!cat) return null;
+                              return (
+                                <span key={i} className="inline-block px-2 py-0.5 rounded-full bg-brand-green/10 text-brand-green text-xs font-medium">
+                                  {cat.name_tr}
+                                </span>
+                              );
+                            })}
+                          </div>
                         )}
                         <h3 className="font-semibold text-brand-dark group-hover/card:text-brand-green transition-colors line-clamp-2">
                           {product.name_tr}
