@@ -18,6 +18,10 @@ export const routing = defineRouting({
       tr: "/magaza/[slug]",
       en: "/shop/[slug]",
     },
+    "/magaza/setler": {
+      tr: "/magaza/setler",
+      en: "/shop/sets",
+    },
     "/magaza/set/[slug]": {
       tr: "/magaza/set/[slug]",
       en: "/shop/set/[slug]",

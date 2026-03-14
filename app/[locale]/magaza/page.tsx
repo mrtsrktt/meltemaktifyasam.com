@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Link } from "@/i18n/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ShoppingBag, Plus, Check, X, Search, ChevronLeft, ChevronRight, Tag, Sparkles } from "lucide-react";
+import { ShoppingBag, Plus, Check, X, Search, ChevronLeft, ChevronRight, Tag, Sparkles, ArrowRight } from "lucide-react";
 import { useCartStore } from "@/lib/store/cart";
 import type { Category } from "@/lib/supabase/types";
 import { useRef, useCallback } from "react";
@@ -318,10 +318,10 @@ function SetsSlider({
             >
               <Sparkles size={22} className="text-orange-500" />
             </motion.div>
-            <div>
+            <Link href="/magaza/setler" className="hover:opacity-80 transition-opacity">
               <h2 className="text-lg sm:text-xl font-bold text-gray-900">Ozel Setler</h2>
-              <p className="text-xs text-orange-600 font-medium">Kampanyali fiyatlarla</p>
-            </div>
+              <p className="text-xs text-orange-600 font-medium flex items-center gap-1">Tum setleri gor <ArrowRight size={12} /></p>
+            </Link>
           </div>
           {sets.length > itemsPerView && (
             <div className="flex gap-2">

@@ -217,6 +217,21 @@ export default function ProductSetsPreview() {
             );
           })}
         </div>
+
+        {/* View all sets link */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mt-10 text-center"
+        >
+          <Link href="/magaza/setler">
+            <span className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white text-orange-600 font-semibold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all border border-orange-200">
+              Tum Setleri Gor
+              <ArrowRight size={18} />
+            </span>
+          </Link>
+        </motion.div>
       </div>
     </section>
   );
