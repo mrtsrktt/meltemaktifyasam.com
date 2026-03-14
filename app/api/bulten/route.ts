@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,11 +12,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // TODO: Save to Supabase when connected
-    // const supabase = await createClient();
-    // await supabase.from('newsletter_subscribers').insert({ email });
+    const supabase = await createClient();
+    const { error } = await supabase
+      .from("newsletter_subscribers")
+      .upsert({ email }, { onConflict: "email" });
 
-    console.log("Newsletter subscription:", email);
+    if (error) {
+      console.error("Newsletter error:", error);
+      return NextResponse.json(
+        { error: "Kayit sirasinda bir hata olustu" },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json({ success: true });
   } catch {

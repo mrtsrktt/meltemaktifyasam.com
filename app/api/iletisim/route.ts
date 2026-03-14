@@ -5,24 +5,25 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
+    if (!body.name || !body.email || !body.message) {
+      return NextResponse.json(
+        { error: "Ad, e-posta ve mesaj zorunludur" },
+        { status: 400 }
+      );
+    }
+
     const supabase = await createClient();
-    const { error } = await supabase.from("vki_leads").insert({
-      full_name: body.name,
-      phone: body.phone,
-      email: body.email || null,
-      age: body.age ? parseInt(body.age) : null,
-      height_cm: parseFloat(body.height),
-      weight_kg: parseFloat(body.weight),
-      bmi: body.bmi,
-      bmi_category: body.bmi_category,
-      goal: body.goal,
-      whatsapp_consent: body.consent || false,
+    const { error } = await supabase.from("contact_messages").insert({
+      name: body.name,
+      email: body.email,
+      phone: body.phone || null,
+      message: body.message,
     });
 
     if (error) {
-      console.error("VKI lead error:", error);
+      console.error("Contact message error:", error);
       return NextResponse.json(
-        { error: "Kayit sirasinda bir hata olustu" },
+        { error: "Mesaj gonderilirken bir hata olustu" },
         { status: 500 }
       );
     }

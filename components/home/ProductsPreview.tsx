@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { motion } from "framer-motion";
@@ -7,49 +8,27 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ShoppingBag, ArrowRight } from "lucide-react";
-
-// Placeholder products until Supabase is connected
-const mockProducts = [
-  {
-    id: "1",
-    slug: "formula-1-shake",
-    name_tr: "Formula 1 Shake Karışımı",
-    name_en: "Formula 1 Shake Mix",
-    price: 899.0,
-    category: "weight_management",
-    image_url: null,
-  },
-  {
-    id: "2",
-    slug: "protein-bar",
-    name_tr: "Protein Bar",
-    name_en: "Protein Bar",
-    price: 349.0,
-    category: "sport_nutrition",
-    image_url: null,
-  },
-  {
-    id: "3",
-    slug: "herbal-cay",
-    name_tr: "Herbal Konsantre Çay",
-    name_en: "Herbal Concentrate Tea",
-    price: 549.0,
-    category: "weight_management",
-    image_url: null,
-  },
-  {
-    id: "4",
-    slug: "aloe-vera",
-    name_tr: "Aloe Vera İçeceği",
-    name_en: "Aloe Vera Drink",
-    price: 699.0,
-    category: "vitamin_mineral",
-    image_url: null,
-  },
-];
+import { createClient } from "@/lib/supabase/client";
+import type { Product } from "@/lib/supabase/types";
 
 export default function ProductsPreview() {
   const t = useTranslations("products");
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    const fetchFeatured = async () => {
+      const supabase = createClient();
+      const { data } = await supabase
+        .from("products")
+        .select("*")
+        .eq("is_active", true)
+        .eq("is_featured", true)
+        .order("created_at", { ascending: false })
+        .limit(4);
+      setProducts((data as Product[]) || []);
+    };
+    fetchFeatured();
+  }, []);
 
   return (
     <section className="py-20 bg-brand-light">
@@ -77,7 +56,7 @@ export default function ProductsPreview() {
         </motion.div>
 
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {mockProducts.map((product, i) => (
+          {products.map((product, i) => (
             <motion.div
               key={product.id}
               initial={{ opacity: 0, y: 30 }}
@@ -87,10 +66,14 @@ export default function ProductsPreview() {
             >
               <Link href={{ pathname: "/magaza/[slug]", params: { slug: product.slug } }}>
                 <Card className="group h-full overflow-hidden border-0 shadow-md transition-all hover:shadow-xl hover:-translate-y-1">
-                  <div className="aspect-square bg-gradient-to-br from-brand-green/10 to-brand-orange/10 p-6">
-                    <div className="flex h-full items-center justify-center">
-                      <ShoppingBag className="h-16 w-16 text-brand-green/30" />
-                    </div>
+                  <div className="aspect-square bg-gradient-to-br from-brand-green/10 to-brand-orange/10 p-6 overflow-hidden">
+                    {product.image_url ? (
+                      <img src={product.image_url} alt={product.name_tr} className="w-full h-full object-contain" />
+                    ) : (
+                      <div className="flex h-full items-center justify-center">
+                        <ShoppingBag className="h-16 w-16 text-brand-green/30" />
+                      </div>
+                    )}
                   </div>
                   <CardContent className="p-4">
                     <Badge variant="secondary" className="mb-2 bg-brand-green/10 text-brand-green text-xs">
@@ -104,7 +87,7 @@ export default function ProductsPreview() {
                       {product.name_tr}
                     </h3>
                     <p className="mt-2 text-lg font-bold text-brand-green">
-                      {product.price.toLocaleString("tr-TR")} TL
+                      {Number(product.price).toLocaleString("tr-TR")} TL
                     </p>
                   </CardContent>
                 </Card>

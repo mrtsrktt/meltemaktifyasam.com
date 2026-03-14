@@ -29,8 +29,27 @@ export default function ContactPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus("loading");
-    // Simulate form submission
-    setTimeout(() => setStatus("success"), 1500);
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    try {
+      const res = await fetch("/api/iletisim", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.get("name"),
+          email: formData.get("email"),
+          phone: formData.get("phone") || null,
+          message: formData.get("message"),
+        }),
+      });
+      if (res.ok) {
+        setStatus("success");
+      } else {
+        setStatus("idle");
+      }
+    } catch {
+      setStatus("idle");
+    }
   };
 
   return (
@@ -69,12 +88,13 @@ export default function ContactPage() {
                     <div className="grid gap-4 sm:grid-cols-2">
                       <div>
                         <Label htmlFor="name">{t("name")}</Label>
-                        <Input id="name" required className="mt-1" />
+                        <Input id="name" name="name" required className="mt-1" />
                       </div>
                       <div>
                         <Label htmlFor="email">{t("email")}</Label>
                         <Input
                           id="email"
+                          name="email"
                           type="email"
                           required
                           className="mt-1"
@@ -83,12 +103,13 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <Label htmlFor="phone">{t("phone")}</Label>
-                      <Input id="phone" type="tel" className="mt-1" />
+                      <Input id="phone" name="phone" type="tel" className="mt-1" />
                     </div>
                     <div>
                       <Label htmlFor="message">{t("message")}</Label>
                       <Textarea
                         id="message"
+                        name="message"
                         required
                         rows={5}
                         className="mt-1"

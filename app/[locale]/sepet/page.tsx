@@ -7,16 +7,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ShoppingBag, ArrowRight, Trash2, Minus, Plus } from "lucide-react";
-
-// Mock cart - will be managed with state management later
-const mockCart = [
-  { id: "1", name: "Formula 1 Shake Karışımı", price: 899, quantity: 1 },
-  { id: "3", name: "Herbal Konsantre Çay", price: 549, quantity: 2 },
-];
+import { useCartStore } from "@/lib/store/cart";
 
 export default function CartPage() {
   const t = useTranslations("cart");
-  const items = mockCart;
+  const items = useCartStore((s) => s.items);
+  const updateQuantity = useCartStore((s) => s.updateQuantity);
+  const removeItem = useCartStore((s) => s.removeItem);
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   return (
@@ -56,13 +53,19 @@ export default function CartPage() {
                 >
                   <Card className="border-0 shadow-md">
                     <CardContent className="p-4 flex items-center gap-4">
-                      <div className="h-20 w-20 rounded-lg bg-brand-green/10 flex items-center justify-center shrink-0">
-                        <ShoppingBag className="h-8 w-8 text-brand-green/30" />
+                      <div className="h-20 w-20 rounded-lg bg-brand-green/10 flex items-center justify-center shrink-0 overflow-hidden">
+                        {item.image_url ? (
+                          <img src={item.image_url} alt={item.name_tr} className="w-full h-full object-contain p-1" />
+                        ) : (
+                          <ShoppingBag className="h-8 w-8 text-brand-green/30" />
+                        )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-brand-dark truncate">
-                          {item.name}
-                        </h3>
+                        <Link href={{ pathname: "/magaza/[slug]", params: { slug: item.slug } }}>
+                          <h3 className="font-semibold text-brand-dark truncate hover:text-brand-green transition-colors">
+                            {item.name_tr}
+                          </h3>
+                        </Link>
                         <p className="text-brand-green font-bold">
                           {item.price.toLocaleString("tr-TR")} TL
                         </p>
@@ -71,6 +74,7 @@ export default function CartPage() {
                             size="icon"
                             variant="outline"
                             className="h-7 w-7"
+                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
                           >
                             <Minus className="h-3 w-3" />
                           </Button>
@@ -81,6 +85,7 @@ export default function CartPage() {
                             size="icon"
                             variant="outline"
                             className="h-7 w-7"
+                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
                           >
                             <Plus className="h-3 w-3" />
                           </Button>
@@ -95,6 +100,7 @@ export default function CartPage() {
                           size="icon"
                           variant="ghost"
                           className="mt-2 text-destructive"
+                          onClick={() => removeItem(item.id)}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -123,7 +129,7 @@ export default function CartPage() {
                         className="flex justify-between text-sm"
                       >
                         <span className="text-muted-foreground">
-                          {item.name} x{item.quantity}
+                          {item.name_tr} x{item.quantity}
                         </span>
                         <span className="font-medium">
                           {(item.price * item.quantity).toLocaleString("tr-TR")}{" "}

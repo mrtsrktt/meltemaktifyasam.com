@@ -7,7 +7,6 @@ import { routing } from "@/i18n/routing";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
-import "../globals.css";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -45,15 +44,13 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} className={`${inter.variable} ${playfair.variable}`}>
-      <body className="font-sans antialiased">
-        <NextIntlClientProvider messages={messages}>
-          <Header />
-          <main className="min-h-screen">{children}</main>
-          <Footer />
-          <WhatsAppButton />
-        </NextIntlClientProvider>
-      </body>
-    </html>
+    <div className={`${inter.variable} ${playfair.variable} font-sans antialiased`}>
+      <NextIntlClientProvider messages={messages}>
+        <Header />
+        <main className="min-h-screen">{children}</main>
+        <Footer />
+        <WhatsAppButton />
+      </NextIntlClientProvider>
+    </div>
   );
 }

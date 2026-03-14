@@ -12,24 +12,17 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ShoppingBag, Minus, Plus, Trash2 } from "lucide-react";
-
-// Cart will be managed with context/zustand later.
-// This is a UI-only component for now.
-
-interface CartItem {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-}
+import { useCartStore } from "@/lib/store/cart";
 
 interface CartDrawerProps {
-  items?: CartItem[];
   children: React.ReactNode;
 }
 
-export default function CartDrawer({ items = [], children }: CartDrawerProps) {
+export default function CartDrawer({ children }: CartDrawerProps) {
   const t = useTranslations("cart");
+  const items = useCartStore((s) => s.items);
+  const updateQuantity = useCartStore((s) => s.updateQuantity);
+  const removeItem = useCartStore((s) => s.removeItem);
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   return (
@@ -61,25 +54,29 @@ export default function CartDrawer({ items = [], children }: CartDrawerProps) {
             <div className="flex-1 overflow-y-auto py-4">
               {items.map((item) => (
                 <div key={item.id} className="flex items-center gap-4 py-4">
-                  <div className="h-16 w-16 rounded-lg bg-brand-green/10 flex items-center justify-center">
-                    <ShoppingBag className="h-6 w-6 text-brand-green/30" />
+                  <div className="h-16 w-16 rounded-lg bg-brand-green/10 flex items-center justify-center overflow-hidden">
+                    {item.image_url ? (
+                      <img src={item.image_url} alt={item.name_tr} className="w-full h-full object-contain p-1" />
+                    ) : (
+                      <ShoppingBag className="h-6 w-6 text-brand-green/30" />
+                    )}
                   </div>
                   <div className="flex-1">
-                    <p className="font-medium text-sm">{item.name}</p>
+                    <p className="font-medium text-sm">{item.name_tr}</p>
                     <p className="text-sm text-brand-green font-semibold">
                       {item.price.toLocaleString("tr-TR")} TL
                     </p>
                     <div className="mt-1 flex items-center gap-2">
-                      <Button size="icon" variant="outline" className="h-6 w-6">
+                      <Button size="icon" variant="outline" className="h-6 w-6" onClick={() => updateQuantity(item.id, item.quantity - 1)}>
                         <Minus className="h-3 w-3" />
                       </Button>
                       <span className="text-sm w-6 text-center">{item.quantity}</span>
-                      <Button size="icon" variant="outline" className="h-6 w-6">
+                      <Button size="icon" variant="outline" className="h-6 w-6" onClick={() => updateQuantity(item.id, item.quantity + 1)}>
                         <Plus className="h-3 w-3" />
                       </Button>
                     </div>
                   </div>
-                  <Button size="icon" variant="ghost" className="text-destructive">
+                  <Button size="icon" variant="ghost" className="text-destructive" onClick={() => removeItem(item.id)}>
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>

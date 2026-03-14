@@ -1,95 +1,30 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import ProductGrid from "@/components/shop/ProductGrid";
-
-// Mock products - will be fetched from Supabase later
-const mockProducts = [
-  {
-    id: "1",
-    slug: "formula-1-shake",
-    name_tr: "Formula 1 Shake Karışımı",
-    name_en: "Formula 1 Shake Mix",
-    price: 899.0,
-    category: "weight_management",
-    image_url: null,
-    stock: 10,
-  },
-  {
-    id: "2",
-    slug: "protein-bar",
-    name_tr: "Protein Bar",
-    name_en: "Protein Bar",
-    price: 349.0,
-    category: "sport_nutrition",
-    image_url: null,
-    stock: 25,
-  },
-  {
-    id: "3",
-    slug: "herbal-cay",
-    name_tr: "Herbal Konsantre Çay",
-    name_en: "Herbal Concentrate Tea",
-    price: 549.0,
-    category: "weight_management",
-    image_url: null,
-    stock: 15,
-  },
-  {
-    id: "4",
-    slug: "aloe-vera",
-    name_tr: "Aloe Vera İçeceği",
-    name_en: "Aloe Vera Drink",
-    price: 699.0,
-    category: "vitamin_mineral",
-    image_url: null,
-    stock: 8,
-  },
-  {
-    id: "5",
-    slug: "protein-tozu",
-    name_tr: "Protein Tozu",
-    name_en: "Protein Powder",
-    price: 1299.0,
-    category: "sport_nutrition",
-    image_url: null,
-    stock: 12,
-  },
-  {
-    id: "6",
-    slug: "multivitamin",
-    name_tr: "Multivitamin Kompleks",
-    name_en: "Multivitamin Complex",
-    price: 449.0,
-    category: "vitamin_mineral",
-    image_url: null,
-    stock: 20,
-  },
-  {
-    id: "7",
-    slug: "formula-1-cikolata",
-    name_tr: "Formula 1 Çikolata Aromalı",
-    name_en: "Formula 1 Chocolate Flavor",
-    price: 899.0,
-    category: "weight_management",
-    image_url: null,
-    stock: 5,
-  },
-  {
-    id: "8",
-    slug: "omega-3",
-    name_tr: "Omega-3 Balık Yağı",
-    name_en: "Omega-3 Fish Oil",
-    price: 599.0,
-    category: "vitamin_mineral",
-    image_url: null,
-    stock: 18,
-  },
-];
+import { createClient } from "@/lib/supabase/client";
+import type { Product } from "@/lib/supabase/types";
 
 export default function ShopPage() {
   const t = useTranslations("products");
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const supabase = createClient();
+      const { data } = await supabase
+        .from("products")
+        .select("*")
+        .eq("is_active", true)
+        .order("created_at", { ascending: false });
+      setProducts((data as Product[]) || []);
+      setLoading(false);
+    };
+    fetchProducts();
+  }, []);
 
   return (
     <section className="py-12">
@@ -107,7 +42,13 @@ export default function ShopPage() {
         </motion.div>
 
         <div className="mt-8">
-          <ProductGrid products={mockProducts} />
+          {loading ? (
+            <div className="flex items-center justify-center py-20">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-green" />
+            </div>
+          ) : (
+            <ProductGrid products={products} />
+          )}
         </div>
       </div>
     </section>
