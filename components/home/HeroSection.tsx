@@ -68,7 +68,7 @@ export default function HeroSection() {
 
   // Auto-slide
   useEffect(() => {
-    const interval = setInterval(goNext, 7000);
+    const interval = setInterval(goNext, 9000);
     return () => clearInterval(interval);
   }, [goNext]);
 
