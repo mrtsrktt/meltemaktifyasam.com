@@ -10,35 +10,35 @@ import { useState, useEffect, useCallback } from "react";
 const slides = [
   {
     image: "/images/profilfoto-1.png",
-    badge: "Fonksiyonel Beslenme Uzmani",
-    title1: "Baskasiyla Calistin Ama",
-    title2: "Sonuc Alamadin mi?",
+    badge: "Fonksiyonel Beslenme Uzmanı",
+    title1: "Başkasıyla Çalıştın Ama",
+    title2: "Sonuç Alamadın mı?",
     subtitle:
-      "Ben Fonksiyonel Beslenme Uzmani Meltem TANIK. Yuzlerce danisanimin hayatini donusturdum, simdi sira sende. Farki birlikte yaratacagiz.",
-    cta: "Ucretsiz Basvuru Yap",
+      "Ben Fonksiyonel Beslenme Uzmanı Meltem TANIK. Yüzlerce danışanımın hayatını dönüştürdüm, şimdi sıra sende. Farkı birlikte yaratacağız.",
+    cta: "Ücretsiz Başvuru Yap",
     ctaLink: "#basvuru",
-    ctaSecondary: "Hakkimda",
+    ctaSecondary: "Hakkımda",
     ctaSecondaryLink: "/hakkimda" as const,
     stats: [
-      { value: "500+", label: "Mutlu Danisan" },
+      { value: "500+", label: "Mutlu Danışan" },
       { value: "%95", label: "Memnuniyet" },
-      { value: "5+", label: "Yil Deneyim" },
+      { value: "5+", label: "Yıl Deneyim" },
     ],
   },
   {
     image: "/images/profil-2.jpg",
-    badge: "Herbalife Bagimsiz Distributoru",
-    title1: "Saglikli Yasam",
-    title2: "Bir Karar Uzaginda",
+    badge: "Herbalife Bağımsız Distribütörü",
+    title1: "Sağlıklı Yaşam",
+    title2: "Bir Karar Uzağında",
     subtitle:
-      "Kisisellestirilmis beslenme programlari, Herbalife urunleriyle desteklenen cozumler ve 7/24 WhatsApp destegi ile hedefinize birlikte ulasalim.",
-    cta: "Urunleri Kesfet",
+      "Kişiselleştirilmiş beslenme programları, Herbalife ürünleriyle desteklenen çözümler ve 7/24 WhatsApp desteği ile hedefinize birlikte ulaşalım.",
+    cta: "Ürünleri Keşfet",
     ctaLink: "/magaza" as const,
     ctaSecondary: "VKI Hesapla",
     ctaSecondaryLink: "/vki-analiz" as const,
     stats: [
-      { value: "1000+", label: "Beslenme Programi" },
-      { value: "55+", label: "Herbalife Urunu" },
+      { value: "1000+", label: "Beslenme Programı" },
+      { value: "55+", label: "Herbalife Ürünü" },
       { value: "7/24", label: "WhatsApp Destek" },
     ],
   },
@@ -226,7 +226,7 @@ export default function HeroSection() {
                       <Star key={i} size={12} className="text-yellow-400 fill-yellow-400" />
                     ))}
                   </div>
-                  <span className="text-xs font-semibold text-gray-700">500+ Mutlu Danisan</span>
+                  <span className="text-xs font-semibold text-gray-700">500+ Mutlu Danışan</span>
                 </div>
               </motion.div>
             </motion.div>

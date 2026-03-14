@@ -75,13 +75,13 @@ export default function ProductSetsPreview() {
             <Flame size={16} className="animate-pulse" />
           </motion.div>
           <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl lg:text-5xl">
-            Size Ozel{" "}
+            Size Özel{" "}
             <span className="bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
               Setler
             </span>
           </h2>
           <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-            Ozel olarak hazirlanan urun setleri ile hem tasarruf edin hem de saglikli yasama ilk adimi atin
+            Özel olarak hazırlanan ürün setleri ile hem tasarruf edin hem de sağlıklı yaşama ilk adımı atın
           </p>
         </motion.div>
 

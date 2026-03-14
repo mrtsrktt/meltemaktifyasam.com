@@ -31,7 +31,7 @@ export default function KullanicilarPage() {
       setProfiles(data || []);
     } catch (err: unknown) {
       const message =
-        err instanceof Error ? err.message : "Kullanicilar yuklenemedi.";
+        err instanceof Error ? err.message : "Kullanıcılar yüklenemedi.";
       setError(message);
     } finally {
       setLoading(false);

@@ -53,7 +53,7 @@ export default function SetsListPage() {
           className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-brand-green transition-colors mb-6"
         >
           <ArrowLeft className="h-4 w-4" />
-          Magazaya Don
+          Mağazaya Dön
         </Link>
 
         {/* Header */}
@@ -67,13 +67,13 @@ export default function SetsListPage() {
             KAMPANYALI SETLER
           </div>
           <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">
-            Ozel Urun{" "}
+            Özel Ürün{" "}
             <span className="bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
               Setleri
             </span>
           </h1>
           <p className="mt-3 text-lg text-gray-600 max-w-2xl mx-auto">
-            Size ozel hazirlanan urun setleri ile hem tasarruf edin hem de saglikli yasama baslayın
+            Size özel hazırlanan ürün setleri ile hem tasarruf edin hem de sağlıklı yaşama başlayın
           </p>
         </motion.div>
 

@@ -20,24 +20,24 @@ export default function ConsultationSection() {
           >
             <Badge className="mb-4 bg-white/15 text-white border-0">
               <Sparkles className="mr-1.5 h-3 w-3" />
-              Ucretsiz Danismanlik
+              Ücretsiz Danışmanlık
             </Badge>
             <h2 className="text-3xl font-bold sm:text-4xl leading-tight">
-              Saglikli Yasaminiza
+              Sağlıklı Yaşamınıza
               <br />
-              <span className="text-emerald-200">Bugun Baslayin</span>
+              <span className="text-emerald-200">Bugün Başlayın</span>
             </h2>
             <p className="mt-4 text-white/75 leading-relaxed max-w-lg">
-              Kisisel beslenme programi, Herbalife urun danismanligi ve surekli destek
-              ile hedeflerinize ulasin. Ilk gorusme ucretsiz!
+              Kişisel beslenme programı, Herbalife ürün danışmanlığı ve sürekli destek
+              ile hedeflerinize ulaşın. İlk görüşme ücretsiz!
             </p>
 
             <div className="mt-6 space-y-2.5">
               {[
-                "Kisisel beslenme programi",
-                "Herbalife urun danismanligi",
+                "Kişisel beslenme programı",
+                "Herbalife ürün danışmanlığı",
                 "WhatsApp ile 7/24 destek",
-                "Ucretsiz ilk gorusme",
+                "Ücretsiz ilk görüşme",
               ].map((item, i) => (
                 <motion.div
                   key={item}
@@ -63,8 +63,8 @@ export default function ConsultationSection() {
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/15 shadow-2xl">
               <ConsultationForm
                 variant="dark"
-                title="Bilgi & Basvuru Formu"
-                subtitle="Bilgilerinizi birakin, size ozel program hazirlayalim."
+                title="Bilgi & Başvuru Formu"
+                subtitle="Bilgilerinizi bırakın, size özel program hazırlayalım."
               />
             </div>
           </motion.div>

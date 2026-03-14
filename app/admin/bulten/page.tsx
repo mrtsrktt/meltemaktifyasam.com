@@ -36,7 +36,7 @@ export default function BultenPage() {
       setSubscribers(data || []);
     } catch (err: unknown) {
       const message =
-        err instanceof Error ? err.message : "Aboneler yuklenemedi.";
+        err instanceof Error ? err.message : "Aboneler yüklenemedi.";
       setError(message);
     } finally {
       setLoading(false);

@@ -22,12 +22,12 @@ import {
 const navItems = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/kategoriler", label: "Kategoriler", icon: FolderTree },
-  { href: "/admin/urunler", label: "Urunler", icon: Package },
-  { href: "/admin/urun-setleri", label: "Urun Setleri", icon: Layers },
+  { href: "/admin/urunler", label: "Ürünler", icon: Package },
+  { href: "/admin/urun-setleri", label: "Ürün Setleri", icon: Layers },
   { href: "/admin/blog", label: "Blog", icon: FileText },
-  { href: "/admin/siparisler", label: "Siparisler", icon: ShoppingCart },
-  { href: "/admin/vki-leadler", label: "Basvurular", icon: Activity },
-  { href: "/admin/kullanicilar", label: "Kullanicilar", icon: Users },
+  { href: "/admin/siparisler", label: "Siparişler", icon: ShoppingCart },
+  { href: "/admin/vki-leadler", label: "Başvurular", icon: Activity },
+  { href: "/admin/kullanicilar", label: "Kullanıcılar", icon: Users },
 ];
 
 export default function AdminLayout({

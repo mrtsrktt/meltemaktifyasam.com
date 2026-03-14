@@ -25,7 +25,7 @@ const goalLabels: Record<string, string> = {
 };
 
 const bmiCategoryColors: Record<string, string> = {
-  Zayif: "text-blue-600 bg-blue-50 border-blue-200",
+  "Zayıf": "text-blue-600 bg-blue-50 border-blue-200",
   Normal: "text-green-600 bg-green-50 border-green-200",
   "Fazla Kilolu": "text-orange-600 bg-orange-50 border-orange-200",
   Obez: "text-red-600 bg-red-50 border-red-200",
@@ -56,7 +56,7 @@ export default function VkiLeadlerPage() {
       if (fetchError) throw fetchError;
       setLeads(data || []);
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Veriler yuklenemedi.";
+      const message = err instanceof Error ? err.message : "Veriler yüklenemedi.";
       setError(message);
     } finally {
       setLoading(false);
@@ -86,7 +86,7 @@ export default function VkiLeadlerPage() {
       );
     } catch (err: unknown) {
       const message =
-        err instanceof Error ? err.message : "Durum guncellenemedi.";
+        err instanceof Error ? err.message : "Durum güncellenemedi.";
       alert(message);
     } finally {
       setTogglingId(null);
@@ -96,7 +96,7 @@ export default function VkiLeadlerPage() {
   const openWhatsApp = (phone: string, fullName: string) => {
     const cleanPhone = phone.replace(/[\s\-\(\)]/g, "");
     const message = encodeURIComponent(
-      `Merhaba ${fullName}, VKI hesaplama formunu doldurdugunuz icin tesekkur ederiz. Size nasil yardimci olabiliriz?`
+      `Merhaba ${fullName}, VKİ hesaplama formunu doldurduğunuz için teşekkür ederiz. Size nasıl yardımcı olabiliriz?`
     );
     window.open(`https://wa.me/${cleanPhone}?text=${message}`, "_blank");
   };

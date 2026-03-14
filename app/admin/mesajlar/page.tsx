@@ -49,7 +49,7 @@ export default function MesajlarPage() {
       setMessages(data || []);
     } catch (err: unknown) {
       const message =
-        err instanceof Error ? err.message : "Mesajlar yuklenemedi.";
+        err instanceof Error ? err.message : "Mesajlar yüklenemedi.";
       setError(message);
     } finally {
       setLoading(false);
@@ -82,7 +82,7 @@ export default function MesajlarPage() {
       }
     } catch (err: unknown) {
       const message =
-        err instanceof Error ? err.message : "Durum guncellenemedi.";
+        err instanceof Error ? err.message : "Durum güncellenemedi.";
       alert(message);
     } finally {
       setMarkingId(null);

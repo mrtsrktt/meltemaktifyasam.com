@@ -20,8 +20,8 @@ const goals = [
 
 export default function ConsultationForm({
   variant = "light",
-  title = "Ucretsiz Danismanlik Basvurusu",
-  subtitle = "Formu doldurun, size en kisa surede donelim.",
+  title = "Ücretsiz Danışmanlık Başvurusu",
+  subtitle = "Formu doldurun, size en kısa sürede dönelim.",
 }: ConsultationFormProps) {
   const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
 
@@ -38,7 +38,7 @@ export default function ConsultationForm({
     const bmi = heightM > 0 ? weight / (heightM * heightM) : 0;
 
     let bmi_category = "Normal";
-    if (bmi < 18.5) bmi_category = "Zayif";
+    if (bmi < 18.5) bmi_category = "Zayıf";
     else if (bmi < 25) bmi_category = "Normal";
     else if (bmi < 30) bmi_category = "Fazla Kilolu";
     else bmi_category = "Obez";
@@ -64,16 +64,16 @@ export default function ConsultationForm({
 
       if (res.ok) {
         setStatus("success");
-        toast.success("Basvurunuz alindi! En kisa surede sizinle iletisime gececegiz.");
+        toast.success("Başvurunuz alındı! En kısa sürede sizinle iletişime geçeceğiz.");
         form.reset();
         setTimeout(() => setStatus("idle"), 5000);
       } else {
         setStatus("idle");
-        toast.error("Bir hata olustu, lutfen tekrar deneyin.");
+        toast.error("Bir hata oluştu, lütfen tekrar deneyin.");
       }
     } catch {
       setStatus("idle");
-      toast.error("Baglanti hatasi.");
+      toast.error("Bağlantı hatası.");
     }
   };
 
@@ -108,10 +108,10 @@ export default function ConsultationForm({
             <Check className="h-7 w-7 text-brand-green" />
           </div>
           <p className={`font-semibold ${isDark ? "text-white" : "text-gray-900"}`}>
-            Basvurunuz Alindi!
+            Başvurunuz Alındı!
           </p>
           <p className={`mt-1 text-sm ${isDark ? "text-white/60" : "text-gray-500"}`}>
-            En kisa surede sizinle iletisime gececegiz.
+            En kısa sürede sizinle iletişime geçeceğiz.
           </p>
         </motion.div>
       ) : (
@@ -121,7 +121,7 @@ export default function ConsultationForm({
             <label className={`block text-xs font-medium ${labelClass} mb-1`}>Ad Soyad *</label>
             <div className="relative">
               <User size={16} className={`absolute left-3 top-1/2 -translate-y-1/2 ${iconClass}`} />
-              <input name="name" required placeholder="Adiniz Soyadiniz" className={inputClass} />
+              <input name="name" required placeholder="Adınız Soyadınız" className={inputClass} />
             </div>
           </div>
 
@@ -146,7 +146,7 @@ export default function ConsultationForm({
           {/* Age + Height + Weight */}
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className={`block text-xs font-medium ${labelClass} mb-1`}>Yas</label>
+              <label className={`block text-xs font-medium ${labelClass} mb-1`}>Yaş</label>
               <div className="relative">
                 <Calendar size={16} className={`absolute left-3 top-1/2 -translate-y-1/2 ${iconClass}`} />
                 <input name="age" type="number" min={10} max={99} placeholder="35" className={inputClass} />
@@ -170,11 +170,11 @@ export default function ConsultationForm({
 
           {/* Health note */}
           <div>
-            <label className={`block text-xs font-medium ${labelClass} mb-1`}>Hastalik / Alerji</label>
+            <label className={`block text-xs font-medium ${labelClass} mb-1`}>Hastalık / Alerji</label>
             <textarea
               name="health_note"
               rows={2}
-              placeholder="Varsa hastalik, alerji veya kullandiginiz ilaclari belirtin"
+              placeholder="Varsa hastalık, alerji veya kullandığınız ilaçları belirtin"
               className={`${inputClass} pl-4 resize-none`}
             />
           </div>
@@ -185,7 +185,7 @@ export default function ConsultationForm({
             <div className="relative">
               <Target size={16} className={`absolute left-3 top-1/2 -translate-y-1/2 ${iconClass}`} />
               <select name="goal" required className={`${selectClass} pl-10`}>
-                <option value="">Hedefinizi secin</option>
+                <option value="">Hedefinizi seçin</option>
                 {goals.map((g) => (
                   <option key={g.value} value={g.value}>{g.label}</option>
                 ))}
@@ -207,11 +207,11 @@ export default function ConsultationForm({
             ) : (
               <Send className="mr-2 h-4 w-4" />
             )}
-            {status === "loading" ? "Gonderiliyor..." : "Ucretsiz Basvuru Yap"}
+            {status === "loading" ? "Gönderiliyor..." : "Ücretsiz Başvuru Yap"}
           </Button>
 
           <p className={`text-center text-[10px] ${isDark ? "text-white/40" : "text-gray-400"}`}>
-            Bilgileriniz gizli tutulur ve ucuncu kisilerle paylasilmaz.
+            Bilgileriniz gizli tutulur ve üçüncü kişilerle paylaşılmaz.
           </p>
         </form>
       )}

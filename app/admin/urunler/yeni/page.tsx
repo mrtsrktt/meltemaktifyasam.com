@@ -66,7 +66,7 @@ export default function NewProductPage() {
     setSaving(true);
 
     if (selectedCategoryIds.length === 0) {
-      setError("En az bir kategori secmelisiniz.");
+      setError("En az bir kategori seçmelisiniz.");
       setSaving(false);
       return;
     }
@@ -82,7 +82,7 @@ export default function NewProductPage() {
         .upload(fileName, imageFile);
 
       if (uploadError) {
-        setError(`Gorsel yuklenemedi: ${uploadError.message}`);
+        setError(`Görsel yüklenemedi: ${uploadError.message}`);
         setSaving(false);
         return;
       }

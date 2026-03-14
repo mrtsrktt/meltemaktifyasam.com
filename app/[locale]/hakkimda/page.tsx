@@ -26,45 +26,45 @@ const expertise = [
   {
     icon: Leaf,
     label: "Fonksiyonel Beslenme",
-    desc: "Bireye ozel beslenme programlari ile metabolizmanizi optimize edin",
+    desc: "Bireye özel beslenme programları ile metabolizmanızı optimize edin",
     img: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop",
   },
   {
     icon: Dumbbell,
     label: "Sporcu Beslenmesi",
-    desc: "Performansinizi en ust seviyeye tasiyin, dogru yakit ile",
+    desc: "Performansınızı en üst seviyeye taşıyın, doğru yakıt ile",
     img: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=400&h=300&fit=crop",
   },
   {
     icon: HeartPulse,
-    label: "Tiroit & Kronik Hastalik",
-    desc: "Hashimoto ve kronik hastaliklar icin ozel beslenme protokolleri",
+    label: "Tiroit & Kronik Hastalık",
+    desc: "Hashimoto ve kronik hastalıklar için özel beslenme protokolleri",
     img: "https://images.unsplash.com/photo-1559757175-5700dde675bc?w=400&h=300&fit=crop",
   },
   {
     icon: Brain,
-    label: "Beden & Zihin Donusumu",
-    desc: "Fiziksel ve zihinsel sagliginizi bir arada guclesin",
+    label: "Beden & Zihin Dönüşümü",
+    desc: "Fiziksel ve zihinsel sağlığınızı bir arada güçlendirin",
     img: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400&h=300&fit=crop",
   },
   {
     icon: TrendingUp,
-    label: "Kilo Yonetimi",
-    desc: "Kalici sonuclar icin bilimsel temelli kilo verme/alma programlari",
+    label: "Kilo Yönetimi",
+    desc: "Kalıcı sonuçlar için bilimsel temelli kilo verme/alma programları",
     img: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=400&h=300&fit=crop",
   },
   {
     icon: Shield,
-    label: "Herbalife Danismanligi",
-    desc: "Herbalife urunleriyle desteklenen kapsamli saglik programlari",
+    label: "Herbalife Danışmanlığı",
+    desc: "Herbalife ürünleriyle desteklenen kapsamlı sağlık programları",
     img: "https://images.unsplash.com/photo-1505576399279-0d309261b291?w=400&h=300&fit=crop",
   },
 ];
 
 const stats = [
-  { value: "500+", label: "Mutlu Danisan" },
-  { value: "5+", label: "Yil Deneyim" },
-  { value: "1000+", label: "Beslenme Programi" },
+  { value: "500+", label: "Mutlu Danışan" },
+  { value: "5+", label: "Yıl Deneyim" },
+  { value: "1000+", label: "Beslenme Programı" },
   { value: "%95", label: "Memnuniyet" },
 ];
 
@@ -98,13 +98,13 @@ export default function AboutPage() {
                 </span>
               </h1>
               <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
-                Saglikli yasam yolculugumda edindigim bilgi ve deneyimleri, danisanlarimla
-                paylasarak onlarin hayatlarini donusturmelerine yardimci oluyorum.
+                Sağlıklı yaşam yolculuğumda edindiğim bilgi ve deneyimleri, danışanlarımla
+                paylaşarak onların hayatlarını dönüştürmelerine yardımcı oluyorum.
               </p>
               <p className="mt-3 text-base leading-relaxed text-muted-foreground">
-                Fonksiyonel beslenme yaklasimiyla her bireyin kendine ozgu ihtiyaclarina
-                uygun programlar gelistiriyorum. Bilimsel temellere dayanan beslenme
-                danismanligi ile kalici sonuclar elde ediyoruz.
+                Fonksiyonel beslenme yaklaşımıyla her bireyin kendine özgü ihtiyaçlarına
+                uygun programlar geliştiriyorum. Bilimsel temellere dayanan beslenme
+                danışmanlığı ile kalıcı sonuçlar elde ediyoruz.
               </p>
 
               {/* Stats */}
@@ -127,7 +127,7 @@ export default function AboutPage() {
                 <a href={`https://wa.me/${WHATSAPP_NUMBER}`} target="_blank" rel="noopener noreferrer">
                   <Button className="bg-brand-green hover:bg-brand-green-dark text-white px-6">
                     <MessageCircle className="mr-2 h-4 w-4" />
-                    WhatsApp ile Ulasin
+                    WhatsApp ile Ulaşın
                   </Button>
                 </a>
               </div>
@@ -162,7 +162,7 @@ export default function AboutPage() {
                       ))}
                     </div>
                     <span className="text-xs font-medium text-gray-700">
-                      500+ Mutlu Danisan
+                      500+ Mutlu Danışan
                     </span>
                   </div>
                 </motion.div>
@@ -182,13 +182,13 @@ export default function AboutPage() {
             className="text-center mb-12"
           >
             <Badge className="mb-3 bg-brand-green/10 text-brand-green border-0">
-              Uzmanlik Alanlari
+              Uzmanlık Alanları
             </Badge>
             <h2 className="text-3xl font-bold text-brand-dark sm:text-4xl">
-              Size Nasil Yardimci Olabilirim?
+              Size Nasıl Yardımcı Olabilirim?
             </h2>
             <p className="mt-3 text-muted-foreground max-w-2xl mx-auto">
-              Her bireyin ihtiyacina ozel, bilimsel temellere dayanan cozumler sunuyorum
+              Her bireyin ihtiyacına özel, bilimsel temellere dayanan çözümler sunuyorum
             </p>
           </motion.div>
 
@@ -258,7 +258,7 @@ export default function AboutPage() {
               >
                 <div className="bg-brand-green text-white rounded-xl px-4 py-2 shadow-lg flex items-center gap-2">
                   <Award className="h-5 w-5" />
-                  <span className="text-sm font-semibold">Sertifikali Uzman</span>
+                  <span className="text-sm font-semibold">Sertifikalı Uzman</span>
                 </div>
               </motion.div>
             </motion.div>
@@ -272,20 +272,20 @@ export default function AboutPage() {
               <div className="flex items-center gap-2 mb-4">
                 <GraduationCap className="h-6 w-6 text-brand-green" />
                 <h2 className="text-2xl font-bold text-brand-dark sm:text-3xl">
-                  Egitim & Sertifikalar
+                  Eğitim & Sertifikalar
                 </h2>
               </div>
               <p className="text-muted-foreground leading-relaxed mb-6">
-                Bilimsel temellere dayanan egitimim ve sertifikalarim ile danisanlarima
-                en yuksek kalitede hizmet sunuyorum.
+                Bilimsel temellere dayanan eğitimim ve sertifikalarım ile danışanlarıma
+                en yüksek kalitede hizmet sunuyorum.
               </p>
 
               <div className="space-y-3">
                 {[
-                  "Bogazici Universitesi Mezunu",
-                  "Herbalife Bagimsiz Distributorlugu",
-                  "Fonksiyonel Beslenme Uzmanligi",
-                  "Kisisel Gelisim & Yasam Koclugu",
+                  "Boğaziçi Üniversitesi Mezunu",
+                  "Herbalife Bağımsız Distribütörlüğü",
+                  "Fonksiyonel Beslenme Uzmanlığı",
+                  "Kişisel Gelişim & Yaşam Koçluğu",
                 ].map((item, i) => (
                   <motion.div
                     key={item}
@@ -316,23 +316,23 @@ export default function AboutPage() {
             >
               <Badge className="mb-4 bg-white/15 text-white border-0">
                 <Sparkles className="mr-1.5 h-3 w-3" />
-                Ucretsiz Danismanlik
+                Ücretsiz Danışmanlık
               </Badge>
               <h2 className="text-3xl font-bold sm:text-4xl">
-                Saglikli Yasam Yolculugunuz Burada Basliyor
+                Sağlıklı Yaşam Yolculuğunuz Burada Başlıyor
               </h2>
               <p className="mt-4 text-white/80 leading-relaxed">
-                Kilo vermek, form kazanmak veya kronik bir rahatsizlik icin beslenme
-                destegi almak mi istiyorsunuz? Size ozel bir program olusturmam icin
-                formu doldurun, en kisa surede donelim.
+                Kilo vermek, form kazanmak veya kronik bir rahatsızlık için beslenme
+                desteği almak mı istiyorsunuz? Size özel bir program oluşturmam için
+                formu doldurun, en kısa sürede dönelim.
               </p>
 
               <div className="mt-6 space-y-3">
                 {[
-                  "Kisisel beslenme programi",
-                  "Herbalife urun danismanligi",
-                  "WhatsApp ile surekli destek",
-                  "Ucretsiz ilk gorusme",
+                  "Kişisel beslenme programı",
+                  "Herbalife ürün danışmanlığı",
+                  "WhatsApp ile sürekli destek",
+                  "Ücretsiz ilk görüşme",
                 ].map((item, i) => (
                   <motion.div
                     key={item}

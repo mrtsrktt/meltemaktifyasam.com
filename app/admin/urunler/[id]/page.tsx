@@ -107,7 +107,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
     setSaving(true);
 
     if (selectedCategoryIds.length === 0) {
-      setError("En az bir kategori secmelisiniz.");
+      setError("En az bir kategori seçmelisiniz.");
       setSaving(false);
       return;
     }
@@ -123,7 +123,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
         .upload(fileName, imageFile);
 
       if (uploadError) {
-        setError(`Gorsel yuklenemedi: ${uploadError.message}`);
+        setError(`Görsel yüklenemedi: ${uploadError.message}`);
         setSaving(false);
         return;
       }
@@ -153,7 +153,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
       .eq("id", id);
 
     if (updateError) {
-      setError(`Urun guncellenemedi: ${updateError.message}`);
+      setError(`Ürün güncellenemedi: ${updateError.message}`);
       setSaving(false);
       return;
     }
@@ -168,7 +168,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
       })));
 
     if (catError) {
-      setError(`Kategoriler guncellenemedi: ${catError.message}`);
+      setError(`Kategoriler güncellenemedi: ${catError.message}`);
       setSaving(false);
       return;
     }
