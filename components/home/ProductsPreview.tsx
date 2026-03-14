@@ -185,7 +185,7 @@ export default function ProductsPreview() {
           )}
 
           {/* Track */}
-          <div className="overflow-hidden rounded-xl">
+          <div className="overflow-hidden py-4 -my-4">
             <div
               ref={trackRef}
               className="flex transition-transform duration-500 ease-out"
