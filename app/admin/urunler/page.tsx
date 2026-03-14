@@ -3,32 +3,40 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import type { Product } from "@/lib/supabase/types";
-import { Plus, Search, Edit, Trash2, Star, Eye, EyeOff } from "lucide-react";
+import type { Product, Category } from "@/lib/supabase/types";
+import { Plus, Search, Edit, Trash2, Star, Eye, EyeOff, ChevronLeft, ChevronRight } from "lucide-react";
 
-const categoryLabels: Record<string, string> = {
-  weight_management: "Kilo Yonetimi",
-  sport_nutrition: "Spor Beslenmesi",
-  vitamin_mineral: "Vitamin & Mineral",
-  beverages: "Icecekler",
-  protein_snacks: "Protein Atistirmalik",
-  supplements: "Takviye Edici",
-};
+const ITEMS_PER_PAGE = 20;
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [productCats, setProductCats] = useState<Record<string, string[]>>({});
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const fetchProducts = async () => {
     const supabase = createClient();
-    const { data } = await supabase
-      .from("products")
-      .select("*")
-      .order("created_at", { ascending: false });
-    setProducts((data as Product[]) || []);
+
+    const [{ data: productsData }, { data: catsData }, { data: pcData }] = await Promise.all([
+      supabase.from("products").select("*").order("created_at", { ascending: false }),
+      supabase.from("categories").select("*").order("sort_order"),
+      supabase.from("product_categories").select("product_id, category_id"),
+    ]);
+
+    setProducts((productsData as Product[]) || []);
+    setCategories((catsData as Category[]) || []);
+
+    // Build product -> category map
+    const map: Record<string, string[]> = {};
+    (pcData || []).forEach((pc: { product_id: string; category_id: string }) => {
+      if (!map[pc.product_id]) map[pc.product_id] = [];
+      map[pc.product_id].push(pc.category_id);
+    });
+    setProductCats(map);
     setLoading(false);
   };
 
@@ -38,6 +46,7 @@ export default function ProductsPage() {
 
   const handleDelete = async (id: string) => {
     const supabase = createClient();
+    await supabase.from("product_categories").delete().eq("product_id", id);
     await supabase.from("products").delete().eq("id", id);
     setDeleteId(null);
     fetchProducts();
@@ -55,11 +64,29 @@ export default function ProductsPage() {
     fetchProducts();
   };
 
+  const getCatNames = (productId: string) => {
+    const catIds = productCats[productId] || [];
+    return catIds
+      .map((id) => categories.find((c) => c.id === id)?.name_tr)
+      .filter(Boolean);
+  };
+
   const filtered = products.filter((p) => {
     const matchSearch = p.name_tr.toLowerCase().includes(search.toLowerCase());
-    const matchCategory = categoryFilter === "all" || p.category === categoryFilter;
+    const matchCategory =
+      categoryFilter === "all" || (productCats[p.id] || []).includes(categoryFilter);
     return matchSearch && matchCategory;
   });
+
+  // Pagination
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedProducts = filtered.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, categoryFilter]);
 
   if (loading) {
     return (
@@ -72,7 +99,7 @@ export default function ProductsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Urunler</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Urunler ({products.length})</h1>
         <Link
           href="/admin/urunler/yeni"
           className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
@@ -100,10 +127,20 @@ export default function ProductsPage() {
           className="px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-sm"
         >
           <option value="all">Tum Kategoriler</option>
-          {Object.entries(categoryLabels).map(([k, v]) => (
-            <option key={k} value={k}>{v}</option>
+          {categories.map((cat) => (
+            <option key={cat.id} value={cat.id}>{cat.name_tr}</option>
           ))}
         </select>
+      </div>
+
+      {/* Info bar */}
+      <div className="flex items-center justify-between text-sm text-gray-500">
+        <span>
+          {filtered.length} urun{filtered.length !== products.length && ` (toplam ${products.length})`}
+        </span>
+        {totalPages > 1 && (
+          <span>Sayfa {currentPage} / {totalPages}</span>
+        )}
       </div>
 
       {/* Table */}
@@ -115,22 +152,21 @@ export default function ProductsPage() {
                 <th className="px-4 py-3 font-medium text-gray-600">Urun</th>
                 <th className="px-4 py-3 font-medium text-gray-600">Kategori</th>
                 <th className="px-4 py-3 font-medium text-gray-600">Fiyat</th>
-                <th className="px-4 py-3 font-medium text-gray-600">Stok</th>
                 <th className="px-4 py-3 font-medium text-gray-600">Durum</th>
                 <th className="px-4 py-3 font-medium text-gray-600 text-right">Islemler</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {filtered.length === 0 ? (
+              {paginatedProducts.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-4 py-8 text-center text-gray-400">
+                  <td colSpan={5} className="px-4 py-8 text-center text-gray-400">
                     {products.length === 0
                       ? "Henuz urun eklenmemis"
                       : "Aramaniza uygun urun bulunamadi"}
                   </td>
                 </tr>
               ) : (
-                filtered.map((product) => (
+                paginatedProducts.map((product) => (
                   <tr key={product.id} className="hover:bg-gray-50">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
@@ -154,21 +190,16 @@ export default function ProductsPage() {
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
-                        {categoryLabels[product.category] || product.category}
-                      </span>
+                      <div className="flex flex-wrap gap-1">
+                        {getCatNames(product.id).map((name, i) => (
+                          <span key={i} className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
+                            {name}
+                          </span>
+                        ))}
+                      </div>
                     </td>
                     <td className="px-4 py-3 font-medium">
                       {Number(product.price).toLocaleString("tr-TR")} TL
-                    </td>
-                    <td className="px-4 py-3">
-                      <span
-                        className={`${
-                          product.stock > 0 ? "text-green-600" : "text-red-600"
-                        }`}
-                      >
-                        {product.stock}
-                      </span>
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
@@ -219,6 +250,43 @@ export default function ProductsPage() {
           </table>
         </div>
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2">
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            className="flex items-center gap-1 px-3 py-2 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            <ChevronLeft size={16} />
+            Onceki
+          </button>
+          <div className="flex gap-1">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`w-9 h-9 rounded-lg text-sm font-medium transition-colors ${
+                  page === currentPage
+                    ? "bg-emerald-500 text-white"
+                    : "text-gray-600 hover:bg-gray-100"
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+          </div>
+          <button
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            className="flex items-center gap-1 px-3 py-2 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            Sonraki
+            <ChevronRight size={16} />
+          </button>
+        </div>
+      )}
 
       {/* Delete confirmation */}
       {deleteId && (
