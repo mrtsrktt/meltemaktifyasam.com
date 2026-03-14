@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
-import { Instagram } from "lucide-react";
+import { Instagram, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import Image from "next/image";
@@ -13,6 +13,7 @@ interface InstaPost {
   image_url: string;
   post_url: string;
   caption: string | null;
+  is_reel: boolean;
 }
 
 export default function InstagramFeed() {
@@ -23,7 +24,7 @@ export default function InstagramFeed() {
     const supabase = createClient();
     supabase
       .from("instagram_posts")
-      .select("id, image_url, post_url, caption")
+      .select("id, image_url, post_url, caption, is_reel")
       .eq("is_active", true)
       .order("sort_order", { ascending: true })
       .limit(6)
@@ -69,8 +70,18 @@ export default function InstagramFeed() {
                 className="object-cover transition-transform duration-300 group-hover:scale-110"
                 sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw"
               />
+              {/* Reels play icon */}
+              {post.is_reel && (
+                <div className="absolute top-2 right-2 bg-black/50 rounded-full p-1.5 backdrop-blur-sm">
+                  <Play className="h-3.5 w-3.5 text-white fill-white" />
+                </div>
+              )}
               <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-all group-hover:bg-black/30">
-                <Instagram className="h-6 w-6 text-white opacity-0 transition-opacity group-hover:opacity-100" />
+                {post.is_reel ? (
+                  <Play className="h-10 w-10 text-white fill-white opacity-0 transition-opacity group-hover:opacity-100 drop-shadow-lg" />
+                ) : (
+                  <Instagram className="h-6 w-6 text-white opacity-0 transition-opacity group-hover:opacity-100" />
+                )}
               </div>
             </motion.a>
           ))}

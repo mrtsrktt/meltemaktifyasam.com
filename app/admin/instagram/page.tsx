@@ -31,6 +31,7 @@ export default function InstagramAdminPage() {
     post_url: "",
     caption: "",
     sort_order: 0,
+    is_reel: false,
   });
 
   const fetchPosts = async () => {
@@ -99,13 +100,14 @@ export default function InstagramAdminPage() {
           post_url: form.post_url,
           caption: form.caption || null,
           sort_order: form.sort_order,
+          is_reel: form.is_reel,
           is_active: true,
         });
 
       if (insertError) throw insertError;
 
       // Reset form
-      setForm({ post_url: "", caption: "", sort_order: 0 });
+      setForm({ post_url: "", caption: "", sort_order: 0, is_reel: false });
       setImageFile(null);
       setImagePreview(null);
       setShowForm(false);
@@ -251,6 +253,20 @@ export default function InstagramAdminPage() {
               />
             </div>
 
+            {/* Is Reel */}
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="is_reel"
+                checked={form.is_reel}
+                onChange={(e) => setForm({ ...form, is_reel: e.target.checked })}
+                className="rounded border-gray-300"
+              />
+              <label htmlFor="is_reel" className="text-sm font-medium text-gray-700">
+                Bu bir Reels videosu (play ikonu gösterilir)
+              </label>
+            </div>
+
             {/* Sort Order */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -303,6 +319,13 @@ export default function InstagramAdminPage() {
                   className="w-full h-full object-cover"
                 />
               </div>
+
+              {/* Reels badge */}
+              {post.is_reel && (
+                <div className="absolute top-1.5 right-8 bg-purple-600 text-white text-[10px] px-1.5 py-0.5 rounded-md font-medium">
+                  Reels
+                </div>
+              )}
 
               {/* Overlay */}
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">

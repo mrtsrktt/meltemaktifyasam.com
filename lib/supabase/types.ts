@@ -150,6 +150,7 @@ export interface InstagramPost {
   post_url: string;
   caption: string | null;
   sort_order: number;
+  is_reel: boolean;
   is_active: boolean;
   created_at: string;
 }
