@@ -1,10 +1,26 @@
 "use client";
 
-import { use, useState, useEffect, useCallback } from "react";
+import { use, useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { slugify } from "@/lib/utils";
 import type { BlogPost } from "@/lib/supabase/types";
-import { ArrowLeft, Save, Loader2, Upload, X } from "lucide-react";
+import {
+  ArrowLeft,
+  Save,
+  Loader2,
+  Upload,
+  X,
+  Bold,
+  Italic,
+  Heading2,
+  List,
+  Link2,
+  Copy,
+  Check,
+  ImagePlus,
+  Trash2,
+} from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -19,31 +35,6 @@ const CATEGORY_LABELS: Record<string, string> = {
 
 const CATEGORIES = Object.keys(CATEGORY_LABELS);
 
-function turkishSlugify(text: string): string {
-  const charMap: Record<string, string> = {
-    ç: "c",
-    Ç: "c",
-    ğ: "g",
-    Ğ: "g",
-    ı: "i",
-    İ: "i",
-    ö: "o",
-    Ö: "o",
-    ş: "s",
-    Ş: "s",
-    ü: "u",
-    Ü: "u",
-  };
-
-  return text
-    .toLowerCase()
-    .replace(/[çÇğĞıİöÖşŞüÜ]/g, (match) => charMap[match] || match)
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
-    .replace(/^-|-$/g, "");
-}
-
 function calculateReadTime(text: string): number {
   const wordCount = text.trim().split(/\s+/).filter(Boolean).length;
   return Math.max(1, Math.ceil(wordCount / 200));
@@ -56,17 +47,20 @@ export default function EditBlogPostPage({
 }) {
   const { id } = use(params);
   const router = useRouter();
+  const contentRef = useRef<HTMLTextAreaElement>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [uploadingContent, setUploadingContent] = useState(false);
   const [coverImageUrl, setCoverImageUrl] = useState<string>("");
+  const [contentImages, setContentImages] = useState<
+    { url: string; name: string }[]
+  >([]);
+  const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
   const [form, setForm] = useState({
     title_tr: "",
-    title_en: "",
     excerpt_tr: "",
-    excerpt_en: "",
     content_tr: "",
-    content_en: "",
     category: "nutrition",
     is_published: false,
   });
@@ -92,11 +86,8 @@ export default function EditBlogPostPage({
       setOriginalPost(data);
       setForm({
         title_tr: data.title_tr || "",
-        title_en: data.title_en || "",
         excerpt_tr: data.excerpt_tr || "",
-        excerpt_en: data.excerpt_en || "",
         content_tr: data.content_tr || "",
-        content_en: data.content_en || "",
         category: data.category || "nutrition",
         is_published: data.is_published || false,
       });
@@ -107,7 +98,7 @@ export default function EditBlogPostPage({
     fetchPost();
   }, [id, router]);
 
-  const slug = turkishSlugify(form.title_tr);
+  const slug = slugify(form.title_tr);
   const readTime = calculateReadTime(form.content_tr);
 
   const handleChange = useCallback(
@@ -126,6 +117,42 @@ export default function EditBlogPostPage({
     []
   );
 
+  // Markdown toolbar helpers
+  const insertMarkdown = (before: string, after: string = "") => {
+    const textarea = contentRef.current;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = form.content_tr;
+    const selectedText = text.substring(start, end);
+
+    const newText =
+      text.substring(0, start) +
+      before +
+      selectedText +
+      after +
+      text.substring(end);
+
+    setForm((prev) => ({ ...prev, content_tr: newText }));
+
+    // Restore cursor position after state update
+    setTimeout(() => {
+      textarea.focus();
+      const cursorPos = selectedText
+        ? start + before.length + selectedText.length + after.length
+        : start + before.length;
+      textarea.setSelectionRange(cursorPos, cursorPos);
+    }, 0);
+  };
+
+  const handleBold = () => insertMarkdown("**", "**");
+  const handleItalic = () => insertMarkdown("*", "*");
+  const handleHeading = () => insertMarkdown("## ");
+  const handleList = () => insertMarkdown("- ");
+  const handleLink = () => insertMarkdown("[", "](url)");
+
+  // Cover image upload
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -159,11 +186,74 @@ export default function EditBlogPostPage({
     setCoverImageUrl("");
   };
 
+  // Content image upload
+  const handleContentImageUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setUploadingContent(true);
+    const supabase = createClient();
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const filePath = `content/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("blog-images")
+        .upload(filePath, file);
+
+      if (uploadError) {
+        console.error("Icerik gorseli yukleme hatasi:", uploadError);
+        alert(`"${file.name}" yuklenirken hata olustu.`);
+        continue;
+      }
+
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("blog-images").getPublicUrl(filePath);
+
+      setContentImages((prev) => [
+        ...prev,
+        { url: publicUrl, name: file.name },
+      ]);
+    }
+
+    setUploadingContent(false);
+    // Reset input
+    e.target.value = "";
+  };
+
+  const handleRemoveContentImage = (url: string) => {
+    setContentImages((prev) => prev.filter((img) => img.url !== url));
+  };
+
+  const handleCopyImageMarkdown = async (url: string) => {
+    try {
+      await navigator.clipboard.writeText(`![](${url})`);
+      setCopiedUrl(url);
+      setTimeout(() => setCopiedUrl(null), 2000);
+    } catch {
+      // Fallback
+      const textarea = document.createElement("textarea");
+      textarea.value = `![](${url})`;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textarea);
+      setCopiedUrl(url);
+      setTimeout(() => setCopiedUrl(null), 2000);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!form.title_tr.trim()) {
-      alert("Baslik (TR) alani zorunludur.");
+      alert("Baslik alani zorunludur.");
       return;
     }
 
@@ -180,12 +270,9 @@ export default function EditBlogPostPage({
 
     const updateData: Record<string, unknown> = {
       title_tr: form.title_tr.trim(),
-      title_en: form.title_en.trim() || null,
       slug,
       excerpt_tr: form.excerpt_tr.trim() || null,
-      excerpt_en: form.excerpt_en.trim() || null,
       content_tr: form.content_tr.trim(),
-      content_en: form.content_en.trim() || null,
       category: form.category,
       cover_image: coverImageUrl || null,
       read_time: readTime,
@@ -244,15 +331,13 @@ export default function EditBlogPostPage({
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Turkish Content */}
+        {/* Content */}
         <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-gray-900">
-            Turkce Icerik
-          </h2>
+          <h2 className="text-lg font-semibold text-gray-900">Icerik</h2>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Baslik (TR) <span className="text-red-500">*</span>
+              Baslik <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -272,7 +357,7 @@ export default function EditBlogPostPage({
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Ozet (TR)
+              Ozet
             </label>
             <textarea
               name="excerpt_tr"
@@ -286,68 +371,142 @@ export default function EditBlogPostPage({
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Icerik (TR)
+              Icerik
             </label>
+
+            {/* Markdown Toolbar */}
+            <div className="flex items-center gap-1 mb-2 p-2 bg-gray-50 rounded-t-lg border border-gray-300 border-b-0">
+              <button
+                type="button"
+                onClick={handleBold}
+                className="inline-flex items-center justify-center rounded-md p-2 text-gray-600 hover:bg-white hover:text-gray-900 transition-colors"
+                title="Kalin (Bold)"
+              >
+                <Bold className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                onClick={handleItalic}
+                className="inline-flex items-center justify-center rounded-md p-2 text-gray-600 hover:bg-white hover:text-gray-900 transition-colors"
+                title="Italik (Italic)"
+              >
+                <Italic className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                onClick={handleHeading}
+                className="inline-flex items-center justify-center rounded-md p-2 text-gray-600 hover:bg-white hover:text-gray-900 transition-colors"
+                title="Baslik (Heading)"
+              >
+                <Heading2 className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                onClick={handleList}
+                className="inline-flex items-center justify-center rounded-md p-2 text-gray-600 hover:bg-white hover:text-gray-900 transition-colors"
+                title="Liste (List)"
+              >
+                <List className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                onClick={handleLink}
+                className="inline-flex items-center justify-center rounded-md p-2 text-gray-600 hover:bg-white hover:text-gray-900 transition-colors"
+                title="Baglanti (Link)"
+              >
+                <Link2 className="h-4 w-4" />
+              </button>
+            </div>
+
             <textarea
+              ref={contentRef}
               name="content_tr"
               value={form.content_tr}
               onChange={handleChange}
               rows={12}
-              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-900 focus:border-emerald-500 focus:ring-emerald-500 focus:outline-none resize-y"
-              placeholder="Yazi icerigi"
+              className="w-full rounded-b-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-900 focus:border-emerald-500 focus:ring-emerald-500 focus:outline-none resize-y font-mono"
+              placeholder="Yazi icerigi (Markdown desteklenir)"
             />
             <p className="mt-1 text-xs text-gray-400">
               Tahmini okuma suresi: {readTime} dk
             </p>
           </div>
-        </div>
 
-        {/* English Content */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-gray-900">
-            Ingilizce Icerik (Opsiyonel)
-          </h2>
-
+          {/* Content Images */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Baslik (EN)
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Icerik Gorselleri
             </label>
-            <input
-              type="text"
-              name="title_en"
-              value={form.title_en}
-              onChange={handleChange}
-              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-900 focus:border-emerald-500 focus:ring-emerald-500 focus:outline-none"
-              placeholder="Post title"
-            />
-          </div>
+            <p className="text-xs text-gray-400 mb-3">
+              Gorselleri yukleyin, ardından URL kopyalayarak icerige ekleyin.
+            </p>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Ozet (EN)
+            {/* Upload Button */}
+            <label className="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-50 transition-colors">
+              {uploadingContent ? (
+                <Loader2 className="h-4 w-4 animate-spin text-emerald-500" />
+              ) : (
+                <ImagePlus className="h-4 w-4 text-gray-500" />
+              )}
+              {uploadingContent ? "Yukleniyor..." : "Gorsel Yukle"}
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleContentImageUpload}
+                className="hidden"
+                disabled={uploadingContent}
+              />
             </label>
-            <textarea
-              name="excerpt_en"
-              value={form.excerpt_en}
-              onChange={handleChange}
-              rows={2}
-              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-900 focus:border-emerald-500 focus:ring-emerald-500 focus:outline-none resize-none"
-              placeholder="Short excerpt"
-            />
-          </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Icerik (EN)
-            </label>
-            <textarea
-              name="content_en"
-              value={form.content_en}
-              onChange={handleChange}
-              rows={12}
-              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-900 focus:border-emerald-500 focus:ring-emerald-500 focus:outline-none resize-y"
-              placeholder="Post content"
-            />
+            {/* Image Grid */}
+            {contentImages.length > 0 && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mt-4">
+                {contentImages.map((img) => (
+                  <div
+                    key={img.url}
+                    className="group relative border border-gray-200 rounded-lg overflow-hidden"
+                  >
+                    <div className="relative w-full h-24">
+                      <Image
+                        src={img.url}
+                        alt={img.name}
+                        fill
+                        className="object-cover"
+                        sizes="200px"
+                      />
+                    </div>
+                    <div className="flex items-center justify-between p-2 bg-gray-50">
+                      <p className="text-xs text-gray-500 truncate flex-1 mr-2">
+                        {img.name}
+                      </p>
+                      <div className="flex items-center gap-1">
+                        <button
+                          type="button"
+                          onClick={() => handleCopyImageMarkdown(img.url)}
+                          className="inline-flex items-center justify-center rounded p-1 text-gray-400 hover:bg-white hover:text-emerald-600 transition-colors"
+                          title="Markdown URL kopyala"
+                        >
+                          {copiedUrl === img.url ? (
+                            <Check className="h-3.5 w-3.5 text-emerald-500" />
+                          ) : (
+                            <Copy className="h-3.5 w-3.5" />
+                          )}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveContentImage(img.url)}
+                          className="inline-flex items-center justify-center rounded p-1 text-gray-400 hover:bg-white hover:text-red-600 transition-colors"
+                          title="Kaldir"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
@@ -393,6 +552,9 @@ export default function EditBlogPostPage({
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Kapak Gorseli
             </label>
+            <p className="text-xs text-gray-400 mb-2">
+              Onerilen boyut: 1200x630px
+            </p>
             {coverImageUrl ? (
               <div className="relative w-full h-48 rounded-lg overflow-hidden border border-gray-200">
                 <Image
