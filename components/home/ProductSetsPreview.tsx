@@ -113,7 +113,7 @@ export default function ProductSetsPreview() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
               >
-                <Link href={{ pathname: "/magaza/[slug]", params: { slug: set.slug } }}>
+                <Link href={{ pathname: "/magaza/set/[slug]", params: { slug: set.slug } }}>
                   <div className="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 overflow-hidden border border-orange-100">
                     {/* Discount badge */}
                     {hasDiscount && (

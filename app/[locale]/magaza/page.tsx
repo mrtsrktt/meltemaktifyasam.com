@@ -7,9 +7,24 @@ import { createClient } from "@/lib/supabase/client";
 import { Link } from "@/i18n/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ShoppingBag, Plus, Check, X, Search } from "lucide-react";
+import { ShoppingBag, Plus, Check, X, Search, ChevronLeft, ChevronRight, Tag, Sparkles } from "lucide-react";
 import { useCartStore } from "@/lib/store/cart";
 import type { Category } from "@/lib/supabase/types";
+import { useRef, useCallback } from "react";
+
+interface ShopSet {
+  id: string;
+  name_tr: string;
+  slug: string;
+  description_tr: string | null;
+  image_url: string | null;
+  discount_percentage: number;
+  discount_amount: number;
+  product_set_items: {
+    quantity: number;
+    products: { price: number; image_url: string | null } | null;
+  }[];
+}
 
 interface ShopProduct {
   id: string;
@@ -27,9 +42,32 @@ export default function ShopPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [sets, setSets] = useState<ShopSet[]>([]);
+  const [setIndex, setSetIndex] = useState(0);
+  const [setItemsPerView, setSetItemsPerView] = useState(3);
+
+  useEffect(() => {
+    const updatePerView = () => {
+      setSetItemsPerView(window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 2 : 3);
+    };
+    updatePerView();
+    window.addEventListener("resize", updatePerView);
+    return () => window.removeEventListener("resize", updatePerView);
+  }, []);
 
   useEffect(() => {
     const supabase = createClient();
+
+    // Fetch sets
+    supabase
+      .from("product_sets")
+      .select("id, name_tr, slug, description_tr, image_url, discount_percentage, discount_amount, product_set_items(quantity, products(price, image_url))")
+      .eq("is_active", true)
+      .order("created_at", { ascending: false })
+      .limit(8)
+      .then(({ data }) => {
+        if (data) setSets(data as unknown as ShopSet[]);
+      });
 
     supabase
       .from("categories")
@@ -113,6 +151,11 @@ export default function ShopPage() {
             })}
           </div>
         </div>
+
+        {/* Sets Slider */}
+        {sets.length > 0 && (
+          <SetsSlider sets={sets} setIndex={setIndex} setSetIndex={setSetIndex} itemsPerView={setItemsPerView} />
+        )}
 
         <div className="mt-6 flex gap-8">
           {/* Sidebar - Desktop */}
@@ -226,6 +269,131 @@ export default function ShopPage() {
         </div>
       </div>
     </section>
+  );
+}
+
+function SetsSlider({
+  sets,
+  setIndex,
+  setSetIndex,
+  itemsPerView,
+}: {
+  sets: ShopSet[];
+  setIndex: number;
+  setSetIndex: (i: number) => void;
+  itemsPerView: number;
+}) {
+  const maxIndex = Math.max(0, sets.length - itemsPerView);
+
+  const goNext = () => setSetIndex(setIndex >= maxIndex ? 0 : setIndex + 1);
+  const goPrev = () => setSetIndex(setIndex <= 0 ? maxIndex : setIndex - 1);
+
+  const slideWidth = 100 / itemsPerView;
+  const translateX = -(setIndex * slideWidth);
+
+  return (
+    <div className="mt-8 mb-4">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+          <Sparkles size={20} className="text-orange-500" />
+          Ozel Setler
+        </h2>
+        {sets.length > itemsPerView && (
+          <div className="flex gap-2">
+            <button
+              onClick={goPrev}
+              className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-colors"
+            >
+              <ChevronLeft size={16} />
+            </button>
+            <button
+              onClick={goNext}
+              className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-colors"
+            >
+              <ChevronRight size={16} />
+            </button>
+          </div>
+        )}
+      </div>
+
+      <div className="overflow-hidden">
+        <div
+          className="flex transition-transform duration-500 ease-out"
+          style={{ transform: `translateX(${translateX}%)` }}
+        >
+          {sets.map((set) => {
+            const totalPrice = (set.product_set_items || []).reduce((sum, item) => {
+              return sum + (Number(item.products?.price || 0) * (item.quantity || 1));
+            }, 0);
+
+            let discountedPrice = totalPrice;
+            if (Number(set.discount_percentage) > 0) discountedPrice *= (1 - Number(set.discount_percentage) / 100);
+            if (Number(set.discount_amount) > 0) discountedPrice -= Number(set.discount_amount);
+            discountedPrice = Math.max(0, discountedPrice);
+
+            const hasDiscount = totalPrice - discountedPrice > 0;
+
+            const productImages = (set.product_set_items || [])
+              .map((item) => item.products?.image_url)
+              .filter(Boolean)
+              .slice(0, 3);
+
+            return (
+              <div
+                key={set.id}
+                className="flex-shrink-0 px-2"
+                style={{ width: `${slideWidth}%` }}
+              >
+                <Link href={{ pathname: "/magaza/set/[slug]", params: { slug: set.slug } }}>
+                  <div className="group relative rounded-2xl overflow-hidden bg-gradient-to-br from-orange-50 to-red-50 border border-orange-100 hover:shadow-lg transition-all hover:-translate-y-1">
+                    {hasDiscount && (
+                      <div className="absolute top-2 right-2 z-10">
+                        <span className="flex items-center gap-1 px-2 py-1 rounded-full bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs font-bold">
+                          <Tag size={10} />
+                          {Number(set.discount_percentage) > 0
+                            ? `%${set.discount_percentage}`
+                            : `-${Number(set.discount_amount).toLocaleString("tr-TR")} TL`}
+                        </span>
+                      </div>
+                    )}
+
+                    <div className="h-36 sm:h-40 flex items-center justify-center p-3 gap-1">
+                      {set.image_url ? (
+                        <img src={set.image_url} alt={set.name_tr} className="h-full object-contain" />
+                      ) : productImages.length > 0 ? (
+                        productImages.map((img, j) => (
+                          <div key={j} className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg bg-white/80 p-1 shadow-sm">
+                            <img src={img!} alt="" className="w-full h-full object-contain" />
+                          </div>
+                        ))
+                      ) : (
+                        <Sparkles size={32} className="text-orange-300" />
+                      )}
+                    </div>
+
+                    <div className="p-3 bg-white/60">
+                      <h3 className="font-semibold text-gray-900 text-sm group-hover:text-orange-600 transition-colors line-clamp-1">
+                        {set.name_tr}
+                      </h3>
+                      <div className="mt-1 flex items-center gap-2">
+                        {hasDiscount && (
+                          <span className="text-xs text-gray-400 line-through">
+                            {totalPrice.toLocaleString("tr-TR")} TL
+                          </span>
+                        )}
+                        <span className="text-base font-bold text-orange-600">
+                          {discountedPrice.toLocaleString("tr-TR")} TL
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
   );
 }
 
