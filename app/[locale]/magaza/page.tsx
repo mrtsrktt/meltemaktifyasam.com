@@ -373,12 +373,15 @@ function SetsSlider({
                   <div className="group relative rounded-xl overflow-hidden bg-white border border-orange-200/60 hover:shadow-xl hover:border-orange-300 transition-all hover:-translate-y-1">
                     {hasDiscount && (
                       <motion.div
-                        animate={{ scale: [1, 1.05, 1] }}
-                        transition={{ repeat: Infinity, duration: 2 }}
+                        animate={{
+                          scale: [1, 1.15, 1],
+                          rotate: [0, -5, 5, -3, 0],
+                        }}
+                        transition={{ repeat: Infinity, duration: 1.5, repeatDelay: 2 }}
                         className="absolute top-2 right-2 z-10"
                       >
-                        <span className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs font-bold shadow-md shadow-red-500/20">
-                          <Tag size={10} />
+                        <span className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-gradient-to-r from-red-600 to-orange-500 text-white text-sm font-bold shadow-lg shadow-red-500/30 ring-2 ring-white/50">
+                          <Tag size={12} />
                           {Number(set.discount_percentage) > 0
                             ? `%${set.discount_percentage}`
                             : `-${Number(set.discount_amount).toLocaleString("tr-TR")} TL`}
@@ -404,16 +407,21 @@ function SetsSlider({
                       <h3 className="font-semibold text-gray-900 text-sm group-hover:text-orange-600 transition-colors line-clamp-1">
                         {set.name_tr}
                       </h3>
-                      <div className="mt-1.5 flex items-center gap-2">
+                      <div className="mt-2 flex items-baseline gap-2">
                         {hasDiscount && (
-                          <span className="text-xs text-gray-400 line-through">
+                          <span className="text-xs text-gray-400 line-through decoration-red-400">
                             {totalPrice.toLocaleString("tr-TR")} TL
                           </span>
                         )}
-                        <span className="text-base font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+                        <span className="text-lg font-extrabold bg-gradient-to-r from-red-600 to-orange-500 bg-clip-text text-transparent">
                           {discountedPrice.toLocaleString("tr-TR")} TL
                         </span>
                       </div>
+                      {hasDiscount && (
+                        <p className="text-[11px] text-green-600 font-semibold mt-0.5">
+                          {(totalPrice - discountedPrice).toLocaleString("tr-TR")} TL kazanc
+                        </p>
+                      )}
                     </div>
 
                     {/* Shimmer on hover */}
