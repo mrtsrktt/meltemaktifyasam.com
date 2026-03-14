@@ -18,6 +18,7 @@ function slugify(text: string): string {
 export default function NewProductPage() {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -55,6 +56,7 @@ export default function NewProductPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
     setSaving(true);
 
     const supabase = createClient();
@@ -63,9 +65,15 @@ export default function NewProductPage() {
     if (imageFile) {
       const ext = imageFile.name.split(".").pop();
       const fileName = `${slugify(form.name_tr)}-${Date.now()}.${ext}`;
-      const { data: uploadData } = await supabase.storage
+      const { data: uploadData, error: uploadError } = await supabase.storage
         .from("product-images")
         .upload(fileName, imageFile);
+
+      if (uploadError) {
+        setError(`Gorsel yuklenemedi: ${uploadError.message}`);
+        setSaving(false);
+        return;
+      }
 
       if (uploadData) {
         const { data: urlData } = supabase.storage
@@ -77,7 +85,7 @@ export default function NewProductPage() {
 
     const slug = slugify(form.name_tr);
 
-    const { error } = await supabase.from("products").insert({
+    const { error: insertError } = await supabase.from("products").insert({
       slug,
       name_tr: form.name_tr,
       description_tr: form.description_tr || null,
@@ -91,10 +99,12 @@ export default function NewProductPage() {
       is_featured: form.is_featured,
     });
 
-    if (!error) {
-      router.push("/admin/urunler");
+    if (insertError) {
+      setError(`Urun kaydedilemedi: ${insertError.message}`);
+      setSaving(false);
+      return;
     }
-    setSaving(false);
+    router.push("/admin/urunler");
   };
 
   const updateForm = (key: string, value: string | boolean) => {
@@ -114,6 +124,11 @@ export default function NewProductPage() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        {error && (
+          <div className="bg-red-50 text-red-600 text-sm px-4 py-3 rounded-lg">
+            {error}
+          </div>
+        )}
         {/* Basic info */}
         <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
           <h2 className="font-semibold text-gray-900">Temel Bilgiler</h2>

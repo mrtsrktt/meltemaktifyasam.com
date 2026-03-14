@@ -19,6 +19,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
   const { id } = use(params);
   const router = useRouter();
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -86,6 +87,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
     setSaving(true);
 
     const supabase = createClient();
@@ -94,9 +96,15 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
     if (imageFile) {
       const ext = imageFile.name.split(".").pop();
       const fileName = `${slugify(form.name_tr)}-${Date.now()}.${ext}`;
-      const { data: uploadData } = await supabase.storage
+      const { data: uploadData, error: uploadError } = await supabase.storage
         .from("product-images")
         .upload(fileName, imageFile);
+
+      if (uploadError) {
+        setError(`Gorsel yuklenemedi: ${uploadError.message}`);
+        setSaving(false);
+        return;
+      }
 
       if (uploadData) {
         const { data: urlData } = supabase.storage
@@ -106,7 +114,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
       }
     }
 
-    const { error } = await supabase
+    const { error: updateError } = await supabase
       .from("products")
       .update({
         slug: slugify(form.name_tr),
@@ -123,10 +131,12 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
       })
       .eq("id", id);
 
-    if (!error) {
-      router.push("/admin/urunler");
+    if (updateError) {
+      setError(`Urun guncellenemedi: ${updateError.message}`);
+      setSaving(false);
+      return;
     }
-    setSaving(false);
+    router.push("/admin/urunler");
   };
 
   const updateForm = (key: string, value: string | boolean) => {
@@ -151,6 +161,11 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        {error && (
+          <div className="bg-red-50 text-red-600 text-sm px-4 py-3 rounded-lg">
+            {error}
+          </div>
+        )}
         <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
           <h2 className="font-semibold text-gray-900">Temel Bilgiler</h2>
 
