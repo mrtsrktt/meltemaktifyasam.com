@@ -57,6 +57,7 @@ export default function ConsultationForm({
           bmi: Math.round(bmi * 10) / 10,
           bmi_category,
           goal: formData.get("goal"),
+          health_note: formData.get("health_note") || null,
           consent: true,
         }),
       });
@@ -165,6 +166,17 @@ export default function ConsultationForm({
                 <input name="weight" type="number" min={30} max={300} required placeholder="75" className={inputClass} />
               </div>
             </div>
+          </div>
+
+          {/* Health note */}
+          <div>
+            <label className={`block text-xs font-medium ${labelClass} mb-1`}>Hastalik / Alerji</label>
+            <textarea
+              name="health_note"
+              rows={2}
+              placeholder="Varsa hastalik, alerji veya kullandiginiz ilaclari belirtin"
+              className={`${inputClass} pl-4 resize-none`}
+            />
           </div>
 
           {/* Goal */}

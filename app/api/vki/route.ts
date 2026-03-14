@@ -16,6 +16,7 @@ export async function POST(request: NextRequest) {
       bmi: body.bmi,
       bmi_category: body.bmi_category,
       goal: body.goal,
+      health_note: body.health_note || null,
       whatsapp_consent: body.consent || false,
     });
 
