@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 
 const navItems = [
-  { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/urunler", label: "Urunler", icon: Package },
   { href: "/admin/blog", label: "Blog", icon: FileText },
   { href: "/admin/siparisler", label: "Siparisler", icon: ShoppingCart },
@@ -41,7 +41,7 @@ export default function AdminLayout({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (pathname === "/admin/giris") {
+    if (pathname === "/admin") {
       setLoading(false);
       return;
     }
@@ -49,7 +49,7 @@ export default function AdminLayout({
     const supabase = createClient();
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (!user) {
-        router.push("/admin/giris");
+        router.push("/admin");
       } else {
         supabase
           .from("profiles")
@@ -58,7 +58,7 @@ export default function AdminLayout({
           .single()
           .then(({ data: profile }) => {
             if (!profile || profile.role !== "admin") {
-              router.push("/admin/giris");
+              router.push("/admin");
             } else {
               setLoading(false);
             }
@@ -68,14 +68,14 @@ export default function AdminLayout({
   }, [pathname, router]);
 
   // Login page - no sidebar
-  if (pathname === "/admin/giris") {
+  if (pathname === "/admin") {
     return <>{children}</>;
   }
 
   const handleLogout = async () => {
     const supabase = createClient();
     await supabase.auth.signOut();
-    router.push("/admin/giris");
+    router.push("/admin");
   };
 
   if (loading) {
@@ -121,7 +121,7 @@ export default function AdminLayout({
           {navItems.map((item) => {
             const isActive =
               pathname === item.href ||
-              (item.href !== "/admin" && pathname.startsWith(item.href));
+              (item.href !== "/admin/dashboard" && pathname.startsWith(item.href));
             return (
               <Link
                 key={item.href}
@@ -175,7 +175,7 @@ export default function AdminLayout({
             {navItems.find(
               (item) =>
                 pathname === item.href ||
-                (item.href !== "/admin" && pathname.startsWith(item.href))
+                (item.href !== "/admin/dashboard" && pathname.startsWith(item.href))
             )?.label || "Dashboard"}
           </div>
         </header>

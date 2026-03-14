@@ -34,7 +34,7 @@ export async function requireAdmin() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/admin/giris");
+    redirect("/admin");
   }
 
   const { data: profile } = await supabase
@@ -44,7 +44,7 @@ export async function requireAdmin() {
     .single();
 
   if (!profile || profile.role !== "admin") {
-    redirect("/admin/giris");
+    redirect("/admin");
   }
 
   return { supabase, user };
