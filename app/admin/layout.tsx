@@ -17,6 +17,7 @@ import {
   X,
   ChevronRight,
   Layers,
+  Instagram,
 } from "lucide-react";
 
 const navItems = [
@@ -27,6 +28,7 @@ const navItems = [
   { href: "/admin/blog", label: "Blog", icon: FileText },
   { href: "/admin/siparisler", label: "Siparişler", icon: ShoppingCart },
   { href: "/admin/vki-leadler", label: "Başvurular", icon: Activity },
+  { href: "/admin/instagram", label: "Instagram", icon: Instagram },
   { href: "/admin/kullanicilar", label: "Kullanıcılar", icon: Users },
 ];
 

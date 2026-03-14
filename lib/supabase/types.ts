@@ -144,6 +144,16 @@ export interface ProductSetItem {
   sort_order: number;
 }
 
+export interface InstagramPost {
+  id: string;
+  image_url: string;
+  post_url: string;
+  caption: string | null;
+  sort_order: number;
+  is_active: boolean;
+  created_at: string;
+}
+
 export interface ContactMessage {
   id: string;
   name: string;

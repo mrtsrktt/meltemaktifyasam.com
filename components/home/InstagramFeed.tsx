@@ -1,22 +1,38 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import { Instagram } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { createClient } from "@/lib/supabase/client";
+import Image from "next/image";
 
-// Static placeholders - will be replaced with Instagram API
-const mockPosts = [
-  { id: 1, color: "from-green-200 to-green-300" },
-  { id: 2, color: "from-orange-200 to-orange-300" },
-  { id: 3, color: "from-green-100 to-green-200" },
-  { id: 4, color: "from-orange-100 to-orange-200" },
-  { id: 5, color: "from-green-200 to-emerald-200" },
-  { id: 6, color: "from-orange-200 to-yellow-200" },
-];
+interface InstaPost {
+  id: string;
+  image_url: string;
+  post_url: string;
+  caption: string | null;
+}
 
 export default function InstagramFeed() {
   const t = useTranslations("instagram");
+  const [posts, setPosts] = useState<InstaPost[]>([]);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase
+      .from("instagram_posts")
+      .select("id, image_url, post_url, caption")
+      .eq("is_active", true)
+      .order("sort_order", { ascending: true })
+      .limit(6)
+      .then(({ data }) => {
+        if (data) setPosts(data);
+      });
+  }, []);
+
+  if (posts.length === 0) return null;
 
   return (
     <section className="py-20 bg-brand-light">
@@ -34,10 +50,10 @@ export default function InstagramFeed() {
         </motion.div>
 
         <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-          {mockPosts.map((post, i) => (
+          {posts.map((post, i) => (
             <motion.a
               key={post.id}
-              href="https://instagram.com/meltem.tanik"
+              href={post.post_url}
               target="_blank"
               rel="noopener noreferrer"
               initial={{ opacity: 0, scale: 0.8 }}
@@ -46,8 +62,12 @@ export default function InstagramFeed() {
               transition={{ delay: i * 0.08 }}
               className="group relative aspect-square overflow-hidden rounded-xl"
             >
-              <div
-                className={`h-full w-full bg-gradient-to-br ${post.color}`}
+              <Image
+                src={post.image_url}
+                alt={post.caption || "Instagram post"}
+                fill
+                className="object-cover transition-transform duration-300 group-hover:scale-110"
+                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw"
               />
               <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-all group-hover:bg-black/30">
                 <Instagram className="h-6 w-6 text-white opacity-0 transition-opacity group-hover:opacity-100" />
