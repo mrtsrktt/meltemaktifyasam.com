@@ -25,8 +25,8 @@ export default function EditProductSetPage({ params }: { params: Promise<{ id: s
   const [form, setForm] = useState({
     name_tr: "",
     description_tr: "",
-    discount_percentage: 0,
-    discount_amount: 0,
+    discount_percentage: "",
+    discount_amount: "",
     is_active: true,
     is_featured: false,
   });
@@ -63,8 +63,8 @@ export default function EditProductSetPage({ params }: { params: Promise<{ id: s
       setForm({
         name_tr: setData.name_tr,
         description_tr: setData.description_tr || "",
-        discount_percentage: Number(setData.discount_percentage) || 0,
-        discount_amount: Number(setData.discount_amount) || 0,
+        discount_percentage: Number(setData.discount_percentage) ? String(setData.discount_percentage) : "",
+        discount_amount: Number(setData.discount_amount) ? String(setData.discount_amount) : "",
         is_active: setData.is_active,
         is_featured: setData.is_featured,
       });
@@ -98,10 +98,13 @@ export default function EditProductSetPage({ params }: { params: Promise<{ id: s
     0
   );
 
+  const discountPct = parseFloat(form.discount_percentage) || 0;
+  const discountAmt = parseFloat(form.discount_amount) || 0;
+
   const discountedPrice = (() => {
     let price = totalPrice;
-    if (form.discount_percentage > 0) price = price * (1 - form.discount_percentage / 100);
-    if (form.discount_amount > 0) price = price - form.discount_amount;
+    if (discountPct > 0) price = price * (1 - discountPct / 100);
+    if (discountAmt > 0) price = price - discountAmt;
     return Math.max(0, price);
   })();
 
@@ -183,8 +186,8 @@ export default function EditProductSetPage({ params }: { params: Promise<{ id: s
         slug,
         description_tr: form.description_tr || null,
         image_url,
-        discount_percentage: form.discount_percentage,
-        discount_amount: form.discount_amount,
+        discount_percentage: discountPct,
+        discount_amount: discountAmt,
         is_active: form.is_active,
         is_featured: form.is_featured,
       })
@@ -366,7 +369,8 @@ export default function EditProductSetPage({ params }: { params: Promise<{ id: s
                 max={99}
                 step={1}
                 value={form.discount_percentage}
-                onChange={(e) => setForm({ ...form, discount_percentage: parseFloat(e.target.value) || 0 })}
+                onChange={(e) => setForm({ ...form, discount_percentage: e.target.value })}
+                placeholder="0"
                 className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-sm"
               />
             </div>
@@ -377,7 +381,8 @@ export default function EditProductSetPage({ params }: { params: Promise<{ id: s
                 min={0}
                 step={1}
                 value={form.discount_amount}
-                onChange={(e) => setForm({ ...form, discount_amount: parseFloat(e.target.value) || 0 })}
+                onChange={(e) => setForm({ ...form, discount_amount: e.target.value })}
+                placeholder="0"
                 className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-sm"
               />
             </div>
