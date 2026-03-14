@@ -56,8 +56,7 @@ export default function ProductsPreview() {
       const width = window.innerWidth;
       if (width < 640) setItemsPerView(1);
       else if (width < 1024) setItemsPerView(2);
-      else if (width < 1280) setItemsPerView(3);
-      else setItemsPerView(4);
+      else setItemsPerView(3);
     };
     updateItemsPerView();
     window.addEventListener("resize", updateItemsPerView);
