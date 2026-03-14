@@ -52,26 +52,34 @@ export default function BlogPreview() {
   if (posts.length === 0) return null;
 
   return (
-    <section className="py-20 bg-gradient-to-br from-brand-green to-brand-green-dark text-white">
+    <section className="py-12 sm:py-16 bg-gradient-to-br from-brand-green to-brand-green-dark text-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-12"
+          className="flex items-center justify-between mb-8"
         >
-          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-white/20">
-            <BookOpen className="h-8 w-8" />
-          </div>
-          <h2 className="text-3xl font-bold sm:text-4xl">Son Yazilar</h2>
-          <p className="mt-4 text-lg text-white/80">
+          <div>
+            <h2 className="text-2xl font-bold sm:text-3xl">Son Yazilar</h2>
+            <p className="mt-1 text-sm text-white/70">
             {t("subtitle")}
           </p>
+          </div>
+          <Link href="/blog" className="hidden sm:block">
+            <Button
+              size="sm"
+              className="bg-white/15 hover:bg-white/25 text-white border border-white/20 font-medium"
+            >
+              Tumu
+              <ArrowRight className="ml-1 h-3.5 w-3.5" />
+            </Button>
+          </Link>
         </motion.div>
 
         {/* Blog Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {posts.map((post, index) => (
             <motion.div
               key={post.id}
@@ -85,7 +93,7 @@ export default function BlogPreview() {
               >
                 <div className="group h-full bg-white rounded-2xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
                   {/* Cover Image */}
-                  <div className="relative aspect-[16/10] overflow-hidden bg-gray-100">
+                  <div className="relative aspect-[16/9] overflow-hidden bg-gray-100">
                     {post.cover_image ? (
                       <Image
                         src={post.cover_image}
@@ -108,7 +116,7 @@ export default function BlogPreview() {
                   </div>
 
                   {/* Card Body */}
-                  <div className="p-5">
+                  <div className="p-4">
                     <h3 className="text-lg font-bold text-brand-dark group-hover:text-brand-green transition-colors line-clamp-2">
                       {post.title_tr}
                     </h3>
@@ -136,24 +144,18 @@ export default function BlogPreview() {
           ))}
         </div>
 
-        {/* View All Button */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.3 }}
-          className="mt-12 text-center"
-        >
+        {/* Mobile CTA */}
+        <div className="mt-6 text-center sm:hidden">
           <Link href="/blog">
             <Button
-              size="lg"
-              className="bg-white text-brand-green hover:bg-white/90 font-semibold px-8"
+              size="sm"
+              className="bg-white/15 hover:bg-white/25 text-white border border-white/20"
             >
               Tum Yazilari Gor
-              <ArrowRight className="ml-2 h-4 w-4" />
+              <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
             </Button>
           </Link>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
