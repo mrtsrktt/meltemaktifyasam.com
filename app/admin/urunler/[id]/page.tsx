@@ -24,16 +24,21 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [form, setForm] = useState({
-    name_tr: "", name_en: "", description_tr: "", description_en: "",
-    price: "", stock: "0", category_id: "", sku: "", weight: "",
-    benefits_tr: "", benefits_en: "", usage_tr: "", usage_en: "",
-    is_active: true, is_featured: false, image_url: null as string | null,
+    name_tr: "",
+    description_tr: "",
+    price: "",
+    category_id: "",
+    sku: "",
+    benefits_tr: "",
+    usage_tr: "",
+    is_active: true,
+    is_featured: false,
+    image_url: null as string | null,
   });
 
   useEffect(() => {
     const supabase = createClient();
 
-    // Fetch categories
     supabase
       .from("categories")
       .select("*")
@@ -43,7 +48,6 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
         if (data) setCategories(data);
       });
 
-    // Fetch product
     const fetchProduct = async () => {
       const { data } = await supabase
         .from("products")
@@ -54,12 +58,16 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
       if (data) {
         const p = data as Product;
         setForm({
-          name_tr: p.name_tr, name_en: p.name_en || "", description_tr: p.description_tr || "",
-          description_en: p.description_en || "", price: String(p.price), stock: String(p.stock),
-          category_id: p.category_id || "", sku: p.sku || "", weight: p.weight || "",
-          benefits_tr: p.benefits_tr || "", benefits_en: p.benefits_en || "",
-          usage_tr: p.usage_tr || "", usage_en: p.usage_en || "",
-          is_active: p.is_active, is_featured: p.is_featured, image_url: p.image_url,
+          name_tr: p.name_tr,
+          description_tr: p.description_tr || "",
+          price: String(p.price),
+          category_id: p.category_id || "",
+          sku: p.sku || "",
+          benefits_tr: p.benefits_tr || "",
+          usage_tr: p.usage_tr || "",
+          is_active: p.is_active,
+          is_featured: p.is_featured,
+          image_url: p.image_url,
         });
         if (p.image_url) setImagePreview(p.image_url);
       }
@@ -102,13 +110,16 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
       .from("products")
       .update({
         slug: slugify(form.name_tr),
-        name_tr: form.name_tr, name_en: form.name_en || null,
-        description_tr: form.description_tr || null, description_en: form.description_en || null,
-        price: parseFloat(form.price), stock: parseInt(form.stock),
-        category_id: form.category_id || null, sku: form.sku || null, weight: form.weight || null,
-        benefits_tr: form.benefits_tr || null, benefits_en: form.benefits_en || null,
-        usage_tr: form.usage_tr || null, usage_en: form.usage_en || null,
-        image_url, is_active: form.is_active, is_featured: form.is_featured,
+        name_tr: form.name_tr,
+        description_tr: form.description_tr || null,
+        price: parseFloat(form.price),
+        category_id: form.category_id || null,
+        sku: form.sku || null,
+        benefits_tr: form.benefits_tr || null,
+        usage_tr: form.usage_tr || null,
+        image_url,
+        is_active: form.is_active,
+        is_featured: form.is_featured,
       })
       .eq("id", id);
 
@@ -142,50 +153,33 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
           <h2 className="font-semibold text-gray-900">Temel Bilgiler</h2>
-          <div className="grid md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Urun Adi (TR) *</label>
-              <input type="text" required value={form.name_tr} onChange={(e) => updateForm("name_tr", e.target.value)} className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-sm" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Urun Adi (EN)</label>
-              <input type="text" value={form.name_en} onChange={(e) => updateForm("name_en", e.target.value)} className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-sm" />
-            </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Urun Adi *</label>
+            <input type="text" required value={form.name_tr} onChange={(e) => updateForm("name_tr", e.target.value)} className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-sm" />
           </div>
-          <div className="grid md:grid-cols-4 gap-4">
+
+          <div className="grid md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Fiyat (TL) *</label>
               <input type="number" required min="0" step="0.01" value={form.price} onChange={(e) => updateForm("price", e.target.value)} className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-sm" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Stok *</label>
-              <input type="number" required min="0" value={form.stock} onChange={(e) => updateForm("stock", e.target.value)} className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-sm" />
-            </div>
-            <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">SKU</label>
               <input type="text" value={form.sku} onChange={(e) => updateForm("sku", e.target.value)} className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-sm" />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Gramaj</label>
-              <input type="text" value={form.weight} onChange={(e) => updateForm("weight", e.target.value)} className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-sm" />
-            </div>
           </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Kategori *</label>
             <select value={form.category_id} onChange={(e) => updateForm("category_id", e.target.value)} className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-sm">
               <option value="">Kategori secin...</option>
-              {categories.filter(c => !c.parent_id).map((parent) => (
-                <optgroup key={parent.id} label={parent.name_tr}>
-                  {categories.filter(c => c.parent_id === parent.id).map((child) => (
-                    <option key={child.id} value={child.id}>{child.name_tr}</option>
-                  ))}
-                  {categories.filter(c => c.parent_id === parent.id).length === 0 && (
-                    <option value={parent.id}>{parent.name_tr}</option>
-                  )}
-                </optgroup>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>{cat.name_tr}</option>
               ))}
             </select>
           </div>
+
           <div className="flex gap-6">
             <label className="flex items-center gap-2 text-sm">
               <input type="checkbox" checked={form.is_active} onChange={(e) => updateForm("is_active", e.target.checked)} className="rounded border-gray-300 text-emerald-500 focus:ring-emerald-500" />
@@ -215,26 +209,21 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
         </div>
 
         <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
-          <h2 className="font-semibold text-gray-900">Aciklamalar</h2>
-          <div className="grid md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Aciklama (TR)</label>
-              <textarea rows={4} value={form.description_tr} onChange={(e) => updateForm("description_tr", e.target.value)} className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-sm" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Aciklama (EN)</label>
-              <textarea rows={4} value={form.description_en} onChange={(e) => updateForm("description_en", e.target.value)} className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-sm" />
-            </div>
+          <h2 className="font-semibold text-gray-900">Detaylar</h2>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Urun Aciklamasi</label>
+            <textarea rows={5} value={form.description_tr} onChange={(e) => updateForm("description_tr", e.target.value)} className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-sm" placeholder="Urun aciklamasi, gramaj bilgisi vb." />
           </div>
-          <div className="grid md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Faydalari (TR)</label>
-              <textarea rows={3} value={form.benefits_tr} onChange={(e) => updateForm("benefits_tr", e.target.value)} className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-sm" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Kullanim Talimati (TR)</label>
-              <textarea rows={3} value={form.usage_tr} onChange={(e) => updateForm("usage_tr", e.target.value)} className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-sm" />
-            </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Faydalari</label>
+            <textarea rows={3} value={form.benefits_tr} onChange={(e) => updateForm("benefits_tr", e.target.value)} className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-sm" placeholder="Her satira bir fayda yazin..." />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Kullanim Talimati</label>
+            <textarea rows={3} value={form.usage_tr} onChange={(e) => updateForm("usage_tr", e.target.value)} className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-sm" placeholder="Kullanim talimati..." />
           </div>
         </div>
 

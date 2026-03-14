@@ -10,11 +10,9 @@ interface Product {
   id: string;
   slug: string;
   name_tr: string;
-  name_en: string | null;
   price: number;
   category: string;
   image_url: string | null;
-  stock?: number;
 }
 
 const categories = [

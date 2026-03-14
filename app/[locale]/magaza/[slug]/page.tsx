@@ -83,7 +83,6 @@ export default function ProductDetailPage({
         id: product.id,
         slug: product.slug,
         name_tr: product.name_tr,
-        name_en: product.name_en,
         price: Number(product.price),
         image_url: product.image_url,
       });
@@ -91,8 +90,6 @@ export default function ProductDetailPage({
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };
-
-  const inStock = product.stock > 0;
 
   return (
     <section className="py-12">
@@ -178,7 +175,6 @@ export default function ProductDetailPage({
               </div>
               <Button
                 size="lg"
-                disabled={!inStock}
                 onClick={handleAddToCart}
                 className="flex-1 bg-brand-green hover:bg-brand-green-dark text-white"
               >
@@ -191,8 +187,7 @@ export default function ProductDetailPage({
             </div>
 
             <p className="mt-4 text-sm text-muted-foreground">
-              {inStock ? `Stok: ${product.stock} adet` : "Stokta yok"}
-              {product.sku && ` • SKU: ${product.sku}`}
+              {product.sku && `SKU: ${product.sku}`}
               {product.weight && ` • ${product.weight}`}
             </p>
           </motion.div>

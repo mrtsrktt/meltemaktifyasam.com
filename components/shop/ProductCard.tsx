@@ -13,18 +13,15 @@ interface Product {
   id: string;
   slug: string;
   name_tr: string;
-  name_en: string | null;
   price: number;
   category: string;
   image_url: string | null;
-  stock?: number;
 }
 
 export default function ProductCard({ product }: { product: Product }) {
   const t = useTranslations("products");
   const addItem = useCartStore((s) => s.addItem);
   const [added, setAdded] = useState(false);
-  const inStock = product.stock === undefined || product.stock > 0;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -32,7 +29,6 @@ export default function ProductCard({ product }: { product: Product }) {
       id: product.id,
       slug: product.slug,
       name_tr: product.name_tr,
-      name_en: product.name_en,
       price: Number(product.price),
       image_url: product.image_url,
     });
@@ -75,16 +71,13 @@ export default function ProductCard({ product }: { product: Product }) {
           </p>
           <Button
             size="sm"
-            disabled={!inStock}
             onClick={handleAddToCart}
             className="bg-brand-green hover:bg-brand-green-dark text-white"
           >
             {added ? (
               <><Check className="mr-1 h-3 w-3" /> Eklendi</>
-            ) : inStock ? (
-              <><Plus className="mr-1 h-3 w-3" /> {t("addToCart")}</>
             ) : (
-              t("outOfStock")
+              <><Plus className="mr-1 h-3 w-3" /> {t("addToCart")}</>
             )}
           </Button>
         </div>
