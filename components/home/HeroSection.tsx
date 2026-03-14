@@ -14,7 +14,7 @@ const slides = [
     title1: "Baskasiyla Calistin Ama",
     title2: "Sonuc Alamadin mi?",
     subtitle:
-      "Ben Meltem Tanik. Fonksiyonel beslenme yaklasimiyla yuzlerce danisanimin hayatini donusturdum. Senin de donusumun burada basliyor.",
+      "Ben Fonksiyonel Beslenme Uzmani Meltem TANIK. Fonksiyonel beslenme yaklasimiyla yuzlerce danisanimin hayatini donusturdum. Senin de donusumun burada basliyor.",
     cta: "Ucretsiz Basvuru Yap",
     ctaLink: "#basvuru",
     ctaSecondary: "Hakkimda",
