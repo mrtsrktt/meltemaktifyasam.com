@@ -6,8 +6,10 @@ export interface CartItem {
   slug: string;
   name_tr: string;
   price: number;
+  originalPrice?: number;
   image_url: string | null;
   quantity: number;
+  type?: "product" | "set";
 }
 
 interface CartStore {
@@ -26,13 +28,17 @@ export const useCartStore = create<CartStore>()(
       items: [],
 
       addItem: (item) => {
+        const itemId = item.type === "set" ? `set-${item.id}` : item.id;
         set((state) => {
-          const existing = state.items.find((i) => i.id === item.id);
+          const existing = state.items.find((i) =>
+            i.type === "set" ? `set-${i.id}` === itemId : i.id === itemId
+          );
           if (existing) {
             return {
-              items: state.items.map((i) =>
-                i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
-              ),
+              items: state.items.map((i) => {
+                const currentId = i.type === "set" ? `set-${i.id}` : i.id;
+                return currentId === itemId ? { ...i, quantity: i.quantity + 1 } : i;
+              }),
             };
           }
           return { items: [...state.items, { ...item, quantity: 1 }] };
@@ -41,7 +47,10 @@ export const useCartStore = create<CartStore>()(
 
       removeItem: (id) => {
         set((state) => ({
-          items: state.items.filter((i) => i.id !== id),
+          items: state.items.filter((i) => {
+            const currentId = i.type === "set" ? `set-${i.id}` : i.id;
+            return currentId !== id;
+          }),
         }));
       },
 
@@ -51,9 +60,10 @@ export const useCartStore = create<CartStore>()(
           return;
         }
         set((state) => ({
-          items: state.items.map((i) =>
-            i.id === id ? { ...i, quantity } : i
-          ),
+          items: state.items.map((i) => {
+            const currentId = i.type === "set" ? `set-${i.id}` : i.id;
+            return currentId === id ? { ...i, quantity } : i;
+          }),
         }));
       },
 

@@ -116,21 +116,20 @@ export default function SetDetailPage({
   const hasDiscount = savings > 0;
 
   const handleAddAllToCart = () => {
-    items.forEach((item) => {
-      if (!item.products) return;
-      for (let i = 0; i < (item.quantity || 1); i++) {
-        addItem({
-          id: item.products.id,
-          slug: item.products.slug,
-          name_tr: item.products.name_tr,
-          price: Number(item.products.price),
-          image_url: item.products.image_url,
-        });
-      }
+    // Set'i tek bir sepet ogesi olarak ekle (indirimli fiyatiyla)
+    const firstImage = set.image_url || items.find((i) => i.products?.image_url)?.products?.image_url || null;
+    addItem({
+      id: set.id,
+      slug: set.slug,
+      name_tr: set.name_tr,
+      price: discountedPrice,
+      originalPrice: hasDiscount ? totalPrice : undefined,
+      image_url: firstImage,
+      type: "set",
     });
     setAddedAll(true);
     setTimeout(() => setAddedAll(false), 2500);
-    toast.success(`${set.name_tr} seti sepete eklendi (${items.length} urun)`);
+    toast.success(`${set.name_tr} seti sepete eklendi`);
   };
 
   return (

@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { ShoppingBag, ArrowRight, Trash2, Minus, Plus } from "lucide-react";
+import { ShoppingBag, ArrowRight, Trash2, Minus, Plus, Sparkles } from "lucide-react";
 import { useCartStore } from "@/lib/store/cart";
 
 export default function CartPage() {
@@ -44,9 +44,11 @@ export default function CartPage() {
           <div className="mt-8 grid gap-8 lg:grid-cols-3">
             {/* Cart Items */}
             <div className="lg:col-span-2 space-y-4">
-              {items.map((item, i) => (
+              {items.map((item, i) => {
+                const cartId = item.type === "set" ? `set-${item.id}` : item.id;
+                return (
                 <motion.div
-                  key={item.id}
+                  key={cartId}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.1 }}
@@ -61,20 +63,36 @@ export default function CartPage() {
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <Link href={{ pathname: "/magaza/[slug]", params: { slug: item.slug } }}>
+                        <Link href={
+                          item.type === "set"
+                            ? { pathname: "/magaza/set/[slug]" as any, params: { slug: item.slug } }
+                            : { pathname: "/magaza/[slug]", params: { slug: item.slug } }
+                        }>
                           <h3 className="font-semibold text-brand-dark truncate hover:text-brand-green transition-colors">
+                            {item.type === "set" && (
+                              <span className="inline-flex items-center gap-1 text-xs font-semibold text-orange-600 bg-orange-100 px-1.5 py-0.5 rounded-full mr-2">
+                                <Sparkles size={10} />SET
+                              </span>
+                            )}
                             {item.name_tr}
                           </h3>
                         </Link>
-                        <p className="text-brand-green font-bold">
-                          {item.price.toLocaleString("tr-TR")} TL
-                        </p>
+                        <div className="flex items-center gap-2">
+                          {item.originalPrice && item.originalPrice > item.price && (
+                            <span className="text-sm text-gray-400 line-through">
+                              {item.originalPrice.toLocaleString("tr-TR")} TL
+                            </span>
+                          )}
+                          <p className="text-brand-green font-bold">
+                            {item.price.toLocaleString("tr-TR")} TL
+                          </p>
+                        </div>
                         <div className="mt-2 flex items-center gap-2">
                           <Button
                             size="icon"
                             variant="outline"
                             className="h-7 w-7"
-                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                            onClick={() => updateQuantity(cartId, item.quantity - 1)}
                           >
                             <Minus className="h-3 w-3" />
                           </Button>
@@ -85,7 +103,7 @@ export default function CartPage() {
                             size="icon"
                             variant="outline"
                             className="h-7 w-7"
-                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                            onClick={() => updateQuantity(cartId, item.quantity + 1)}
                           >
                             <Plus className="h-3 w-3" />
                           </Button>
@@ -100,7 +118,7 @@ export default function CartPage() {
                           size="icon"
                           variant="ghost"
                           className="mt-2 text-destructive"
-                          onClick={() => removeItem(item.id)}
+                          onClick={() => removeItem(cartId)}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -108,7 +126,8 @@ export default function CartPage() {
                     </CardContent>
                   </Card>
                 </motion.div>
-              ))}
+                );
+              })}
             </div>
 
             {/* Order Summary */}
