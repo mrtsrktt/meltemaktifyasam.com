@@ -1,3 +1,18 @@
+export interface Category {
+  id: string;
+  slug: string;
+  name_tr: string;
+  name_en: string | null;
+  parent_id: string | null;
+  sort_order: number;
+  is_active: boolean;
+  created_at: string;
+}
+
+export interface CategoryWithChildren extends Category {
+  children: Category[];
+}
+
 export interface Profile {
   id: string;
   full_name: string | null;
@@ -18,6 +33,7 @@ export interface Product {
   stock: number;
   image_url: string | null;
   category: string;
+  category_id: string | null;
   sku: string | null;
   weight: string | null;
   benefits_tr: string | null;

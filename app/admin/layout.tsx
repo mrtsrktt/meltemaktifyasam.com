@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import {
   LayoutDashboard,
   Package,
+  FolderTree,
   FileText,
   ShoppingCart,
   Users,
@@ -21,6 +22,7 @@ import {
 
 const navItems = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/kategoriler", label: "Kategoriler", icon: FolderTree },
   { href: "/admin/urunler", label: "Urunler", icon: Package },
   { href: "/admin/blog", label: "Blog", icon: FileText },
   { href: "/admin/siparisler", label: "Siparisler", icon: ShoppingCart },

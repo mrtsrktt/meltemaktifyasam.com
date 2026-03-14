@@ -3,18 +3,9 @@
 import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import type { Product } from "@/lib/supabase/types";
+import type { Product, Category } from "@/lib/supabase/types";
 import { ArrowLeft, Save, Upload, X } from "lucide-react";
 import Link from "next/link";
-
-const categories = [
-  { value: "weight_management", label: "Kilo Yonetimi" },
-  { value: "sport_nutrition", label: "Spor Beslenmesi" },
-  { value: "vitamin_mineral", label: "Vitamin & Mineral" },
-  { value: "beverages", label: "Icecekler" },
-  { value: "protein_snacks", label: "Protein Atistirmalik" },
-  { value: "supplements", label: "Takviye Edici" },
-];
 
 function slugify(text: string): string {
   return text
@@ -31,16 +22,29 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
   const [loading, setLoading] = useState(true);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [form, setForm] = useState({
     name_tr: "", name_en: "", description_tr: "", description_en: "",
-    price: "", stock: "0", category: "weight_management", sku: "", weight: "",
+    price: "", stock: "0", category_id: "", sku: "", weight: "",
     benefits_tr: "", benefits_en: "", usage_tr: "", usage_en: "",
     is_active: true, is_featured: false, image_url: null as string | null,
   });
 
   useEffect(() => {
+    const supabase = createClient();
+
+    // Fetch categories
+    supabase
+      .from("categories")
+      .select("*")
+      .eq("is_active", true)
+      .order("sort_order")
+      .then(({ data }) => {
+        if (data) setCategories(data);
+      });
+
+    // Fetch product
     const fetchProduct = async () => {
-      const supabase = createClient();
       const { data } = await supabase
         .from("products")
         .select("*")
@@ -52,7 +56,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
         setForm({
           name_tr: p.name_tr, name_en: p.name_en || "", description_tr: p.description_tr || "",
           description_en: p.description_en || "", price: String(p.price), stock: String(p.stock),
-          category: p.category, sku: p.sku || "", weight: p.weight || "",
+          category_id: p.category_id || "", sku: p.sku || "", weight: p.weight || "",
           benefits_tr: p.benefits_tr || "", benefits_en: p.benefits_en || "",
           usage_tr: p.usage_tr || "", usage_en: p.usage_en || "",
           is_active: p.is_active, is_featured: p.is_featured, image_url: p.image_url,
@@ -101,7 +105,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
         name_tr: form.name_tr, name_en: form.name_en || null,
         description_tr: form.description_tr || null, description_en: form.description_en || null,
         price: parseFloat(form.price), stock: parseInt(form.stock),
-        category: form.category, sku: form.sku || null, weight: form.weight || null,
+        category_id: form.category_id || null, sku: form.sku || null, weight: form.weight || null,
         benefits_tr: form.benefits_tr || null, benefits_en: form.benefits_en || null,
         usage_tr: form.usage_tr || null, usage_en: form.usage_en || null,
         image_url, is_active: form.is_active, is_featured: form.is_featured,
@@ -168,8 +172,18 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Kategori *</label>
-            <select value={form.category} onChange={(e) => updateForm("category", e.target.value)} className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-sm">
-              {categories.map((c) => (<option key={c.value} value={c.value}>{c.label}</option>))}
+            <select value={form.category_id} onChange={(e) => updateForm("category_id", e.target.value)} className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-sm">
+              <option value="">Kategori secin...</option>
+              {categories.filter(c => !c.parent_id).map((parent) => (
+                <optgroup key={parent.id} label={parent.name_tr}>
+                  {categories.filter(c => c.parent_id === parent.id).map((child) => (
+                    <option key={child.id} value={child.id}>{child.name_tr}</option>
+                  ))}
+                  {categories.filter(c => c.parent_id === parent.id).length === 0 && (
+                    <option value={parent.id}>{parent.name_tr}</option>
+                  )}
+                </optgroup>
+              ))}
             </select>
           </div>
           <div className="flex gap-6">

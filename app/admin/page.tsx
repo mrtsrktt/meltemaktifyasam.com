@@ -52,9 +52,10 @@ export default function AdminLoginPage() {
       }
 
       router.push("/admin/dashboard");
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("Login error:", err);
-      setError("Bir hata olustu. Lutfen tekrar deneyin.");
+      const message = err instanceof Error ? err.message : "Bilinmeyen hata";
+      setError(`Giris hatasi: ${message}`);
       setLoading(false);
     }
   };
