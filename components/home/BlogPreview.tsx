@@ -12,8 +12,8 @@ import Image from "next/image";
 interface BlogPost {
   id: string;
   slug: string;
-  title: string;
-  excerpt: string | null;
+  title_tr: string;
+  excerpt_tr: string | null;
   cover_image: string | null;
   category: string | null;
   read_time: number | null;
@@ -39,7 +39,7 @@ export default function BlogPreview() {
       const { data } = await supabase
         .from("blog_posts")
         .select(
-          "id, slug, title, excerpt, cover_image, category, read_time, published_at"
+          "id, slug, title_tr, excerpt_tr, cover_image, category, read_time, published_at"
         )
         .eq("is_published", true)
         .order("published_at", { ascending: false })
@@ -89,7 +89,7 @@ export default function BlogPreview() {
                     {post.cover_image ? (
                       <Image
                         src={post.cover_image}
-                        alt={post.title}
+                        alt={post.title_tr}
                         fill
                         className="object-cover transition-transform duration-300 group-hover:scale-105"
                         sizes="(max-width: 768px) 100vw, 33vw"
@@ -110,11 +110,11 @@ export default function BlogPreview() {
                   {/* Card Body */}
                   <div className="p-5">
                     <h3 className="text-lg font-bold text-brand-dark group-hover:text-brand-green transition-colors line-clamp-2">
-                      {post.title}
+                      {post.title_tr}
                     </h3>
-                    {post.excerpt && (
+                    {post.excerpt_tr && (
                       <p className="mt-2 text-sm text-muted-foreground line-clamp-2">
-                        {post.excerpt}
+                        {post.excerpt_tr}
                       </p>
                     )}
                     <div className="mt-4 flex items-center justify-between">
