@@ -5,6 +5,7 @@ import ProductSetsPreview from "@/components/home/ProductSetsPreview";
 import TestimonialsSection from "@/components/home/TestimonialsSection";
 import InstagramFeed from "@/components/home/InstagramFeed";
 import BlogPreview from "@/components/home/BlogPreview";
+import ConsultationSection from "@/components/home/ConsultationSection";
 
 export default function HomePage() {
   return (
@@ -13,6 +14,7 @@ export default function HomePage() {
       <FeaturesSection />
       <ProductsPreview />
       <ProductSetsPreview />
+      <ConsultationSection />
       <TestimonialsSection />
       <InstagramFeed />
       <BlogPreview />
