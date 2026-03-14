@@ -81,8 +81,8 @@ export default function ConsultationForm({
     ? "w-full pl-10 pr-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/40 text-sm backdrop-blur-sm"
     : "w-full pl-10 pr-4 py-3 rounded-xl bg-white border border-gray-200 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-green/30 focus:border-brand-green text-sm shadow-sm";
   const selectClass = isDark
-    ? "w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/40 text-sm backdrop-blur-sm appearance-none"
-    : "w-full px-4 py-3 rounded-xl bg-white border border-gray-200 text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-green/30 focus:border-brand-green text-sm shadow-sm appearance-none";
+    ? "w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/40 text-sm backdrop-blur-sm [&>option]:bg-gray-800 [&>option]:text-white"
+    : "w-full px-4 py-3 rounded-xl bg-white border border-gray-200 text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-green/30 focus:border-brand-green text-sm shadow-sm";
   const iconClass = isDark ? "text-white/40" : "text-gray-400";
   const labelClass = isDark ? "text-white/80" : "text-gray-700";
 
