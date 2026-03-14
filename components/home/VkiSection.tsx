@@ -236,7 +236,7 @@ export function VkiSection() {
 
           {/* Güven notu */}
           <p className="mt-4 text-sm text-gray-400">
-            ✓ Kayıt gerekmez &nbsp;·&nbsp; ✓ Kredi kartı istenmez &nbsp;·&nbsp; ✓ 1 dakikada tamamlanır
+            ✓ Kredi kartı istenmez &nbsp;·&nbsp; ✓ 1 dakikada tamamlanır
           </p>
         </motion.div>
 
