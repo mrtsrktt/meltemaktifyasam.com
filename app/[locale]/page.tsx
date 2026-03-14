@@ -6,6 +6,7 @@ import TestimonialsSection from "@/components/home/TestimonialsSection";
 import InstagramFeed from "@/components/home/InstagramFeed";
 import BlogPreview from "@/components/home/BlogPreview";
 import ConsultationSection from "@/components/home/ConsultationSection";
+import VKISection from "@/components/home/VKISection";
 
 export default function HomePage() {
   return (
@@ -14,6 +15,7 @@ export default function HomePage() {
       <FeaturesSection />
       <ProductsPreview />
       <ProductSetsPreview />
+      <VKISection />
       <ConsultationSection />
       <TestimonialsSection />
       <InstagramFeed />
