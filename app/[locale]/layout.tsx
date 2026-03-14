@@ -7,6 +7,7 @@ import { routing } from "@/i18n/routing";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
+import { Toaster } from "sonner";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -50,6 +51,19 @@ export default async function LocaleLayout({
         <main className="min-h-screen">{children}</main>
         <Footer />
         <WhatsAppButton />
+        <Toaster
+          position="top-center"
+          toastOptions={{
+            style: {
+              background: "#065f46",
+              color: "white",
+              border: "none",
+              fontSize: "14px",
+              fontWeight: "500",
+            },
+            duration: 2000,
+          }}
+        />
       </NextIntlClientProvider>
     </div>
   );

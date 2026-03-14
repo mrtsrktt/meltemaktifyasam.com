@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { useLocale } from "next-intl";
@@ -14,6 +14,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { motion, AnimatePresence } from "framer-motion";
+import { useCartStore } from "@/lib/store/cart";
 
 const navLinks = [
   { href: "/" as const, key: "home" },
@@ -23,6 +24,53 @@ const navLinks = [
   { href: "/vki-analiz" as const, key: "vki" },
   { href: "/iletisim" as const, key: "contact" },
 ];
+
+function CartIcon() {
+  const totalItems = useCartStore((s) => s.totalItems());
+  const [prevCount, setPrevCount] = useState(0);
+  const [bump, setBump] = useState(false);
+  const isFirstRender = useRef(true);
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      setPrevCount(totalItems);
+      return;
+    }
+    if (totalItems > prevCount) {
+      setBump(true);
+      setTimeout(() => setBump(false), 600);
+    }
+    setPrevCount(totalItems);
+  }, [totalItems]);
+
+  return (
+    <Link href="/sepet">
+      <Button variant="ghost" size="icon" className="relative">
+        <motion.div
+          animate={bump ? { scale: [1, 1.4, 0.9, 1.1, 1] } : {}}
+          transition={{ duration: 0.5 }}
+        >
+          <ShoppingBag className="h-4 w-4" />
+        </motion.div>
+        <AnimatePresence>
+          {totalItems > 0 && (
+            <motion.span
+              key={totalItems}
+              initial={{ scale: 0, y: 5 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0 }}
+              transition={{ type: "spring", stiffness: 500, damping: 15 }}
+              className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-r from-red-500 to-orange-500 text-[10px] font-bold text-white shadow-md shadow-red-500/30 ring-2 ring-white"
+            >
+              {totalItems > 99 ? "99+" : totalItems}
+            </motion.span>
+          )}
+        </AnimatePresence>
+      </Button>
+    </Link>
+  );
+}
 
 export default function Header() {
   const t = useTranslations("nav");
@@ -80,11 +128,7 @@ export default function Header() {
           >
             <Globe className="h-4 w-4" />
           </Button>
-          <Link href="/sepet">
-            <Button variant="ghost" size="icon">
-              <ShoppingBag className="h-4 w-4" />
-            </Button>
-          </Link>
+          <CartIcon />
           <Link href="/hesabim">
             <Button variant="ghost" size="icon">
               <User className="h-4 w-4" />
@@ -106,11 +150,7 @@ export default function Header() {
           >
             <Globe className="h-4 w-4" />
           </Button>
-          <Link href="/sepet">
-            <Button variant="ghost" size="icon">
-              <ShoppingBag className="h-4 w-4" />
-            </Button>
-          </Link>
+          <CartIcon />
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger render={<Button variant="ghost" size="icon" />}>
               <Menu className="h-5 w-5" />
@@ -137,7 +177,7 @@ export default function Header() {
                 <div className="mt-4 border-t pt-4">
                   <Link
                     href="/hesabim"
-                                       onClick={() => setOpen(false)}
+                    onClick={() => setOpen(false)}
                     className="flex items-center gap-2 rounded-lg px-4 py-3 text-base font-medium text-foreground/70 hover:bg-accent"
                   >
                     <User className="h-4 w-4" />

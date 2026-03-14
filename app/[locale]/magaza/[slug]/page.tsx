@@ -17,6 +17,7 @@ import {
 import { useState, useEffect, use } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useCartStore } from "@/lib/store/cart";
+import { toast } from "sonner";
 import type { Product } from "@/lib/supabase/types";
 
 export default function ProductDetailPage({
@@ -89,6 +90,7 @@ export default function ProductDetailPage({
     }
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
+    toast.success(`${product.name_tr} sepete eklendi (${quantity} adet)`);
   };
 
   return (

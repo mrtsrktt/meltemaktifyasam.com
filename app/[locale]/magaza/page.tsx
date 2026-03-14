@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ShoppingBag, Plus, Check, X, Search, ChevronLeft, ChevronRight, Tag, Sparkles, ArrowRight } from "lucide-react";
 import { useCartStore } from "@/lib/store/cart";
+import { toast } from "sonner";
 import type { Category } from "@/lib/supabase/types";
 import { useRef, useCallback } from "react";
 
@@ -475,6 +476,7 @@ function ProductCardShop({
     });
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);
+    toast.success(`${product.name_tr} sepete eklendi`);
   };
 
   const productCatNames = product.product_categories

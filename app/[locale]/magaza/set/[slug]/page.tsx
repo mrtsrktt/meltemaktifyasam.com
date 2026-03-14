@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useCartStore } from "@/lib/store/cart";
+import { toast } from "sonner";
 
 interface SetProduct {
   id: string;
@@ -129,6 +130,7 @@ export default function SetDetailPage({
     });
     setAddedAll(true);
     setTimeout(() => setAddedAll(false), 2500);
+    toast.success(`${set.name_tr} seti sepete eklendi (${items.length} urun)`);
   };
 
   return (
