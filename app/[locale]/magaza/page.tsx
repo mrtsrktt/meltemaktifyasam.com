@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Link } from "@/i18n/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ShoppingBag, Plus, Check, Filter, X, Search } from "lucide-react";
+import { ShoppingBag, Plus, Check, X, Search } from "lucide-react";
 import { useCartStore } from "@/lib/store/cart";
 import type { Category } from "@/lib/supabase/types";
 
@@ -26,13 +26,11 @@ export default function ShopPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const supabase = createClient();
 
-    // Fetch categories
     supabase
       .from("categories")
       .select("*")
@@ -42,7 +40,6 @@ export default function ShopPage() {
         if (data) setCategories(data);
       });
 
-    // Fetch products with their category relations
     supabase
       .from("products")
       .select("id, slug, name_tr, price, image_url, product_categories(category_id)")
@@ -69,39 +66,55 @@ export default function ShopPage() {
       p.product_categories?.some((pc) => pc.category_id === catId)
     ).length;
 
-  const handleSelectCategory = (catId: string | null) => {
-    setSelectedCategory(catId);
-    setMobileFilterOpen(false);
-  };
-
   return (
-    <section className="py-12">
+    <section className="py-8 sm:py-12">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-end justify-between"
         >
-          <div>
-            <h1 className="text-3xl font-bold text-brand-dark sm:text-4xl">
-              {t("title")}
-            </h1>
-            <p className="mt-4 text-lg text-muted-foreground">
-              {t("subtitle")}
-            </p>
-          </div>
-          {/* Mobile filter toggle */}
-          <button
-            onClick={() => setMobileFilterOpen(true)}
-            className="lg:hidden flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-300 text-sm text-gray-600 hover:bg-gray-50"
-          >
-            <Filter size={16} />
-            Filtrele
-          </button>
+          <h1 className="text-3xl font-bold text-brand-dark sm:text-4xl">
+            Herbalife Urunleri
+          </h1>
+          <p className="mt-2 text-base text-muted-foreground">
+            {t("subtitle")}
+          </p>
         </motion.div>
 
-        <div className="mt-8 flex gap-8">
+        {/* Mobile category tabs - always visible */}
+        <div className="mt-6 lg:hidden">
+          <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
+            <button
+              onClick={() => setSelectedCategory(null)}
+              className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                selectedCategory === null
+                  ? "bg-brand-green text-white"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+            >
+              Tumunu Gor ({products.length})
+            </button>
+            {categories.map((cat) => {
+              const count = getCategoryCount(cat.id);
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => setSelectedCategory(cat.id)}
+                  className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                    selectedCategory === cat.id
+                      ? "bg-brand-green text-white"
+                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  }`}
+                >
+                  {cat.name_tr} ({count})
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="mt-6 flex gap-8">
           {/* Sidebar - Desktop */}
           <aside className="hidden lg:block w-64 flex-shrink-0">
             <div className="sticky top-24">
@@ -110,7 +123,7 @@ export default function ShopPage() {
               </h3>
               <nav className="space-y-1">
                 <button
-                  onClick={() => handleSelectCategory(null)}
+                  onClick={() => setSelectedCategory(null)}
                   className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm transition-colors ${
                     selectedCategory === null
                       ? "bg-brand-green text-white font-medium"
@@ -127,7 +140,7 @@ export default function ShopPage() {
                   return (
                     <button
                       key={cat.id}
-                      onClick={() => handleSelectCategory(cat.id)}
+                      onClick={() => setSelectedCategory(cat.id)}
                       className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm transition-colors ${
                         selectedCategory === cat.id
                           ? "bg-brand-green text-white font-medium"
@@ -144,58 +157,6 @@ export default function ShopPage() {
               </nav>
             </div>
           </aside>
-
-          {/* Mobile filter overlay */}
-          {mobileFilterOpen && (
-            <div className="fixed inset-0 z-50 lg:hidden">
-              <div className="absolute inset-0 bg-black/50" onClick={() => setMobileFilterOpen(false)} />
-              <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl p-6 max-h-[70vh] overflow-y-auto">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900">Kategoriler</h3>
-                  <button
-                    onClick={() => setMobileFilterOpen(false)}
-                    className="p-2 text-gray-400 hover:text-gray-600"
-                  >
-                    <X size={20} />
-                  </button>
-                </div>
-                <nav className="space-y-1">
-                  <button
-                    onClick={() => handleSelectCategory(null)}
-                    className={`w-full flex items-center justify-between px-4 py-3 rounded-lg text-sm transition-colors ${
-                      selectedCategory === null
-                        ? "bg-brand-green text-white font-medium"
-                        : "text-gray-600 hover:bg-gray-100"
-                    }`}
-                  >
-                    <span>Tum Urunler</span>
-                    <span className={`text-xs ${selectedCategory === null ? "text-white/80" : "text-gray-400"}`}>
-                      {products.length}
-                    </span>
-                  </button>
-                  {categories.map((cat) => {
-                    const count = getCategoryCount(cat.id);
-                    return (
-                      <button
-                        key={cat.id}
-                        onClick={() => handleSelectCategory(cat.id)}
-                        className={`w-full flex items-center justify-between px-4 py-3 rounded-lg text-sm transition-colors ${
-                          selectedCategory === cat.id
-                            ? "bg-brand-green text-white font-medium"
-                            : "text-gray-600 hover:bg-gray-100"
-                        }`}
-                      >
-                        <span>{cat.name_tr}</span>
-                        <span className={`text-xs ${selectedCategory === cat.id ? "text-white/80" : "text-gray-400"}`}>
-                          {count}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </nav>
-              </div>
-            </div>
-          )}
 
           {/* Product Grid */}
           <div className="flex-1 min-w-0">
@@ -219,9 +180,9 @@ export default function ShopPage() {
               )}
             </div>
 
-            {/* Active filter badge */}
+            {/* Active filter badge - desktop only */}
             {selectedCategory && (
-              <div className="flex items-center gap-2 mb-6">
+              <div className="hidden lg:flex items-center gap-2 mb-6">
                 <span className="text-sm text-gray-500">Filtre:</span>
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-green/10 text-brand-green text-sm font-medium">
                   {categories.find((c) => c.id === selectedCategory)?.name_tr}
@@ -248,7 +209,7 @@ export default function ShopPage() {
                 <p className="text-lg">Bu kategoride henuz urun bulunmuyor.</p>
               </div>
             ) : (
-              <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+              <div className="grid gap-4 grid-cols-2 lg:grid-cols-3">
                 {filtered.map((product, i) => (
                   <motion.div
                     key={product.id}
@@ -299,7 +260,7 @@ function ProductCardShop({
   return (
     <Card className="group h-full overflow-hidden border-0 shadow-md transition-all hover:shadow-xl hover:-translate-y-1">
       <Link href={{ pathname: "/magaza/[slug]", params: { slug: product.slug } }}>
-        <div className="aspect-square bg-gradient-to-br from-brand-green/10 to-brand-orange/10 p-6 overflow-hidden">
+        <div className="aspect-square bg-gradient-to-br from-brand-green/10 to-brand-orange/10 p-4 sm:p-6 overflow-hidden">
           {product.image_url ? (
             <img
               src={product.image_url}
@@ -308,18 +269,18 @@ function ProductCardShop({
             />
           ) : (
             <div className="flex h-full items-center justify-center">
-              <ShoppingBag className="h-16 w-16 text-brand-green/30 transition-transform group-hover:scale-110" />
+              <ShoppingBag className="h-12 w-12 sm:h-16 sm:w-16 text-brand-green/30 transition-transform group-hover:scale-110" />
             </div>
           )}
         </div>
       </Link>
-      <CardContent className="p-4">
+      <CardContent className="p-3 sm:p-4">
         {productCatNames && productCatNames.length > 0 && (
-          <div className="flex flex-wrap gap-1 mb-2">
+          <div className="flex flex-wrap gap-1 mb-1.5">
             {productCatNames.map((name, i) => (
               <span
                 key={i}
-                className="inline-block px-2 py-0.5 rounded-full bg-brand-green/10 text-brand-green text-xs font-medium"
+                className="inline-block px-1.5 py-0.5 rounded-full bg-brand-green/10 text-brand-green text-[10px] sm:text-xs font-medium"
               >
                 {name}
               </span>
@@ -327,23 +288,23 @@ function ProductCardShop({
           </div>
         )}
         <Link href={{ pathname: "/magaza/[slug]", params: { slug: product.slug } }}>
-          <h3 className="font-semibold text-brand-dark group-hover:text-brand-green transition-colors line-clamp-2">
+          <h3 className="font-semibold text-brand-dark group-hover:text-brand-green transition-colors line-clamp-2 text-sm sm:text-base">
             {product.name_tr}
           </h3>
         </Link>
-        <div className="mt-3 flex items-center justify-between">
-          <p className="text-lg font-bold text-brand-green">
+        <div className="mt-2 sm:mt-3 flex items-center justify-between">
+          <p className="text-base sm:text-lg font-bold text-brand-green">
             {Number(product.price).toLocaleString("tr-TR")} TL
           </p>
           <Button
             size="sm"
             onClick={handleAddToCart}
-            className="bg-brand-green hover:bg-brand-green-dark text-white"
+            className="bg-brand-green hover:bg-brand-green-dark text-white text-xs sm:text-sm px-2 sm:px-3"
           >
             {added ? (
               <><Check className="mr-1 h-3 w-3" /> Eklendi</>
             ) : (
-              <><Plus className="mr-1 h-3 w-3" /> {t("addToCart")}</>
+              <><Plus className="mr-1 h-3 w-3" /> <span className="hidden sm:inline">{t("addToCart")}</span><span className="sm:hidden">Ekle</span></>
             )}
           </Button>
         </div>
