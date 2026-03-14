@@ -305,11 +305,12 @@ function SetsSlider({
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative rounded-2xl bg-gradient-to-r from-orange-50 via-red-50 to-amber-50 border border-orange-200/50 p-4 sm:p-5"
+        className="relative rounded-2xl bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460] border border-amber-500/20 p-4 sm:p-5 overflow-hidden"
       >
         {/* Animated corner decoration */}
-        <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-orange-200/30 to-transparent rounded-bl-full" />
-        <div className="absolute bottom-0 left-0 w-16 h-16 bg-gradient-to-tr from-red-200/20 to-transparent rounded-tr-full" />
+        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-amber-500/15 to-transparent rounded-bl-full" />
+        <div className="absolute bottom-0 left-0 w-20 h-20 bg-gradient-to-tr from-amber-400/10 to-transparent rounded-tr-full" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-radial from-amber-500/5 to-transparent rounded-full pointer-events-none" />
 
         <div className="relative flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
@@ -317,24 +318,24 @@ function SetsSlider({
               animate={{ rotate: [0, 15, -15, 0] }}
               transition={{ repeat: Infinity, duration: 2, repeatDelay: 3 }}
             >
-              <Sparkles size={22} className="text-orange-500" />
+              <Sparkles size={22} className="text-amber-400" />
             </motion.div>
             <Link href="/magaza/setler" className="hover:opacity-80 transition-opacity">
-              <h2 className="text-lg sm:text-xl font-bold text-gray-900">Ozel Setler</h2>
-              <p className="text-xs text-orange-600 font-medium flex items-center gap-1">Tum setleri gor <ArrowRight size={12} /></p>
+              <h2 className="text-lg sm:text-xl font-bold text-white">Ozel Setler</h2>
+              <p className="text-xs text-amber-400 font-medium flex items-center gap-1">Tum setleri gor <ArrowRight size={12} /></p>
             </Link>
           </div>
           {sets.length > itemsPerView && (
             <div className="flex gap-2">
               <button
                 onClick={goPrev}
-                className="w-8 h-8 rounded-full bg-white shadow-sm border border-orange-200 flex items-center justify-center text-orange-500 hover:bg-orange-50 transition-colors"
+                className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm border border-amber-500/30 flex items-center justify-center text-amber-400 hover:bg-white/20 transition-colors"
               >
                 <ChevronLeft size={16} />
               </button>
               <button
                 onClick={goNext}
-                className="w-8 h-8 rounded-full bg-white shadow-sm border border-orange-200 flex items-center justify-center text-orange-500 hover:bg-orange-50 transition-colors"
+                className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm border border-amber-500/30 flex items-center justify-center text-amber-400 hover:bg-white/20 transition-colors"
               >
                 <ChevronRight size={16} />
               </button>
@@ -371,7 +372,7 @@ function SetsSlider({
                 style={{ width: `${slideWidth}%` }}
               >
                 <Link href={{ pathname: "/magaza/set/[slug]", params: { slug: set.slug } }}>
-                  <div className="group relative rounded-xl overflow-hidden bg-white border border-orange-200/60 hover:shadow-xl hover:border-orange-300 transition-all hover:-translate-y-1">
+                  <div className="group relative rounded-xl overflow-hidden bg-white/95 backdrop-blur-sm border border-amber-200/40 hover:shadow-xl hover:shadow-amber-500/10 hover:border-amber-400/60 transition-all hover:-translate-y-1">
                     {hasDiscount && (
                       <motion.div
                         animate={{
@@ -443,7 +444,7 @@ function SetsSlider({
                 key={i}
                 onClick={() => setSetIndex(i)}
                 className={`h-1.5 rounded-full transition-all duration-300 ${
-                  i === setIndex ? "w-5 bg-orange-500" : "w-1.5 bg-orange-300/40"
+                  i === setIndex ? "w-5 bg-amber-400" : "w-1.5 bg-white/30"
                 }`}
               />
             ))}
