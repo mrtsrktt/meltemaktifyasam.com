@@ -121,6 +121,28 @@ export interface NewsletterSubscriber {
   created_at: string;
 }
 
+export interface ProductSet {
+  id: string;
+  name_tr: string;
+  slug: string;
+  description_tr: string | null;
+  image_url: string | null;
+  discount_percentage: number;
+  discount_amount: number;
+  is_active: boolean;
+  is_featured: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ProductSetItem {
+  id: string;
+  set_id: string;
+  product_id: string;
+  quantity: number;
+  sort_order: number;
+}
+
 export interface ContactMessage {
   id: string;
   name: string;

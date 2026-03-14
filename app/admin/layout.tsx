@@ -18,12 +18,14 @@ import {
   Menu,
   X,
   ChevronRight,
+  Layers,
 } from "lucide-react";
 
 const navItems = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/kategoriler", label: "Kategoriler", icon: FolderTree },
   { href: "/admin/urunler", label: "Urunler", icon: Package },
+  { href: "/admin/urun-setleri", label: "Urun Setleri", icon: Layers },
   { href: "/admin/blog", label: "Blog", icon: FileText },
   { href: "/admin/siparisler", label: "Siparisler", icon: ShoppingCart },
   { href: "/admin/vki-leadler", label: "VKI Leadler", icon: Activity },
