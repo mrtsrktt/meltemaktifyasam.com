@@ -121,9 +121,9 @@ export default function VkiLeadlerPage() {
             <Activity className="w-6 h-6 text-emerald-600" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">VKI Leadler</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Basvurular</h1>
             <p className="text-sm text-gray-500">
-              VKI hesaplama formu uzerinden gelen potansiyel musteriler
+              Danismanlik basvuru formu uzerinden gelen potansiyel musteriler
             </p>
           </div>
         </div>

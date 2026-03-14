@@ -11,8 +11,6 @@ import {
   FileText,
   ShoppingCart,
   Users,
-  MessageSquare,
-  Mail,
   Activity,
   LogOut,
   Menu,
@@ -28,9 +26,7 @@ const navItems = [
   { href: "/admin/urun-setleri", label: "Urun Setleri", icon: Layers },
   { href: "/admin/blog", label: "Blog", icon: FileText },
   { href: "/admin/siparisler", label: "Siparisler", icon: ShoppingCart },
-  { href: "/admin/vki-leadler", label: "VKI Leadler", icon: Activity },
-  { href: "/admin/mesajlar", label: "Mesajlar", icon: MessageSquare },
-  { href: "/admin/bulten", label: "Bulten", icon: Mail },
+  { href: "/admin/vki-leadler", label: "Basvurular", icon: Activity },
   { href: "/admin/kullanicilar", label: "Kullanicilar", icon: Users },
 ];
 
