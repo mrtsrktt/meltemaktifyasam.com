@@ -604,8 +604,7 @@ export default function ContactPage() {
               </a>
               <Button
                 size="lg"
-                variant="outline"
-                className="border-white text-white hover:bg-white/10 font-semibold px-8"
+                className="bg-white/20 text-white hover:bg-white/30 font-semibold px-8 border-2 border-white/50"
                 onClick={() => {
                   window.scrollTo({ top: 0, behavior: "smooth" });
                 }}
