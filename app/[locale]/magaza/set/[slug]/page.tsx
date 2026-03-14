@@ -144,51 +144,85 @@ export default function SetDetailPage({
 
         {/* Set Header */}
         <div className="grid gap-8 lg:grid-cols-2 mb-12">
-          {/* Image */}
+          {/* Image Showcase */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
-            className="relative aspect-square rounded-3xl bg-gradient-to-br from-orange-100 via-amber-50 to-red-50 flex items-center justify-center overflow-hidden"
+            className="relative"
           >
             {hasDiscount && (
-              <div className="absolute top-4 right-4 z-10">
-                <div className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-gradient-to-r from-red-500 to-orange-500 text-white text-sm font-bold shadow-lg">
+              <motion.div
+                initial={{ scale: 0, rotate: -12 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ type: "spring", stiffness: 200, delay: 0.3 }}
+                className="absolute -top-3 -right-3 z-20"
+              >
+                <div className="flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-gradient-to-r from-red-500 to-orange-500 text-white font-bold shadow-xl shadow-red-500/25">
                   <Tag size={16} />
                   {Number(set.discount_percentage) > 0
                     ? `%${set.discount_percentage} Indirim`
                     : `-${Number(set.discount_amount).toLocaleString("tr-TR")} TL`}
                 </div>
-              </div>
+              </motion.div>
             )}
 
             {set.image_url ? (
-              <img
-                src={set.image_url}
-                alt={set.name_tr}
-                className="w-full h-full object-contain p-8"
-              />
+              <div className="aspect-square rounded-3xl bg-gradient-to-br from-orange-50 via-white to-red-50 border border-orange-100 flex items-center justify-center overflow-hidden">
+                <img src={set.image_url} alt={set.name_tr} className="w-full h-full object-contain p-8" />
+              </div>
             ) : items.length > 0 ? (
-              <div className="flex flex-wrap items-center justify-center gap-3 p-8">
-                {items.slice(0, 6).map((item, i) => (
-                  <div
-                    key={i}
-                    className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl bg-white/80 p-2 shadow-sm"
-                    style={{ transform: `rotate(${(i % 3 - 1) * 5}deg)` }}
-                  >
-                    {item.products?.image_url ? (
-                      <img
-                        src={item.products.image_url}
-                        alt=""
-                        className="w-full h-full object-contain"
-                      />
+              <div className="rounded-3xl bg-gradient-to-br from-orange-50 via-white to-amber-50 border border-orange-100 p-6 sm:p-8 overflow-hidden">
+                {/* Main featured product */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.2 }}
+                  className="flex items-center justify-center mb-4"
+                >
+                  <div className="w-48 h-48 sm:w-56 sm:h-56 rounded-2xl bg-white shadow-lg p-4">
+                    {items[0]?.products?.image_url ? (
+                      <img src={items[0].products.image_url} alt={items[0].products?.name_tr || ""} className="w-full h-full object-contain" />
                     ) : (
-                      <ShoppingBag className="w-full h-full text-orange-200 p-4" />
+                      <ShoppingBag className="w-full h-full text-orange-200 p-8" />
                     )}
                   </div>
-                ))}
+                </motion.div>
+
+                {/* Other products in a row */}
+                <div className="flex items-center justify-center gap-3 flex-wrap">
+                  {items.slice(1, 7).map((item, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 + i * 0.08 }}
+                      className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-white shadow-md p-2 hover:shadow-lg hover:-translate-y-1 transition-all"
+                    >
+                      {item.products?.image_url ? (
+                        <img src={item.products.image_url} alt="" className="w-full h-full object-contain" />
+                      ) : (
+                        <ShoppingBag className="w-full h-full text-orange-200 p-3" />
+                      )}
+                    </motion.div>
+                  ))}
+                  {items.length > 7 && (
+                    <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-orange-100 flex items-center justify-center text-orange-600 font-bold text-sm">
+                      +{items.length - 7}
+                    </div>
+                  )}
+                </div>
+
+                {/* Product count badge */}
+                <div className="mt-4 flex justify-center">
+                  <span className="text-xs font-medium text-orange-500 bg-orange-50 px-3 py-1 rounded-full border border-orange-200">
+                    {items.length} urun bu sette
+                  </span>
+                </div>
               </div>
             ) : (
-              <Sparkles size={64} className="text-orange-300" />
+              <div className="aspect-square rounded-3xl bg-gradient-to-br from-orange-50 to-red-50 flex items-center justify-center">
+                <Sparkles size={64} className="text-orange-300" />
+              </div>
             )}
           </motion.div>
 

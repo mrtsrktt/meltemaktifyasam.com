@@ -291,36 +291,61 @@ function SetsSlider({
   const slideWidth = 100 / itemsPerView;
   const translateX = -(setIndex * slideWidth);
 
+  // Auto-slide
+  useEffect(() => {
+    if (sets.length <= itemsPerView) return;
+    const interval = setInterval(goNext, 5000);
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sets.length, itemsPerView, setIndex]);
+
   return (
     <div className="mt-8 mb-4">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-          <Sparkles size={20} className="text-orange-500" />
-          Ozel Setler
-        </h2>
-        {sets.length > itemsPerView && (
-          <div className="flex gap-2">
-            <button
-              onClick={goPrev}
-              className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-colors"
-            >
-              <ChevronLeft size={16} />
-            </button>
-            <button
-              onClick={goNext}
-              className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-colors"
-            >
-              <ChevronRight size={16} />
-            </button>
-          </div>
-        )}
-      </div>
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative rounded-2xl bg-gradient-to-r from-orange-50 via-red-50 to-amber-50 border border-orange-200/50 p-4 sm:p-5"
+      >
+        {/* Animated corner decoration */}
+        <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-orange-200/30 to-transparent rounded-bl-full" />
+        <div className="absolute bottom-0 left-0 w-16 h-16 bg-gradient-to-tr from-red-200/20 to-transparent rounded-tr-full" />
 
-      <div className="overflow-hidden">
-        <div
-          className="flex transition-transform duration-500 ease-out"
-          style={{ transform: `translateX(${translateX}%)` }}
-        >
+        <div className="relative flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <motion.div
+              animate={{ rotate: [0, 15, -15, 0] }}
+              transition={{ repeat: Infinity, duration: 2, repeatDelay: 3 }}
+            >
+              <Sparkles size={22} className="text-orange-500" />
+            </motion.div>
+            <div>
+              <h2 className="text-lg sm:text-xl font-bold text-gray-900">Ozel Setler</h2>
+              <p className="text-xs text-orange-600 font-medium">Kampanyali fiyatlarla</p>
+            </div>
+          </div>
+          {sets.length > itemsPerView && (
+            <div className="flex gap-2">
+              <button
+                onClick={goPrev}
+                className="w-8 h-8 rounded-full bg-white shadow-sm border border-orange-200 flex items-center justify-center text-orange-500 hover:bg-orange-50 transition-colors"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <button
+                onClick={goNext}
+                className="w-8 h-8 rounded-full bg-white shadow-sm border border-orange-200 flex items-center justify-center text-orange-500 hover:bg-orange-50 transition-colors"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div className="overflow-hidden">
+          <div
+            className="flex transition-transform duration-500 ease-out"
+            style={{ transform: `translateX(${translateX}%)` }}
+          >
           {sets.map((set) => {
             const totalPrice = (set.product_set_items || []).reduce((sum, item) => {
               return sum + (Number(item.products?.price || 0) * (item.quantity || 1));
@@ -345,24 +370,28 @@ function SetsSlider({
                 style={{ width: `${slideWidth}%` }}
               >
                 <Link href={{ pathname: "/magaza/set/[slug]", params: { slug: set.slug } }}>
-                  <div className="group relative rounded-2xl overflow-hidden bg-gradient-to-br from-orange-50 to-red-50 border border-orange-100 hover:shadow-lg transition-all hover:-translate-y-1">
+                  <div className="group relative rounded-xl overflow-hidden bg-white border border-orange-200/60 hover:shadow-xl hover:border-orange-300 transition-all hover:-translate-y-1">
                     {hasDiscount && (
-                      <div className="absolute top-2 right-2 z-10">
-                        <span className="flex items-center gap-1 px-2 py-1 rounded-full bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs font-bold">
+                      <motion.div
+                        animate={{ scale: [1, 1.05, 1] }}
+                        transition={{ repeat: Infinity, duration: 2 }}
+                        className="absolute top-2 right-2 z-10"
+                      >
+                        <span className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs font-bold shadow-md shadow-red-500/20">
                           <Tag size={10} />
                           {Number(set.discount_percentage) > 0
                             ? `%${set.discount_percentage}`
                             : `-${Number(set.discount_amount).toLocaleString("tr-TR")} TL`}
                         </span>
-                      </div>
+                      </motion.div>
                     )}
 
-                    <div className="h-36 sm:h-40 flex items-center justify-center p-3 gap-1">
+                    <div className="h-36 sm:h-40 flex items-center justify-center p-3 gap-2 bg-gradient-to-br from-orange-50/50 to-amber-50/50">
                       {set.image_url ? (
-                        <img src={set.image_url} alt={set.name_tr} className="h-full object-contain" />
+                        <img src={set.image_url} alt={set.name_tr} className="h-full object-contain transition-transform duration-300 group-hover:scale-105" />
                       ) : productImages.length > 0 ? (
                         productImages.map((img, j) => (
-                          <div key={j} className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg bg-white/80 p-1 shadow-sm">
+                          <div key={j} className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg bg-white p-1.5 shadow-sm group-hover:shadow-md transition-shadow">
                             <img src={img!} alt="" className="w-full h-full object-contain" />
                           </div>
                         ))
@@ -371,28 +400,47 @@ function SetsSlider({
                       )}
                     </div>
 
-                    <div className="p-3 bg-white/60">
+                    <div className="p-3">
                       <h3 className="font-semibold text-gray-900 text-sm group-hover:text-orange-600 transition-colors line-clamp-1">
                         {set.name_tr}
                       </h3>
-                      <div className="mt-1 flex items-center gap-2">
+                      <div className="mt-1.5 flex items-center gap-2">
                         {hasDiscount && (
                           <span className="text-xs text-gray-400 line-through">
                             {totalPrice.toLocaleString("tr-TR")} TL
                           </span>
                         )}
-                        <span className="text-base font-bold text-orange-600">
+                        <span className="text-base font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
                           {discountedPrice.toLocaleString("tr-TR")} TL
                         </span>
                       </div>
                     </div>
+
+                    {/* Shimmer on hover */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 pointer-events-none" />
                   </div>
                 </Link>
               </div>
             );
           })}
         </div>
-      </div>
+        </div>
+
+        {/* Dots */}
+        {sets.length > itemsPerView && (
+          <div className="flex justify-center gap-1.5 mt-3">
+            {Array.from({ length: maxIndex + 1 }).map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setSetIndex(i)}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  i === setIndex ? "w-5 bg-orange-500" : "w-1.5 bg-orange-300/40"
+                }`}
+              />
+            ))}
+          </div>
+        )}
+      </motion.div>
     </div>
   );
 }
