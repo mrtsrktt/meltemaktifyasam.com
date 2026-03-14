@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     if (error) {
       console.error("VKI lead error:", error);
       return NextResponse.json(
-        { error: "Kayit sirasinda bir hata olustu" },
+        { error: "Kayıt sırasında bir hata oluştu" },
         { status: 500 }
       );
     }

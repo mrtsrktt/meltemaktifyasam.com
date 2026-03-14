@@ -16,12 +16,14 @@ import {
   Users,
 } from "lucide-react";
 
-type GoalFilter = "all" | "kilo_ver" | "kilo_al" | "form_koru";
+type GoalFilter = "all" | "kilo_ver" | "kilo_al" | "form_koru" | "saglikli_beslenme" | "kronik_destek";
 
 const goalLabels: Record<string, string> = {
   kilo_ver: "Kilo Ver",
   kilo_al: "Kilo Al",
   form_koru: "Form Koru",
+  saglikli_beslenme: "Sağlıklı Beslenme",
+  kronik_destek: "Kronik Destek",
 };
 
 const bmiCategoryColors: Record<string, string> = {

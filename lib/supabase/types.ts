@@ -108,7 +108,8 @@ export interface VkiLead {
   weight_kg: number;
   bmi: number;
   bmi_category: string;
-  goal: "kilo_ver" | "kilo_al" | "form_koru";
+  goal: "kilo_ver" | "kilo_al" | "form_koru" | "saglikli_beslenme" | "kronik_destek";
+  health_note: string | null;
   whatsapp_consent: boolean;
   is_contacted: boolean;
   created_at: string;
