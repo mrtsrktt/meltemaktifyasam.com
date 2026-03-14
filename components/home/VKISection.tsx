@@ -221,7 +221,7 @@ export function VkiSection() {
           </ul>
 
           {/* CTA butonu */}
-          <Link href="/vki-analizi">
+          <Link href="/vki-analiz">
             <motion.button
               whileHover={{ scale: 1.025 }}
               whileTap={{ scale: 0.975 }}
