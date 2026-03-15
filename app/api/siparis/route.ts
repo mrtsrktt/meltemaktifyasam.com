@@ -25,10 +25,14 @@ export async function POST(request: NextRequest) {
 
     const supabase = await createClient();
 
+    // Get authenticated user (optional - guest checkout allowed)
+    const { data: { user } } = await supabase.auth.getUser();
+
     // Create the order with shipping_address as JSONB
     const { data: order, error: orderError } = await supabase
       .from("orders")
       .insert({
+        user_id: user?.id || null,
         shipping_address: {
           fullName: customer_name,
           email: customer_email,

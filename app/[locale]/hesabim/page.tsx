@@ -67,14 +67,23 @@ export default function AccountPage() {
   const supabase = createClient();
 
   useEffect(() => {
-    checkUser();
+    const init = async () => {
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      if (currentUser) {
+        setUser(currentUser);
+        await fetchProfile(currentUser.id);
+        await fetchOrders(currentUser.id);
+      }
+      setLoading(false);
+    };
+    init();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" && session?.user) {
         setUser(session.user);
         fetchProfile(session.user.id);
         fetchOrders(session.user.id);
-      } else {
+      } else if (event === "SIGNED_OUT") {
         setUser(null);
         setProfile(null);
         setOrders([]);
@@ -84,16 +93,6 @@ export default function AccountPage() {
     return () => subscription.unsubscribe();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const checkUser = async () => {
-    const { data: { user: currentUser } } = await supabase.auth.getUser();
-    if (currentUser) {
-      setUser(currentUser);
-      await fetchProfile(currentUser.id);
-      await fetchOrders(currentUser.id);
-    }
-    setLoading(false);
-  };
 
   const fetchProfile = async (userId: string) => {
     const { data } = await supabase
@@ -195,7 +194,10 @@ export default function AccountPage() {
       })
       .eq("id", user.id);
 
-    if (!updateError) {
+    if (updateError) {
+      setError("Profil güncellenemedi. Lütfen tekrar deneyin.");
+    } else {
+      setError("");
       setProfile((prev) => prev ? { ...prev, full_name: editName, phone: editPhone } : null);
       setSuccess("Profil güncellendi.");
       setTimeout(() => setSuccess(""), 3000);
