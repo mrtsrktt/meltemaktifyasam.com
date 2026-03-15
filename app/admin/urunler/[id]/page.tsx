@@ -253,7 +253,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
             </label>
             <label className="flex items-center gap-2 text-sm">
               <input type="checkbox" checked={form.is_featured} onChange={(e) => updateForm("is_featured", e.target.checked)} className="rounded border-gray-300 text-emerald-500 focus:ring-emerald-500" />
-              One Cikan (ana sayfada goster)
+              Öne Çıkan (ana sayfada göster)
             </label>
           </div>
         </div>

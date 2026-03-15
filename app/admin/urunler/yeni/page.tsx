@@ -250,7 +250,7 @@ export default function NewProductPage() {
                 onChange={(e) => updateForm("is_featured", e.target.checked)}
                 className="rounded border-gray-300 text-emerald-500 focus:ring-emerald-500"
               />
-              One Cikan (ana sayfada goster)
+              Öne Çıkan (ana sayfada göster)
             </label>
           </div>
         </div>
