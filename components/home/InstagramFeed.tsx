@@ -111,22 +111,30 @@ export default function InstagramFeed() {
               )}
 
               {/* Hover overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-center">
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center">
                 {post.is_reel ? (
-                  <Play className="h-12 w-12 text-white fill-white drop-shadow-lg" />
+                  <Play className="h-12 w-12 text-white fill-white drop-shadow-lg opacity-0 group-hover:opacity-100 transition-opacity" />
                 ) : (
-                  <Heart className="h-8 w-8 text-white fill-white drop-shadow-lg" />
-                )}
-                {post.caption && (
-                  <p className="absolute bottom-3 left-3 right-3 text-white text-xs truncate font-medium">
-                    {post.caption}
-                  </p>
+                  <Heart className="h-8 w-8 text-white fill-white drop-shadow-lg opacity-0 group-hover:opacity-100 transition-opacity" />
                 )}
               </div>
 
               {/* Subtle border glow */}
               <div className="absolute inset-0 rounded-2xl ring-1 ring-black/5 group-hover:ring-pink-400/30 transition-all" />
             </motion.a>
+          ))}
+        </div>
+
+        {/* Captions */}
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6 sm:gap-4 mt-2">
+          {posts.map((post) => (
+            <div key={`caption-${post.id}`} className="text-center px-1">
+              {post.caption && (
+                <p className="text-xs text-gray-500 leading-snug line-clamp-2">
+                  {post.caption}
+                </p>
+              )}
+            </div>
           ))}
         </div>
 
