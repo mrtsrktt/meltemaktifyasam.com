@@ -13,12 +13,12 @@ export default function HomePage() {
     <>
       <HeroSection />
       <FeaturesSection />
+      <InstagramFeed />
       <ProductsPreview />
       <ProductSetsPreview />
       <VkiSection />
       <ConsultationSection />
       <TestimonialsSection />
-      <InstagramFeed />
       <BlogPreview />
     </>
   );
