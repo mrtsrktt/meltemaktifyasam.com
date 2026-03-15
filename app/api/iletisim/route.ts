@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     if (error) {
       console.error("Contact message error:", error);
       return NextResponse.json(
-        { error: "Mesaj gonderilirken bir hata olustu" },
+        { error: "Mesaj gönderilirken bir hata oluştu" },
         { status: 500 }
       );
     }

@@ -46,7 +46,7 @@ export default function SiparislerPage() {
     const { data, error } = await query;
 
     if (error) {
-      console.error("Siparisler yuklenirken hata:", error);
+      console.error("Siparişler yüklenirken hata:", error);
     } else {
       setOrders(data || []);
     }
@@ -79,7 +79,7 @@ export default function SiparislerPage() {
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Siparisler</h1>
             <p className="text-sm text-gray-500">
-              Tum siparisleri goruntuleyin ve yonetin
+              Tüm siparişleri görüntüleyin ve yönetin
             </p>
           </div>
         </div>
@@ -113,7 +113,7 @@ export default function SiparislerPage() {
           <div className="p-12 text-center text-gray-500">Yukleniyor...</div>
         ) : orders.length === 0 ? (
           <div className="p-12 text-center text-gray-500">
-            Siparis bulunamadi.
+            Sipariş bulunamadı.
           </div>
         ) : (
           <table className="w-full">

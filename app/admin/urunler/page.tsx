@@ -126,7 +126,7 @@ export default function ProductsPage() {
           onChange={(e) => setCategoryFilter(e.target.value)}
           className="px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-sm"
         >
-          <option value="all">Tum Kategoriler</option>
+          <option value="all">Tüm Kategoriler</option>
           {categories.map((cat) => (
             <option key={cat.id} value={cat.id}>{cat.name_tr}</option>
           ))}
@@ -162,7 +162,7 @@ export default function ProductsPage() {
                   <td colSpan={5} className="px-4 py-8 text-center text-gray-400">
                     {products.length === 0
                       ? "Henuz urun eklenmemis"
-                      : "Aramaniza uygun urun bulunamadi"}
+                      : "Aramanıza uygun ürün bulunamadı"}
                   </td>
                 </tr>
               ) : (

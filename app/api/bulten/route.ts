@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     if (error) {
       console.error("Newsletter error:", error);
       return NextResponse.json(
-        { error: "Kayit sirasinda bir hata olustu" },
+        { error: "Kayıt sırasında bir hata oluştu" },
         { status: 500 }
       );
     }

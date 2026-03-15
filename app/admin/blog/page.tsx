@@ -22,7 +22,7 @@ import {
 const CATEGORY_LABELS: Record<string, string> = {
   nutrition: "Fonksiyonel Beslenme",
   sports: "Sporcu Beslenmesi",
-  thyroid: "Tiroit & Kronik Hastalik",
+  thyroid: "Tiroit & Kronik Hastalık",
   motivation: "Motivasyon & Zihin",
   recipes: "Tarifler",
   herbalife: "Herbalife",
@@ -79,7 +79,7 @@ export default function BlogAdminPage() {
     const { data, error } = await query;
 
     if (error) {
-      console.error("Blog yazilari yuklenirken hata:", error);
+      console.error("Blog yazıları yüklenirken hata:", error);
     } else {
       setPosts(data || []);
     }
@@ -113,7 +113,7 @@ export default function BlogAdminPage() {
 
     if (error) {
       console.error("Silme hatasi:", error);
-      alert("Yazi silinirken bir hata olustu.");
+      alert("Yazı silinirken bir hata oluştu.");
     } else {
       setPosts((prev) => prev.filter((p) => p.id !== id));
       setTotalCount((prev) => prev - 1);
@@ -142,7 +142,7 @@ export default function BlogAdminPage() {
 
     if (error) {
       console.error("Durum degistirme hatasi:", error);
-      alert("Durum degistirilirken bir hata olustu.");
+      alert("Durum değiştirilirken bir hata oluştu.");
     } else {
       setPosts((prev) =>
         prev.map((p) =>
@@ -215,7 +215,7 @@ export default function BlogAdminPage() {
               }}
               className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 focus:border-emerald-500 focus:ring-emerald-500 focus:outline-none"
             >
-              <option value="">Tum Kategoriler</option>
+              <option value="">Tüm Kategoriler</option>
               {CATEGORIES.map((cat) => (
                 <option key={cat} value={cat}>
                   {CATEGORY_LABELS[cat]}
@@ -237,7 +237,7 @@ export default function BlogAdminPage() {
           <div className="text-center py-20">
             <p className="text-gray-500">
               {searchQuery || categoryFilter
-                ? "Aramaniza uygun yazi bulunamadi."
+                ? "Aramanıza uygun yazı bulunamadı."
                 : "Henuz blog yazisi bulunmuyor."}
             </p>
           </div>
@@ -247,7 +247,7 @@ export default function BlogAdminPage() {
               <thead>
                 <tr className="border-b border-gray-200 bg-gray-50">
                   <th className="text-left px-6 py-3 font-semibold text-gray-600 w-16">
-                    Gorsel
+                    Görsel
                   </th>
                   <th className="text-left px-6 py-3 font-semibold text-gray-600">
                     Baslik

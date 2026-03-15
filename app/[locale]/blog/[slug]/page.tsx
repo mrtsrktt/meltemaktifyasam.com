@@ -21,7 +21,7 @@ import type { BlogPost } from "@/lib/supabase/types";
 const CATEGORY_LABELS: Record<string, string> = {
   nutrition: "Fonksiyonel Beslenme",
   sports: "Sporcu Beslenmesi",
-  thyroid: "Tiroit & Kronik Hastalik",
+  thyroid: "Tiroit & Kronik Hastalık",
   motivation: "Motivasyon & Zihin",
   recipes: "Tarifler",
   herbalife: "Herbalife",
@@ -117,7 +117,7 @@ export default function BlogDetailPage({
     return (
       <div className="py-20 text-center">
         <BookOpen className="mx-auto h-16 w-16 text-muted-foreground/30" />
-        <p className="mt-4 text-muted-foreground">Yazi bulunamadi</p>
+        <p className="mt-4 text-muted-foreground">Yazı bulunamadı</p>
         <Link href="/blog">
           <Button className="mt-4 bg-brand-green hover:bg-brand-green-dark text-white">
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -136,7 +136,7 @@ export default function BlogDetailPage({
           className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-brand-green transition-colors mb-8"
         >
           <ArrowLeft className="h-4 w-4" />
-          Tum Yazilar
+          Tüm Yazılar
         </Link>
 
         <motion.article

@@ -68,7 +68,7 @@ export default function SiparisDetayPage({
       .single();
 
     if (error) {
-      console.error("Siparis yuklenirken hata:", error);
+      console.error("Sipariş yüklenirken hata:", error);
     } else {
       setOrder(data as OrderWithItems);
       setSelectedStatus(data.status);
@@ -127,7 +127,7 @@ export default function SiparisDetayPage({
     return (
       <div className="p-6 max-w-5xl mx-auto">
         <div className="text-center text-gray-500 py-12">
-          Siparis bulunamadi.
+          Sipariş bulunamadı.
         </div>
         <div className="text-center">
           <Link
@@ -258,7 +258,7 @@ export default function SiparisDetayPage({
             </div>
           ) : (
             <p className="text-sm text-gray-500">
-              Musteri bilgisi bulunamadi.
+              Müşteri bilgisi bulunamadı.
             </p>
           )}
         </div>
@@ -371,7 +371,7 @@ export default function SiparisDetayPage({
           </table>
         ) : (
           <div className="p-8 text-center text-gray-500">
-            Siparis kalemi bulunamadi.
+            Sipariş kalemi bulunamadı.
           </div>
         )}
       </div>

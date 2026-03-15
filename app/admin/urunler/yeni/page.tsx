@@ -257,7 +257,7 @@ export default function NewProductPage() {
 
         {/* Image */}
         <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
-          <h2 className="font-semibold text-gray-900">Urun Gorseli</h2>
+          <h2 className="font-semibold text-gray-900">Ürün Görseli</h2>
           {imagePreview ? (
             <div className="relative inline-block">
               <img
@@ -276,7 +276,7 @@ export default function NewProductPage() {
           ) : (
             <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-emerald-500 hover:bg-emerald-50/50 transition-colors">
               <Upload size={24} className="text-gray-400 mb-2" />
-              <span className="text-sm text-gray-500">Gorsel yukle</span>
+              <span className="text-sm text-gray-500">Görsel yükle</span>
               <span className="text-xs text-gray-400 mt-1">PNG, JPG (max 2MB)</span>
               <input
                 type="file"

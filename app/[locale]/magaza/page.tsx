@@ -114,7 +114,7 @@ export default function ShopPage() {
           animate={{ opacity: 1, y: 0 }}
         >
           <h1 className="text-3xl font-bold text-brand-dark sm:text-4xl">
-            Herbalife Urunleri
+            Herbalife Ürünleri
           </h1>
           <p className="mt-2 text-base text-muted-foreground">
             {t("subtitle")}
@@ -132,7 +132,7 @@ export default function ShopPage() {
                   : "bg-gray-100 text-gray-600 hover:bg-gray-200"
               }`}
             >
-              Tumunu Gor ({products.length})
+              Tümünü Gör ({products.length})
             </button>
             {categories.map((cat) => {
               const count = getCategoryCount(cat.id);
@@ -174,7 +174,7 @@ export default function ShopPage() {
                       : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                   }`}
                 >
-                  <span>Tum Urunler</span>
+                  <span>Tüm Ürünler</span>
                   <span className={`text-xs ${selectedCategory === null ? "text-white/80" : "text-gray-400"}`}>
                     {products.length}
                   </span>
@@ -209,7 +209,7 @@ export default function ShopPage() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               <input
                 type="text"
-                placeholder="Urun ara..."
+                placeholder="Ürün ara..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 bg-white text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-green/30 focus:border-brand-green transition-colors"
@@ -238,7 +238,7 @@ export default function ShopPage() {
                   </button>
                 </span>
                 <span className="text-sm text-gray-400">
-                  ({filtered.length} urun)
+                  ({filtered.length} ürün)
                 </span>
               </div>
             )}
@@ -250,7 +250,7 @@ export default function ShopPage() {
             ) : filtered.length === 0 ? (
               <div className="py-20 text-center text-muted-foreground">
                 <ShoppingBag className="h-12 w-12 mx-auto mb-3 opacity-30" />
-                <p className="text-lg">Bu kategoride henuz urun bulunmuyor.</p>
+                <p className="text-lg">Bu kategoride henüz ürün bulunmuyor.</p>
               </div>
             ) : (
               <div className="grid gap-4 grid-cols-2 lg:grid-cols-3">
@@ -321,8 +321,8 @@ function SetsSlider({
               <Sparkles size={22} className="text-amber-400" />
             </motion.div>
             <Link href="/magaza/setler" className="hover:opacity-80 transition-opacity">
-              <h2 className="text-lg sm:text-xl font-bold text-white">Ozel Setler</h2>
-              <p className="text-xs text-amber-400 font-medium flex items-center gap-1">Tum setleri gor <ArrowRight size={12} /></p>
+              <h2 className="text-lg sm:text-xl font-bold text-white">Özel Setler</h2>
+              <p className="text-xs text-amber-400 font-medium flex items-center gap-1">Tüm setleri gör <ArrowRight size={12} /></p>
             </Link>
           </div>
           {sets.length > itemsPerView && (
@@ -421,7 +421,7 @@ function SetsSlider({
                       </div>
                       {hasDiscount && (
                         <p className="text-[11px] text-green-600 font-semibold mt-0.5">
-                          {(totalPrice - discountedPrice).toLocaleString("tr-TR")} TL kazanc
+                          {(totalPrice - discountedPrice).toLocaleString("tr-TR")} TL kazanç
                         </p>
                       )}
                     </div>

@@ -120,7 +120,7 @@ export default function NewProductSetPage() {
         .from("product-images")
         .upload(fileName, imageFile);
       if (uploadError) {
-        alert("Gorsel yukleme hatasi: " + uploadError.message);
+        alert("Görsel yükleme hatası: " + uploadError.message);
         setSaving(false);
         return;
       }
@@ -211,7 +211,7 @@ export default function NewProductSetPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Set Gorseli</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Set Görseli</label>
             <input type="file" accept="image/*" onChange={handleImageChange} className="text-sm" />
             {imagePreview && (
               <img src={imagePreview} alt="Onizleme" className="mt-2 w-32 h-32 object-cover rounded-lg" />
@@ -399,7 +399,7 @@ export default function NewProductSetPage() {
             </div>
             <div className="overflow-y-auto flex-1 space-y-1">
               {filteredProducts.length === 0 ? (
-                <p className="text-gray-400 text-sm text-center py-4">Urun bulunamadi</p>
+                <p className="text-gray-400 text-sm text-center py-4">Ürün bulunamadı</p>
               ) : (
                 filteredProducts.map((product) => (
                   <button

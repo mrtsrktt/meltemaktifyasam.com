@@ -270,7 +270,7 @@ export default function CategoriesPage() {
             Kategoriler
           </h1>
           <p className="text-sm text-gray-500 mt-1">
-            Urun kategorilerini ve alt kategorilerini yonetin
+            Ürün kategorilerini ve alt kategorilerini yönetin
           </p>
         </div>
         <button

@@ -21,7 +21,7 @@ const RichTextEditor = dynamic(() => import("@/components/admin/RichTextEditor")
 const CATEGORY_LABELS: Record<string, string> = {
   nutrition: "Fonksiyonel Beslenme",
   sports: "Sporcu Beslenmesi",
-  thyroid: "Tiroit & Kronik Hastalik",
+  thyroid: "Tiroit & Kronik Hastalık",
   motivation: "Motivasyon & Zihin",
   recipes: "Tarifler",
   herbalife: "Herbalife",
@@ -62,7 +62,7 @@ export default function NewBlogPostPage() {
 
     const { error } = await supabase.storage.from("blog-images").upload(fileName, file);
     if (error) {
-      alert("Gorsel yuklenirken hata olustu: " + error.message);
+      alert("Görsel yüklenirken hata oluştu: " + error.message);
       setUploading(false);
       return;
     }
@@ -190,7 +190,7 @@ export default function NewBlogPostPage() {
 
           {/* Cover Image */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Kapak Gorseli</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Kapak Görseli</label>
             <p className="text-xs text-gray-400 mb-2">Onerilen boyut: 1200x630px</p>
             {coverImageUrl ? (
               <div className="relative w-full h-48 rounded-lg overflow-hidden border border-gray-200">
@@ -210,7 +210,7 @@ export default function NewBlogPostPage() {
                 ) : (
                   <>
                     <Upload className="h-8 w-8 text-gray-400 mb-2" />
-                    <span className="text-sm text-gray-500">Gorsel yuklemek icin tiklayin</span>
+                    <span className="text-sm text-gray-500">Görsel yüklemek için tıklayın</span>
                     <span className="text-xs text-gray-400 mt-1">PNG, JPG, WebP</span>
                   </>
                 )}

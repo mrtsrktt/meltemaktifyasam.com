@@ -88,7 +88,7 @@ export default function SetDetailPage({
     return (
       <div className="py-20 text-center">
         <ShoppingBag className="mx-auto h-16 w-16 text-muted-foreground/30" />
-        <p className="mt-4 text-muted-foreground">Set bulunamadi</p>
+        <p className="mt-4 text-muted-foreground">Set bulunamadı</p>
         <Link href="/magaza">
           <Button className="mt-4 bg-brand-green hover:bg-brand-green-dark text-white">
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -280,7 +280,7 @@ export default function SetDetailPage({
               >
                 {addedAll ? (
                   <>
-                    <Check className="mr-2 h-5 w-5" /> Tum Urunler Sepete Eklendi!
+                    <Check className="mr-2 h-5 w-5" /> Tüm Ürünler Sepete Eklendi!
                   </>
                 ) : (
                   <>

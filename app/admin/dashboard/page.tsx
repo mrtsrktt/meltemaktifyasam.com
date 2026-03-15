@@ -170,7 +170,7 @@ export default function AdminDashboard() {
           className="flex items-center gap-2 text-sm text-gray-500 hover:text-emerald-600 transition-colors"
         >
           <Eye size={16} />
-          Siteyi Gor
+          Siteyi Gör
         </Link>
       </div>
 
@@ -203,7 +203,7 @@ export default function AdminDashboard() {
               href="/admin/siparisler"
               className="text-xs text-emerald-600 hover:underline"
             >
-              Tumunu gor
+              Tümünü gör
             </Link>
           </div>
           <div className="divide-y divide-gray-50">
@@ -255,7 +255,7 @@ export default function AdminDashboard() {
               href="/admin/vki-leadler"
               className="text-xs text-emerald-600 hover:underline"
             >
-              Tumunu gor
+              Tümünü gör
             </Link>
           </div>
           <div className="divide-y divide-gray-50">
