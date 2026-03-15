@@ -48,6 +48,30 @@ export const routing = defineRouting({
       tr: "/hesabim",
       en: "/my-account",
     },
+    "/gizlilik-politikasi": {
+      tr: "/gizlilik-politikasi",
+      en: "/privacy-policy",
+    },
+    "/kullanim-kosullari": {
+      tr: "/kullanim-kosullari",
+      en: "/terms-of-service",
+    },
+    "/kvkk": {
+      tr: "/kvkk",
+      en: "/data-protection",
+    },
+    "/iade-politikasi": {
+      tr: "/iade-politikasi",
+      en: "/refund-policy",
+    },
+    "/teslimat-kosullari": {
+      tr: "/teslimat-kosullari",
+      en: "/shipping-terms",
+    },
+    "/mesafeli-satis-sozlesmesi": {
+      tr: "/mesafeli-satis-sozlesmesi",
+      en: "/distance-sales-agreement",
+    },
   },
 });
 

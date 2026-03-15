@@ -12,7 +12,7 @@ export default function Footer() {
   return (
     <footer className="border-t bg-brand-dark text-white">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-5">
           {/* Brand */}
           <div>
             <div className="flex items-center gap-2">
@@ -95,11 +95,44 @@ export default function Footer() {
                   {nav("contact")}
                 </Link>
               </li>
+            </ul>
+          </div>
+
+          {/* Legal */}
+          <div>
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-brand-green">
+              Yasal
+            </h3>
+            <ul className="mt-4 space-y-2">
               <li>
-                <span className="text-sm text-gray-400">{t("privacy")}</span>
+                <Link href="/gizlilik-politikasi" className="text-sm text-gray-400 hover:text-white transition-colors">
+                  {t("privacy")}
+                </Link>
               </li>
               <li>
-                <span className="text-sm text-gray-400">{t("terms")}</span>
+                <Link href="/kullanim-kosullari" className="text-sm text-gray-400 hover:text-white transition-colors">
+                  {t("terms")}
+                </Link>
+              </li>
+              <li>
+                <Link href="/kvkk" className="text-sm text-gray-400 hover:text-white transition-colors">
+                  KVKK
+                </Link>
+              </li>
+              <li>
+                <Link href="/iade-politikasi" className="text-sm text-gray-400 hover:text-white transition-colors">
+                  İade Politikası
+                </Link>
+              </li>
+              <li>
+                <Link href="/teslimat-kosullari" className="text-sm text-gray-400 hover:text-white transition-colors">
+                  Teslimat Koşulları
+                </Link>
+              </li>
+              <li>
+                <Link href="/mesafeli-satis-sozlesmesi" className="text-sm text-gray-400 hover:text-white transition-colors">
+                  Mesafeli Satış Sözleşmesi
+                </Link>
               </li>
             </ul>
           </div>
