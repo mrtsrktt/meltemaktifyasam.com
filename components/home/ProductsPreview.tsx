@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,13 +14,15 @@ interface FeaturedProduct {
   id: string;
   slug: string;
   name_tr: string;
+  name_en: string | null;
   price: number;
   image_url: string | null;
-  product_categories: { categories: { name_tr: string }[] | { name_tr: string } | null }[];
+  product_categories: { categories: { name_tr: string; name_en: string | null }[] | { name_tr: string; name_en: string | null } | null }[];
 }
 
 export default function ProductsPreview() {
   const t = useTranslations("products");
+  const locale = useLocale();
   const [products, setProducts] = useState<FeaturedProduct[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -37,7 +40,7 @@ export default function ProductsPreview() {
       const supabase = createClient();
       const { data } = await supabase
         .from("products")
-        .select("id, slug, name_tr, price, image_url, product_categories(categories(name_tr))")
+        .select("id, slug, name_tr, name_en, price, image_url, product_categories(categories(name_tr, name_en))")
         .eq("is_active", true)
         .eq("is_featured", true)
         .order("created_at", { ascending: false })
@@ -131,6 +134,9 @@ export default function ProductsPreview() {
   const slideWidth = 100 / itemsPerView;
   const translateX = -(currentIndex * slideWidth) + (isDragging ? (dragOffset / (trackRef.current?.offsetWidth || 1)) * 100 : 0);
 
+  const getProductName = (p: FeaturedProduct) =>
+    locale === "en" && p.name_en ? p.name_en : p.name_tr;
+
   return (
     <section className="py-20 bg-brand-light">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -169,14 +175,12 @@ export default function ProductsPreview() {
               <button
                 onClick={goPrev}
                 className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 z-10 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center text-gray-600 hover:text-brand-green hover:shadow-xl transition-all opacity-0 group-hover:opacity-100 sm:-translate-x-5"
-                aria-label="Onceki"
               >
                 <ChevronLeft size={20} />
               </button>
               <button
                 onClick={goNext}
                 className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 z-10 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center text-gray-600 hover:text-brand-green hover:shadow-xl transition-all opacity-0 group-hover:opacity-100 sm:translate-x-5"
-                aria-label="Sonraki"
               >
                 <ChevronRight size={20} />
               </button>
@@ -200,54 +204,58 @@ export default function ProductsPreview() {
               onTouchMove={(e) => handleDragMove(e.touches[0].clientX)}
               onTouchEnd={handleDragEnd}
             >
-              {products.map((product) => (
-                <div
-                  key={product.id}
-                  className="flex-shrink-0 px-3"
-                  style={{ width: `${slideWidth}%` }}
-                >
-                  <Link href={{ pathname: "/magaza/[slug]", params: { slug: product.slug } }}>
-                    <Card className="group/card h-full overflow-hidden border-0 shadow-md transition-all hover:shadow-xl hover:-translate-y-1 select-none">
-                      <div className="aspect-square bg-gradient-to-br from-brand-green/10 to-brand-orange/10 p-6 overflow-hidden">
-                        {product.image_url ? (
-                          <img
-                            src={product.image_url}
-                            alt={product.name_tr}
-                            className="w-full h-full object-contain transition-transform duration-300 group-hover/card:scale-110"
-                            draggable={false}
-                          />
-                        ) : (
-                          <div className="flex h-full items-center justify-center">
-                            <ShoppingBag className="h-16 w-16 text-brand-green/30" />
-                          </div>
-                        )}
-                      </div>
-                      <CardContent className="p-4">
-                        {product.product_categories?.length > 0 && (
-                          <div className="flex flex-wrap gap-1 mb-2">
-                            {product.product_categories.map((pc, i) => {
-                              if (!pc.categories) return null;
-                              const cat = Array.isArray(pc.categories) ? pc.categories[0] : pc.categories;
-                              if (!cat) return null;
-                              return (
-                                <span key={i} className="inline-block px-2 py-0.5 rounded-full bg-brand-green/10 text-brand-green text-xs font-medium">
-                                  {cat.name_tr}
-                                </span>
-                              );
-                            })}
-                          </div>
-                        )}
-                        <h3 className="font-semibold text-brand-dark group-hover/card:text-brand-green transition-colors line-clamp-2">
-                          {product.name_tr}
-                        </h3>
-                        <p className="mt-2 text-lg font-bold text-brand-green">
-                          {Number(product.price).toLocaleString("tr-TR")} TL
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                </div>
-              ))}
+              {products.map((product) => {
+                const productName = getProductName(product);
+                return (
+                  <div
+                    key={product.id}
+                    className="flex-shrink-0 px-3"
+                    style={{ width: `${slideWidth}%` }}
+                  >
+                    <Link href={{ pathname: "/magaza/[slug]", params: { slug: product.slug } }}>
+                      <Card className="group/card h-full overflow-hidden border-0 shadow-md transition-all hover:shadow-xl hover:-translate-y-1 select-none">
+                        <div className="aspect-square bg-gradient-to-br from-brand-green/10 to-brand-orange/10 p-6 overflow-hidden">
+                          {product.image_url ? (
+                            <img
+                              src={product.image_url}
+                              alt={productName}
+                              className="w-full h-full object-contain transition-transform duration-300 group-hover/card:scale-110"
+                              draggable={false}
+                            />
+                          ) : (
+                            <div className="flex h-full items-center justify-center">
+                              <ShoppingBag className="h-16 w-16 text-brand-green/30" />
+                            </div>
+                          )}
+                        </div>
+                        <CardContent className="p-4">
+                          {product.product_categories?.length > 0 && (
+                            <div className="flex flex-wrap gap-1 mb-2">
+                              {product.product_categories.map((pc, i) => {
+                                if (!pc.categories) return null;
+                                const cat = Array.isArray(pc.categories) ? pc.categories[0] : pc.categories;
+                                if (!cat) return null;
+                                const catName = locale === "en" && cat.name_en ? cat.name_en : cat.name_tr;
+                                return (
+                                  <span key={i} className="inline-block px-2 py-0.5 rounded-full bg-brand-green/10 text-brand-green text-xs font-medium">
+                                    {catName}
+                                  </span>
+                                );
+                              })}
+                            </div>
+                          )}
+                          <h3 className="font-semibold text-brand-dark group-hover/card:text-brand-green transition-colors line-clamp-2">
+                            {productName}
+                          </h3>
+                          <p className="mt-2 text-lg font-bold text-brand-green">
+                            {Number(product.price).toLocaleString("tr-TR")} TL
+                          </p>
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
@@ -263,7 +271,6 @@ export default function ProductsPreview() {
                       ? "w-6 bg-brand-green"
                       : "w-2 bg-brand-green/25 hover:bg-brand-green/50"
                   }`}
-                  aria-label={`Slide ${i + 1}`}
                 />
               ))}
             </div>

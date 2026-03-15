@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
 import { motion } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
 import { Link } from "@/i18n/navigation";
@@ -31,6 +32,7 @@ interface ShopProduct {
   id: string;
   slug: string;
   name_tr: string;
+  name_en: string | null;
   price: number;
   image_url: string | null;
   product_categories: { category_id: string }[];
@@ -38,6 +40,8 @@ interface ShopProduct {
 
 export default function ShopPage() {
   const t = useTranslations("products");
+  const ts = useTranslations("shop");
+  const locale = useLocale();
   const [products, setProducts] = useState<ShopProduct[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -46,6 +50,12 @@ export default function ShopPage() {
   const [sets, setSets] = useState<ShopSet[]>([]);
   const [setIndex, setSetIndex] = useState(0);
   const [setItemsPerView, setSetItemsPerView] = useState(3);
+
+  const getProductName = (p: ShopProduct) =>
+    locale === "en" && p.name_en ? p.name_en : p.name_tr;
+
+  const getCategoryName = (cat: Category) =>
+    locale === "en" && cat.name_en ? cat.name_en : cat.name_tr;
 
   useEffect(() => {
     const updatePerView = () => {
@@ -81,7 +91,7 @@ export default function ShopPage() {
 
     supabase
       .from("products")
-      .select("id, slug, name_tr, price, image_url, product_categories(category_id)")
+      .select("id, slug, name_tr, name_en, price, image_url, product_categories(category_id)")
       .eq("is_active", true)
       .order("created_at", { ascending: false })
       .then(({ data }) => {
@@ -94,8 +104,9 @@ export default function ShopPage() {
     const matchesCategory = selectedCategory
       ? p.product_categories?.some((pc) => pc.category_id === selectedCategory)
       : true;
+    const name = getProductName(p);
     const matchesSearch = searchQuery.trim()
-      ? p.name_tr.toLowerCase().includes(searchQuery.toLowerCase())
+      ? name.toLowerCase().includes(searchQuery.toLowerCase())
       : true;
     return matchesCategory && matchesSearch;
   });
@@ -114,7 +125,7 @@ export default function ShopPage() {
           animate={{ opacity: 1, y: 0 }}
         >
           <h1 className="text-3xl font-bold text-brand-dark sm:text-4xl">
-            Herbalife Ürünleri
+            {ts("title")}
           </h1>
           <p className="mt-2 text-base text-muted-foreground">
             {t("subtitle")}
@@ -132,7 +143,7 @@ export default function ShopPage() {
                   : "bg-gray-100 text-gray-600 hover:bg-gray-200"
               }`}
             >
-              Tümünü Gör ({products.length})
+              {ts("viewAll")} ({products.length})
             </button>
             {categories.map((cat) => {
               const count = getCategoryCount(cat.id);
@@ -146,7 +157,7 @@ export default function ShopPage() {
                       : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                   }`}
                 >
-                  {cat.name_tr} ({count})
+                  {getCategoryName(cat)} ({count})
                 </button>
               );
             })}
@@ -155,7 +166,7 @@ export default function ShopPage() {
 
         {/* Sets Slider */}
         {sets.length > 0 && (
-          <SetsSlider sets={sets} setIndex={setIndex} setSetIndex={setSetIndex} itemsPerView={setItemsPerView} />
+          <SetsSlider sets={sets} setIndex={setIndex} setSetIndex={setSetIndex} itemsPerView={setItemsPerView} ts={ts} />
         )}
 
         <div className="mt-6 flex gap-8">
@@ -163,7 +174,7 @@ export default function ShopPage() {
           <aside className="hidden lg:block w-64 flex-shrink-0">
             <div className="sticky top-24">
               <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">
-                Kategoriler
+                {ts("categoriesTitle")}
               </h3>
               <nav className="space-y-1">
                 <button
@@ -174,7 +185,7 @@ export default function ShopPage() {
                       : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                   }`}
                 >
-                  <span>Tüm Ürünler</span>
+                  <span>{ts("allProducts")}</span>
                   <span className={`text-xs ${selectedCategory === null ? "text-white/80" : "text-gray-400"}`}>
                     {products.length}
                   </span>
@@ -191,7 +202,7 @@ export default function ShopPage() {
                           : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                       }`}
                     >
-                      <span>{cat.name_tr}</span>
+                      <span>{getCategoryName(cat)}</span>
                       <span className={`text-xs ${selectedCategory === cat.id ? "text-white/80" : "text-gray-400"}`}>
                         {count}
                       </span>
@@ -209,7 +220,7 @@ export default function ShopPage() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               <input
                 type="text"
-                placeholder="Ürün ara..."
+                placeholder={ts("searchPlaceholder")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 bg-white text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-green/30 focus:border-brand-green transition-colors"
@@ -227,9 +238,9 @@ export default function ShopPage() {
             {/* Active filter badge - desktop only */}
             {selectedCategory && (
               <div className="hidden lg:flex items-center gap-2 mb-6">
-                <span className="text-sm text-gray-500">Filtre:</span>
+                <span className="text-sm text-gray-500">{ts("filter")}</span>
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-green/10 text-brand-green text-sm font-medium">
-                  {categories.find((c) => c.id === selectedCategory)?.name_tr}
+                  {getCategoryName(categories.find((c) => c.id === selectedCategory)!)}
                   <button
                     onClick={() => setSelectedCategory(null)}
                     className="hover:text-brand-green-dark"
@@ -238,7 +249,7 @@ export default function ShopPage() {
                   </button>
                 </span>
                 <span className="text-sm text-gray-400">
-                  ({filtered.length} ürün)
+                  ({filtered.length} {locale === "en" ? "products" : "ürün"})
                 </span>
               </div>
             )}
@@ -250,7 +261,7 @@ export default function ShopPage() {
             ) : filtered.length === 0 ? (
               <div className="py-20 text-center text-muted-foreground">
                 <ShoppingBag className="h-12 w-12 mx-auto mb-3 opacity-30" />
-                <p className="text-lg">Bu kategoride henüz ürün bulunmuyor.</p>
+                <p className="text-lg">{ts("emptyCategory")}</p>
               </div>
             ) : (
               <div className="grid gap-4 grid-cols-2 lg:grid-cols-3">
@@ -261,7 +272,7 @@ export default function ShopPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.03 }}
                   >
-                    <ProductCardShop product={product} categories={categories} />
+                    <ProductCardShop product={product} categories={categories} locale={locale} />
                   </motion.div>
                 ))}
               </div>
@@ -278,11 +289,13 @@ function SetsSlider({
   setIndex,
   setSetIndex,
   itemsPerView,
+  ts,
 }: {
   sets: ShopSet[];
   setIndex: number;
   setSetIndex: (i: number) => void;
   itemsPerView: number;
+  ts: ReturnType<typeof useTranslations>;
 }) {
   const maxIndex = Math.max(0, sets.length - itemsPerView);
 
@@ -321,8 +334,8 @@ function SetsSlider({
               <Sparkles size={22} className="text-amber-400" />
             </motion.div>
             <Link href="/magaza/setler" className="hover:opacity-80 transition-opacity">
-              <h2 className="text-lg sm:text-xl font-bold text-white">Özel Setler</h2>
-              <p className="text-xs text-amber-400 font-medium flex items-center gap-1">Tüm setleri gör <ArrowRight size={12} /></p>
+              <h2 className="text-lg sm:text-xl font-bold text-white">{ts("specialSets")}</h2>
+              <p className="text-xs text-amber-400 font-medium flex items-center gap-1">{ts("viewAllSets")} <ArrowRight size={12} /></p>
             </Link>
           </div>
           {sets.length > itemsPerView && (
@@ -421,7 +434,7 @@ function SetsSlider({
                       </div>
                       {hasDiscount && (
                         <p className="text-[11px] text-green-600 font-semibold mt-0.5">
-                          {(totalPrice - discountedPrice).toLocaleString("tr-TR")} TL kazanç
+                          {(totalPrice - discountedPrice).toLocaleString("tr-TR")} {ts("savings")}
                         </p>
                       )}
                     </div>
@@ -458,13 +471,17 @@ function SetsSlider({
 function ProductCardShop({
   product,
   categories,
+  locale,
 }: {
   product: ShopProduct;
   categories: Category[];
+  locale: string;
 }) {
   const t = useTranslations("products");
   const addItem = useCartStore((s) => s.addItem);
   const [added, setAdded] = useState(false);
+
+  const productName = locale === "en" && product.name_en ? product.name_en : product.name_tr;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -477,11 +494,15 @@ function ProductCardShop({
     });
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);
-    toast.success(`${product.name_tr} sepete eklendi`);
+    toast.success(`${productName} ${t("addedToCart")}`);
   };
 
   const productCatNames = product.product_categories
-    ?.map((pc) => categories.find((c) => c.id === pc.category_id)?.name_tr)
+    ?.map((pc) => {
+      const cat = categories.find((c) => c.id === pc.category_id);
+      if (!cat) return null;
+      return locale === "en" && cat.name_en ? cat.name_en : cat.name_tr;
+    })
     .filter(Boolean);
 
   return (
@@ -491,7 +512,7 @@ function ProductCardShop({
           {product.image_url ? (
             <img
               src={product.image_url}
-              alt={product.name_tr}
+              alt={productName}
               className="w-full h-full object-contain transition-transform group-hover:scale-110"
             />
           ) : (
@@ -516,7 +537,7 @@ function ProductCardShop({
         )}
         <Link href={{ pathname: "/magaza/[slug]", params: { slug: product.slug } }}>
           <h3 className="font-semibold text-brand-dark group-hover:text-brand-green transition-colors line-clamp-2 text-sm sm:text-base">
-            {product.name_tr}
+            {productName}
           </h3>
         </Link>
         <div className="mt-2 sm:mt-3 flex items-center justify-between">
@@ -529,9 +550,9 @@ function ProductCardShop({
             className="bg-brand-green hover:bg-brand-green-dark text-white text-xs sm:text-sm px-2 sm:px-3"
           >
             {added ? (
-              <><Check className="mr-1 h-3 w-3" /> Eklendi</>
+              <><Check className="mr-1 h-3 w-3" /> {t("added")}</>
             ) : (
-              <><Plus className="mr-1 h-3 w-3" /> <span className="hidden sm:inline">{t("addToCart")}</span><span className="sm:hidden">Ekle</span></>
+              <><Plus className="mr-1 h-3 w-3" /> <span className="hidden sm:inline">{t("addToCart")}</span><span className="sm:hidden">{t("add")}</span></>
             )}
           </Button>
         </div>

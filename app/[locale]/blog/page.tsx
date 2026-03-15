@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
@@ -25,6 +26,7 @@ const ITEMS_PER_PAGE = 9;
 
 export default function BlogPage() {
   const t = useTranslations("blog");
+  const locale = useLocale();
   const [activeCategory, setActiveCategory] = useState("all");
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,11 +52,16 @@ export default function BlogPage() {
     setCurrentPage(1);
   }, [activeCategory, searchQuery]);
 
+  const getTitle = (p: BlogPost) => locale === "en" && p.title_en ? p.title_en : p.title_tr;
+  const getExcerpt = (p: BlogPost) => locale === "en" && p.excerpt_en ? p.excerpt_en : p.excerpt_tr;
+
   const filtered = posts.filter((p) => {
     const matchCategory = activeCategory === "all" || p.category === activeCategory;
+    const title = getTitle(p);
+    const excerpt = getExcerpt(p) || "";
     const matchSearch = searchQuery.trim()
-      ? p.title_tr.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (p.excerpt_tr || "").toLowerCase().includes(searchQuery.toLowerCase())
+      ? title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        excerpt.toLowerCase().includes(searchQuery.toLowerCase())
       : true;
     return matchCategory && matchSearch;
   });
@@ -67,7 +74,7 @@ export default function BlogPage() {
 
   const formatDate = (dateStr: string | null) => {
     if (!dateStr) return "";
-    return new Date(dateStr).toLocaleDateString("tr-TR", {
+    return new Date(dateStr).toLocaleDateString(locale === "en" ? "en-US" : "tr-TR", {
       day: "numeric",
       month: "long",
       year: "numeric",
@@ -92,7 +99,7 @@ export default function BlogPage() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <input
             type="text"
-            placeholder="Yazı ara..."
+            placeholder={t("searchPlaceholder")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 bg-white text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-green/30 focus:border-brand-green transition-colors"
@@ -135,7 +142,7 @@ export default function BlogPage() {
           <div className="mt-12 flex flex-col items-center justify-center py-20">
             <BookOpen className="h-16 w-16 text-muted-foreground/30" />
             <p className="mt-4 text-muted-foreground">
-              {searchQuery ? "Aramanıza uygun yazı bulunamadı" : "Henüz yazı yayınlanmadı"}
+              {searchQuery ? t("noResults") : t("noPosts")}
             </p>
           </div>
         ) : (
@@ -152,7 +159,7 @@ export default function BlogPage() {
                     <Card className="group h-full overflow-hidden border-0 shadow-md transition-all hover:shadow-xl hover:-translate-y-1">
                       <div className="aspect-[16/9] bg-gradient-to-br from-brand-green/10 to-brand-orange/10 flex items-center justify-center overflow-hidden">
                         {post.cover_image ? (
-                          <img src={post.cover_image} alt={post.title_tr} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                          <img src={post.cover_image} alt={getTitle(post)} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
                         ) : (
                           <BookOpen className="h-12 w-12 text-brand-green/30" />
                         )}
@@ -173,11 +180,11 @@ export default function BlogPage() {
                           )}
                         </div>
                         <h3 className="text-lg font-semibold text-brand-dark group-hover:text-brand-green transition-colors line-clamp-2">
-                          {post.title_tr}
+                          {getTitle(post)}
                         </h3>
-                        {post.excerpt_tr && (
+                        {getExcerpt(post) && (
                           <p className="mt-2 text-sm text-muted-foreground line-clamp-2">
-                            {post.excerpt_tr}
+                            {getExcerpt(post)}
                           </p>
                         )}
                         <div className="mt-4 flex items-center justify-between">

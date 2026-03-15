@@ -129,7 +129,7 @@ export default function VKIForm() {
         >
           {/* Banner */}
           <div className="rounded-lg bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-800 text-center">
-            🎁 Analizi tamamlayanlara ücretsiz &apos;İdeal Kilo Rehberi&apos; PDF&apos;i hediye!
+            {t("banner")}
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
@@ -227,14 +227,14 @@ export default function VKIForm() {
               }
             >
               <SelectTrigger className="mt-1">
-                <SelectValue placeholder="Hedefiniz (seçiniz)" />
+                <SelectValue placeholder={t("goalPlaceholder")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="kilo_ver">Kilo vermek istiyorum</SelectItem>
-                <SelectItem value="form_koru">Kilomu korumak istiyorum</SelectItem>
-                <SelectItem value="kilo_al">Kilo almak / kas yapmak istiyorum</SelectItem>
-                <SelectItem value="saglikli_beslenme">Sağlıklı beslenme alışkanlığı edinmek istiyorum</SelectItem>
-                <SelectItem value="kronik_destek">Kronik hastalığım var, destek arıyorum</SelectItem>
+                <SelectItem value="kilo_ver">{t("goals.loseWeight")}</SelectItem>
+                <SelectItem value="form_koru">{t("goals.maintainWeight")}</SelectItem>
+                <SelectItem value="kilo_al">{t("goals.gainMuscle")}</SelectItem>
+                <SelectItem value="saglikli_beslenme">{t("goals.healthyEating")}</SelectItem>
+                <SelectItem value="kronik_destek">{t("goals.chronicSupport")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -250,7 +250,7 @@ export default function VKIForm() {
               className="rounded border-border"
             />
             <Label htmlFor="consent" className="text-sm font-normal">
-              WhatsApp&apos;tan ücretsiz danışmanlık almak istiyorum
+              {t("consentLabel")}
             </Label>
           </div>
 
@@ -263,11 +263,11 @@ export default function VKIForm() {
             {loading ? (
               <Loader2 className="mr-2 h-5 w-5 animate-spin" />
             ) : null}
-            Ücretsiz Analizimi Başlat →
+            {t("submitButton")}
           </Button>
 
           <p className="text-xs text-gray-400 text-center">
-            🔒 Bilgileriniz güvende · Spam yok · İstediğiniz zaman çıkabilirsiniz
+            {t("privacyNote")}
           </p>
         </motion.form>
       ) : (
@@ -324,8 +324,8 @@ export default function VKIForm() {
             </div>
             <p className="text-sm text-muted-foreground mt-2">
               {result.categoryKey === "normal"
-                ? "Harika! VKİ değeriniz normal aralıkta. Formunuzu korumak için kişiselleştirilmiş bir program oluşturalım."
-                : "VKİ değerinize göre kişiselleştirilmiş bir beslenme programı ile hedeflerinize ulaşmanızı sağlayabiliriz."}
+                ? t("resultNormal")
+                : t("resultOther")}
             </p>
           </div>
 
@@ -333,7 +333,7 @@ export default function VKIForm() {
           <Card className="border-0 shadow-md bg-green-50">
             <CardContent className="p-6">
               <p className="text-green-800 font-medium">
-                🎉 Analiziniz tamamlandı! Meltem Hanım&apos;ın ekibi en kısa sürede WhatsApp üzerinden sizi arayacak.
+                {t("successMessage")}
               </p>
             </CardContent>
           </Card>
@@ -349,7 +349,7 @@ export default function VKIForm() {
                 className="w-full bg-[#25D366] hover:bg-[#20BD5A] text-white sm:w-auto"
               >
                 <MessageCircle className="mr-2 h-5 w-5" />
-                📲 WhatsApp&apos;tan Hemen Ulaşın
+                {t("whatsappButton")}
               </Button>
             </a>
             <Button
@@ -359,7 +359,7 @@ export default function VKIForm() {
               className="border-brand-green text-brand-green"
             >
               <RotateCcw className="mr-2 h-4 w-4" />
-              Tekrar Hesapla
+              {t("recalculate")}
             </Button>
           </div>
         </motion.div>

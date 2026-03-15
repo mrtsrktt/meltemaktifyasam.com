@@ -6,47 +6,47 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Sparkles, ChevronLeft, ChevronRight, Star } from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect, useCallback } from "react";
-
-const slides = [
-  {
-    image: "/images/profilfoto-1.png",
-    badge: "Fonksiyonel Beslenme Uzmanı",
-    title1: "Başkasıyla Çalıştın Ama",
-    title2: "Sonuç Alamadın mı?",
-    subtitle:
-      "Ben Fonksiyonel Beslenme Uzmanı Meltem TANIK. Yüzlerce danışanımın hayatını dönüştürdüm, şimdi sıra sende. Farkı birlikte yaratacağız.",
-    cta: "Ücretsiz Başvuru Yap",
-    ctaLink: "#basvuru",
-    ctaSecondary: "Hakkımda",
-    ctaSecondaryLink: "/hakkimda" as const,
-    stats: [
-      { value: "500+", label: "Mutlu Danışan" },
-      { value: "%95", label: "Memnuniyet" },
-      { value: "5+", label: "Yıl Deneyim" },
-    ],
-  },
-  {
-    image: "/images/profil-2.jpg",
-    badge: "Herbalife Bağımsız Distribütörü",
-    title1: "Sağlıklı Yaşam",
-    title2: "Bir Karar Uzağında",
-    subtitle:
-      "Kişiselleştirilmiş beslenme programları, Herbalife ürünleriyle desteklenen çözümler ve 7/24 WhatsApp desteği ile hedefinize birlikte ulaşalım.",
-    cta: "Ürünleri Keşfet",
-    ctaLink: "/magaza" as const,
-    ctaSecondary: "VKI Hesapla",
-    ctaSecondaryLink: "/vki-analiz" as const,
-    stats: [
-      { value: "1000+", label: "Beslenme Programı" },
-      { value: "55+", label: "Herbalife Ürünü" },
-      { value: "7/24", label: "WhatsApp Destek" },
-    ],
-  },
-];
+import { useTranslations } from "next-intl";
 
 export default function HeroSection() {
+  const t = useTranslations("hero");
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(1);
+
+  const slides = [
+    {
+      image: "/images/profilfoto-1.png",
+      badge: t("slide1.badge"),
+      title1: t("slide1.title1"),
+      title2: t("slide1.title2"),
+      subtitle: t("slide1.subtitle"),
+      cta: t("slide1.cta"),
+      ctaLink: "#basvuru",
+      ctaSecondary: t("slide1.ctaSecondary"),
+      ctaSecondaryLink: "/hakkimda" as const,
+      stats: [
+        { value: "500+", label: t("slide1.happyClients") },
+        { value: "%95", label: t("slide1.satisfaction") },
+        { value: "5+", label: t("slide1.experience") },
+      ],
+    },
+    {
+      image: "/images/profil-2.jpg",
+      badge: t("slide2.badge"),
+      title1: t("slide2.title1"),
+      title2: t("slide2.title2"),
+      subtitle: t("slide2.subtitle"),
+      cta: t("slide2.cta"),
+      ctaLink: "/magaza" as const,
+      ctaSecondary: t("slide2.ctaSecondary"),
+      ctaSecondaryLink: "/vki-analiz" as const,
+      stats: [
+        { value: "1000+", label: t("slide2.programs") },
+        { value: "55+", label: t("slide2.products") },
+        { value: "7/24", label: t("slide2.support") },
+      ],
+    },
+  ];
 
   const goTo = useCallback(
     (index: number) => {
@@ -59,12 +59,12 @@ export default function HeroSection() {
   const goNext = useCallback(() => {
     setDirection(1);
     setCurrent((prev) => (prev + 1) % slides.length);
-  }, []);
+  }, [slides.length]);
 
   const goPrev = useCallback(() => {
     setDirection(-1);
     setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
-  }, []);
+  }, [slides.length]);
 
   // Auto-slide
   useEffect(() => {
@@ -226,7 +226,7 @@ export default function HeroSection() {
                       <Star key={i} size={12} className="text-yellow-400 fill-yellow-400" />
                     ))}
                   </div>
-                  <span className="text-xs font-semibold text-gray-700">500+ Mutlu Danışan</span>
+                  <span className="text-xs font-semibold text-gray-700">{t("floatingBadge")}</span>
                 </div>
               </motion.div>
             </motion.div>

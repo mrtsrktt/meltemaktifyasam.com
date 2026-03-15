@@ -58,7 +58,7 @@ export default function FeaturesSection() {
             viewport={{ once: true }}
             className="inline-block px-4 py-1.5 rounded-full bg-brand-green/10 text-brand-green text-sm font-semibold mb-4"
           >
-            Profesyonel Destek
+            {t("badge")}
           </motion.span>
           <h2 className="text-3xl font-bold text-brand-dark sm:text-4xl lg:text-5xl">
             {t("title")}
@@ -119,7 +119,7 @@ export default function FeaturesSection() {
                       {t(`${feature.key}.description`)}
                     </p>
                     <div className="mt-4 flex items-center text-sm font-semibold text-brand-dark group-hover:text-brand-green transition-colors">
-                      Detayli Bilgi
+                      {t("detailLink")}
                       <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </div>
                   </div>

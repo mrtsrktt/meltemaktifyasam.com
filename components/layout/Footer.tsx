@@ -101,7 +101,7 @@ export default function Footer() {
           {/* Legal */}
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wider text-brand-green">
-              Yasal
+              {t("legal")}
             </h3>
             <ul className="mt-4 space-y-2">
               <li>
@@ -116,22 +116,22 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/kvkk" className="text-sm text-gray-400 hover:text-white transition-colors">
-                  KVKK
+                  {t("kvkk")}
                 </Link>
               </li>
               <li>
                 <Link href="/iade-politikasi" className="text-sm text-gray-400 hover:text-white transition-colors">
-                  İade Politikası
+                  {t("returnPolicy")}
                 </Link>
               </li>
               <li>
                 <Link href="/teslimat-kosullari" className="text-sm text-gray-400 hover:text-white transition-colors">
-                  Teslimat Koşulları
+                  {t("deliveryTerms")}
                 </Link>
               </li>
               <li>
                 <Link href="/mesafeli-satis-sozlesmesi" className="text-sm text-gray-400 hover:text-white transition-colors">
-                  Mesafeli Satış Sözleşmesi
+                  {t("distanceSalesContract")}
                 </Link>
               </li>
             </ul>

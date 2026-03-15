@@ -1,11 +1,21 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Sparkles, CheckCircle } from "lucide-react";
 import ConsultationForm from "@/components/shared/ConsultationForm";
 
 export default function ConsultationSection() {
+  const t = useTranslations("consultationSection");
+
+  const features = [
+    t("feature1"),
+    t("feature2"),
+    t("feature3"),
+    t("feature4"),
+  ];
+
   return (
     <section id="basvuru" className="py-14 sm:py-20 bg-gradient-to-br from-brand-green to-emerald-700 text-white relative overflow-hidden scroll-mt-16">
       <div className="absolute top-0 right-0 w-72 h-72 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
@@ -20,25 +30,19 @@ export default function ConsultationSection() {
           >
             <Badge className="mb-4 bg-white/15 text-white border-0">
               <Sparkles className="mr-1.5 h-3 w-3" />
-              Ücretsiz Danışmanlık
+              {t("badge")}
             </Badge>
             <h2 className="text-3xl font-bold sm:text-4xl leading-tight">
-              Sağlıklı Yaşamınıza
+              {t("title")}
               <br />
-              <span className="text-emerald-200">Bugün Başlayın</span>
+              <span className="text-emerald-200">{t("titleHighlight")}</span>
             </h2>
             <p className="mt-4 text-white/75 leading-relaxed max-w-lg">
-              Kişisel beslenme programı, Herbalife ürün danışmanlığı ve sürekli destek
-              ile hedeflerinize ulaşın. İlk görüşme ücretsiz!
+              {t("description")}
             </p>
 
             <div className="mt-6 space-y-2.5">
-              {[
-                "Kişisel beslenme programı",
-                "Herbalife ürün danışmanlığı",
-                "WhatsApp ile 7/24 destek",
-                "Ücretsiz ilk görüşme",
-              ].map((item, i) => (
+              {features.map((item, i) => (
                 <motion.div
                   key={item}
                   initial={{ opacity: 0, x: -20 }}
@@ -63,8 +67,8 @@ export default function ConsultationSection() {
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/15 shadow-2xl">
               <ConsultationForm
                 variant="dark"
-                title="Bilgi & Başvuru Formu"
-                subtitle="Bilgilerinizi bırakın, size özel program hazırlayalım."
+                title={t("formTitle")}
+                subtitle={t("formSubtitle")}
               />
             </div>
           </motion.div>

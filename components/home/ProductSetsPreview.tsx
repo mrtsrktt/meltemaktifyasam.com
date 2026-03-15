@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { motion } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
@@ -28,6 +29,7 @@ interface FeaturedSet {
 }
 
 export default function ProductSetsPreview() {
+  const t = useTranslations("sets");
   const [sets, setSets] = useState<FeaturedSet[]>([]);
 
   useEffect(() => {
@@ -71,17 +73,17 @@ export default function ProductSetsPreview() {
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-orange-500 to-red-500 text-white text-sm font-semibold mb-4"
           >
             <Flame size={16} className="animate-pulse" />
-            KAMPANYA
+            {t("campaign")}
             <Flame size={16} className="animate-pulse" />
           </motion.div>
           <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl lg:text-5xl">
-            Size Özel{" "}
+            {t("title")}{" "}
             <span className="bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
-              Setler
+              {t("titleHighlight")}
             </span>
           </h2>
           <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-            Özel olarak hazırlanan ürün setleri ile hem tasarruf edin hem de sağlıklı yaşama ilk adımı atın
+            {t("description")}
           </p>
         </motion.div>
 
@@ -125,7 +127,7 @@ export default function ProductSetsPreview() {
                         >
                           <Tag size={14} />
                           {set.discount_percentage > 0
-                            ? `%${set.discount_percentage} Indirim`
+                            ? `%${set.discount_percentage} ${t("discount")}`
                             : `-${set.discount_amount.toLocaleString("tr-TR")} TL`}
                         </motion.div>
                       </div>
@@ -169,7 +171,7 @@ export default function ProductSetsPreview() {
                     <div className="p-5">
                       <div className="flex items-center gap-2 mb-2">
                         <span className="text-xs font-semibold text-orange-600 bg-orange-100 px-2 py-0.5 rounded-full">
-                          {(set.product_set_items || []).length} Urun
+                          {(set.product_set_items || []).length} {t("productCount")}
                         </span>
                       </div>
 
@@ -198,7 +200,7 @@ export default function ProductSetsPreview() {
                         {hasDiscount && (
                           <div className="text-right">
                             <p className="text-xs text-green-600 font-semibold">
-                              {savings.toLocaleString("tr-TR")} TL tasarruf
+                              {savings.toLocaleString("tr-TR")} TL {t("savings")}
                             </p>
                           </div>
                         )}
@@ -207,7 +209,7 @@ export default function ProductSetsPreview() {
                       {/* CTA */}
                       <div className="mt-4 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 text-white font-semibold text-sm transition-all group-hover:shadow-lg group-hover:shadow-orange-500/25">
                         <Sparkles size={16} />
-                        Seti Incele
+                        {t("viewSet")}
                         <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
                       </div>
                     </div>
@@ -227,7 +229,7 @@ export default function ProductSetsPreview() {
         >
           <Link href="/magaza/setler">
             <span className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white text-orange-600 font-semibold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all border border-orange-200">
-              Tum Setleri Gor
+              {t("viewAllSets")}
               <ArrowRight size={18} />
             </span>
           </Link>

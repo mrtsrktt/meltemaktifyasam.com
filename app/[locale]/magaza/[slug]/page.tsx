@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -27,6 +28,7 @@ export default function ProductDetailPage({
 }) {
   const { slug } = use(params);
   const t = useTranslations("products");
+  const locale = useLocale();
   const [quantity, setQuantity] = useState(1);
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
@@ -60,7 +62,7 @@ export default function ProductDetailPage({
     return (
       <div className="py-20 text-center">
         <ShoppingBag className="mx-auto h-16 w-16 text-muted-foreground/30" />
-        <p className="mt-4 text-muted-foreground">Ürün bulunamadı</p>
+        <p className="mt-4 text-muted-foreground">{t("productNotFound")}</p>
         <Link href="/magaza">
           <Button className="mt-4 bg-brand-green hover:bg-brand-green-dark text-white">
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -70,6 +72,11 @@ export default function ProductDetailPage({
       </div>
     );
   }
+
+  const productName = locale === "en" && product.name_en ? product.name_en : product.name_tr;
+  const productDescription = locale === "en" && product.description_en ? product.description_en : product.description_tr;
+  const productBenefits = locale === "en" && product.benefits_en ? product.benefits_en : product.benefits_tr;
+  const productUsage = locale === "en" && product.usage_en ? product.usage_en : product.usage_tr;
 
   const categoryLabel =
     product.category === "weight_management"
@@ -90,7 +97,7 @@ export default function ProductDetailPage({
     }
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
-    toast.success(`${product.name_tr} sepete eklendi (${quantity} adet)`);
+    toast.success(`${productName} ${t("addedToCart")} (${quantity})`);
   };
 
   return (
@@ -111,7 +118,7 @@ export default function ProductDetailPage({
             className="aspect-square rounded-3xl bg-gradient-to-br from-brand-green/10 to-brand-orange/10 flex items-center justify-center overflow-hidden"
           >
             {product.image_url ? (
-              <img src={product.image_url} alt={product.name_tr} className="w-full h-full object-contain p-8" />
+              <img src={product.image_url} alt={productName} className="w-full h-full object-contain p-8" />
             ) : (
               <ShoppingBag className="h-32 w-32 text-brand-green/20" />
             )}
@@ -126,7 +133,7 @@ export default function ProductDetailPage({
               {categoryLabel}
             </Badge>
             <h1 className="text-3xl font-bold text-brand-dark">
-              {product.name_tr}
+              {productName}
             </h1>
             <p className="mt-2 text-3xl font-bold text-brand-green">
               {Number(product.price).toLocaleString("tr-TR")} TL
@@ -134,31 +141,31 @@ export default function ProductDetailPage({
 
             <Separator className="my-6" />
 
-            {product.description_tr && (
+            {productDescription && (
               <div>
                 <h3 className="font-semibold text-brand-dark mb-3">
                   {t("description")}
                 </h3>
                 <p className="text-muted-foreground leading-relaxed">
-                  {product.description_tr}
+                  {productDescription}
                 </p>
               </div>
             )}
 
-            {product.benefits_tr && (
+            {productBenefits && (
               <div className="mt-4">
-                <h3 className="font-semibold text-brand-dark mb-2">Faydaları</h3>
+                <h3 className="font-semibold text-brand-dark mb-2">{t("benefits")}</h3>
                 <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
-                  {product.benefits_tr}
+                  {productBenefits}
                 </p>
               </div>
             )}
 
-            {product.usage_tr && (
+            {productUsage && (
               <div className="mt-4">
-                <h3 className="font-semibold text-brand-dark mb-2">Kullanım</h3>
+                <h3 className="font-semibold text-brand-dark mb-2">{t("usage")}</h3>
                 <p className="text-muted-foreground leading-relaxed">
-                  {product.usage_tr}
+                  {productUsage}
                 </p>
               </div>
             )}
@@ -181,7 +188,7 @@ export default function ProductDetailPage({
                 className="flex-1 bg-brand-green hover:bg-brand-green-dark text-white"
               >
                 {added ? (
-                  <><Check className="mr-2 h-5 w-5" /> Eklendi!</>
+                  <><Check className="mr-2 h-5 w-5" /> {t("added")}!</>
                 ) : (
                   <><ShoppingCart className="mr-2 h-5 w-5" /> {t("addToCart")}</>
                 )}

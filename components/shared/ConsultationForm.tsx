@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Send, Check, Loader2, Phone, User, Mail, Target, Ruler, Weight, Calendar } from "lucide-react";
@@ -12,18 +13,22 @@ interface ConsultationFormProps {
   subtitle?: string;
 }
 
-const goals = [
-  { value: "kilo_ver", label: "Kilo Vermek" },
-  { value: "kilo_al", label: "Kilo Almak" },
-  { value: "form_koru", label: "Formumu Korumak" },
-];
-
 export default function ConsultationForm({
   variant = "light",
-  title = "Ücretsiz Danışmanlık Başvurusu",
-  subtitle = "Formu doldurun, size en kısa sürede dönelim.",
+  title,
+  subtitle,
 }: ConsultationFormProps) {
+  const t = useTranslations("consultation");
   const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
+
+  const displayTitle = title || t("defaultTitle");
+  const displaySubtitle = subtitle || t("defaultSubtitle");
+
+  const goals = [
+    { value: "kilo_ver", label: t("goalLose") },
+    { value: "kilo_al", label: t("goalGain") },
+    { value: "form_koru", label: t("goalMaintain") },
+  ];
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -64,16 +69,16 @@ export default function ConsultationForm({
 
       if (res.ok) {
         setStatus("success");
-        toast.success("Başvurunuz alındı! En kısa sürede sizinle iletişime geçeceğiz.");
+        toast.success(t("successToast"));
         form.reset();
         setTimeout(() => setStatus("idle"), 5000);
       } else {
         setStatus("idle");
-        toast.error("Bir hata oluştu, lütfen tekrar deneyin.");
+        toast.error(t("errorToast"));
       }
     } catch {
       setStatus("idle");
-      toast.error("Bağlantı hatası.");
+      toast.error(t("connectionError"));
     }
   };
 
@@ -91,10 +96,10 @@ export default function ConsultationForm({
     <div>
       <div className="mb-5">
         <h3 className={`text-xl font-bold ${isDark ? "text-white" : "text-gray-900"} sm:text-2xl`}>
-          {title}
+          {displayTitle}
         </h3>
         <p className={`mt-1 text-sm ${isDark ? "text-white/60" : "text-gray-500"}`}>
-          {subtitle}
+          {displaySubtitle}
         </p>
       </div>
 
@@ -108,37 +113,37 @@ export default function ConsultationForm({
             <Check className="h-7 w-7 text-brand-green" />
           </div>
           <p className={`font-semibold ${isDark ? "text-white" : "text-gray-900"}`}>
-            Başvurunuz Alındı!
+            {t("successTitle")}
           </p>
           <p className={`mt-1 text-sm ${isDark ? "text-white/60" : "text-gray-500"}`}>
-            En kısa sürede sizinle iletişime geçeceğiz.
+            {t("successSubtitle")}
           </p>
         </motion.div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-3">
           {/* Name */}
           <div>
-            <label className={`block text-xs font-medium ${labelClass} mb-1`}>Ad Soyad *</label>
+            <label className={`block text-xs font-medium ${labelClass} mb-1`}>{t("nameLabel")}</label>
             <div className="relative">
               <User size={16} className={`absolute left-3 top-1/2 -translate-y-1/2 ${iconClass}`} />
-              <input name="name" required placeholder="Adınız Soyadınız" className={inputClass} />
+              <input name="name" required placeholder={t("namePlaceholder")} className={inputClass} />
             </div>
           </div>
 
           {/* Phone + Email */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className={`block text-xs font-medium ${labelClass} mb-1`}>Telefon *</label>
+              <label className={`block text-xs font-medium ${labelClass} mb-1`}>{t("phoneLabel")}</label>
               <div className="relative">
                 <Phone size={16} className={`absolute left-3 top-1/2 -translate-y-1/2 ${iconClass}`} />
-                <input name="phone" type="tel" required placeholder="0500 000 00 00" className={inputClass} />
+                <input name="phone" type="tel" required placeholder={t("phonePlaceholder")} className={inputClass} />
               </div>
             </div>
             <div>
-              <label className={`block text-xs font-medium ${labelClass} mb-1`}>E-posta</label>
+              <label className={`block text-xs font-medium ${labelClass} mb-1`}>{t("emailLabel")}</label>
               <div className="relative">
                 <Mail size={16} className={`absolute left-3 top-1/2 -translate-y-1/2 ${iconClass}`} />
-                <input name="email" type="email" placeholder="ornek@mail.com" className={inputClass} />
+                <input name="email" type="email" placeholder={t("emailPlaceholder")} className={inputClass} />
               </div>
             </div>
           </div>
@@ -146,21 +151,21 @@ export default function ConsultationForm({
           {/* Age + Height + Weight */}
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className={`block text-xs font-medium ${labelClass} mb-1`}>Yaş</label>
+              <label className={`block text-xs font-medium ${labelClass} mb-1`}>{t("ageLabel")}</label>
               <div className="relative">
                 <Calendar size={16} className={`absolute left-3 top-1/2 -translate-y-1/2 ${iconClass}`} />
                 <input name="age" type="number" min={10} max={99} placeholder="35" className={inputClass} />
               </div>
             </div>
             <div>
-              <label className={`block text-xs font-medium ${labelClass} mb-1`}>Boy (cm) *</label>
+              <label className={`block text-xs font-medium ${labelClass} mb-1`}>{t("heightLabel")}</label>
               <div className="relative">
                 <Ruler size={16} className={`absolute left-3 top-1/2 -translate-y-1/2 ${iconClass}`} />
                 <input name="height" type="number" min={100} max={250} required placeholder="170" className={inputClass} />
               </div>
             </div>
             <div>
-              <label className={`block text-xs font-medium ${labelClass} mb-1`}>Kilo (kg) *</label>
+              <label className={`block text-xs font-medium ${labelClass} mb-1`}>{t("weightLabel")}</label>
               <div className="relative">
                 <Weight size={16} className={`absolute left-3 top-1/2 -translate-y-1/2 ${iconClass}`} />
                 <input name="weight" type="number" min={30} max={300} required placeholder="75" className={inputClass} />
@@ -170,22 +175,22 @@ export default function ConsultationForm({
 
           {/* Health note */}
           <div>
-            <label className={`block text-xs font-medium ${labelClass} mb-1`}>Hastalık / Alerji</label>
+            <label className={`block text-xs font-medium ${labelClass} mb-1`}>{t("healthLabel")}</label>
             <textarea
               name="health_note"
               rows={2}
-              placeholder="Varsa hastalık, alerji veya kullandığınız ilaçları belirtin"
+              placeholder={t("healthPlaceholder")}
               className={`${inputClass} pl-4 resize-none`}
             />
           </div>
 
           {/* Goal */}
           <div>
-            <label className={`block text-xs font-medium ${labelClass} mb-1`}>Hedefiniz *</label>
+            <label className={`block text-xs font-medium ${labelClass} mb-1`}>{t("goalLabel")}</label>
             <div className="relative">
               <Target size={16} className={`absolute left-3 top-1/2 -translate-y-1/2 ${iconClass}`} />
               <select name="goal" required className={`${selectClass} pl-10`}>
-                <option value="">Hedefinizi seçin</option>
+                <option value="">{t("goalPlaceholder")}</option>
                 {goals.map((g) => (
                   <option key={g.value} value={g.value}>{g.label}</option>
                 ))}
@@ -207,11 +212,11 @@ export default function ConsultationForm({
             ) : (
               <Send className="mr-2 h-4 w-4" />
             )}
-            {status === "loading" ? "Gönderiliyor..." : "Ücretsiz Başvuru Yap"}
+            {status === "loading" ? t("submitting") : t("submitButton")}
           </Button>
 
           <p className={`text-center text-[10px] ${isDark ? "text-white/40" : "text-gray-400"}`}>
-            Bilgileriniz gizli tutulur ve üçüncü kişilerle paylaşılmaz.
+            {t("privacyNote")}
           </p>
         </form>
       )}
