@@ -94,7 +94,7 @@ export default function AboutPage() {
               <h1 className="text-4xl font-bold text-brand-dark sm:text-5xl lg:text-6xl leading-tight">
                 Meltem{" "}
                 <span className="bg-gradient-to-r from-brand-green to-emerald-600 bg-clip-text text-transparent">
-                  Tanik
+                  Tanık
                 </span>
               </h1>
               <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
@@ -142,7 +142,7 @@ export default function AboutPage() {
               <div className="relative mx-auto aspect-[3/4] max-w-sm overflow-hidden rounded-3xl shadow-2xl shadow-brand-green/10">
                 <Image
                   src="/images/profilfoto-1.png"
-                  alt="Meltem Tanik"
+                  alt="Meltem Tanık"
                   fill
                   className="object-cover object-top"
                   priority

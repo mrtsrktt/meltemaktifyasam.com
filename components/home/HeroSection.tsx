@@ -205,7 +205,7 @@ export default function HeroSection() {
               }`}>
                 <Image
                   src={slide.image}
-                  alt="Meltem Tanik"
+                  alt="Meltem Tanık"
                   fill
                   className="object-cover object-top"
                   priority
