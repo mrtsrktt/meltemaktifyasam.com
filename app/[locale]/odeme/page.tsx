@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { motion } from "framer-motion";
@@ -12,12 +12,15 @@ import { Separator } from "@/components/ui/separator";
 import {
   CreditCard,
   Lock,
-  AlertTriangle,
   Loader2,
   Check,
   ShoppingBag,
+  ShieldCheck,
+  AlertCircle,
 } from "lucide-react";
 import { useCartStore } from "@/lib/store/cart";
+
+type CheckoutStatus = "form" | "loading" | "payment" | "success" | "error";
 
 export default function CheckoutPage() {
   const t = useTranslations("checkout");
@@ -27,31 +30,62 @@ export default function CheckoutPage() {
     (sum, item) => sum + item.price * item.quantity,
     0
   );
-  const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
+  const [status, setStatus] = useState<CheckoutStatus>("form");
+  const [paytrToken, setPaytrToken] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  // Listen for PayTR iframe result
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data?.type === "PAYTR_RESULT") {
+        if (event.data.status === "success") {
+          setStatus("success");
+          clearCart();
+        } else {
+          setStatus("error");
+          setErrorMessage(t("paymentFailed"));
+        }
+      }
+    };
+
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, [clearCart, t]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (items.length === 0) return;
     setStatus("loading");
+    setErrorMessage("");
 
     const form = e.currentTarget;
-    const formData = new FormData(form);
+    const fd = new FormData(form);
+
+    const customerName = fd.get("fullName") as string;
+    const customerEmail = fd.get("email") as string;
+    const customerPhone = fd.get("phone") as string;
+    const customerAddress = fd.get("address") as string;
+    const customerCity = fd.get("city") as string;
+    const customerDistrict = fd.get("district") as string;
+    const customerZip = fd.get("zipCode") as string;
 
     try {
-      const res = await fetch("/api/siparis", {
+      // Step 1: Create order (pending)
+      const orderRes = await fetch("/api/siparis", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          customer_name: formData.get("fullName"),
-          customer_email: formData.get("email"),
-          customer_phone: formData.get("phone"),
-          shipping_address: formData.get("address"),
-          shipping_city: formData.get("city"),
-          shipping_district: formData.get("district"),
-          shipping_zip: formData.get("zipCode"),
+          customer_name: customerName,
+          customer_email: customerEmail,
+          customer_phone: customerPhone,
+          shipping_address: customerAddress,
+          shipping_city: customerCity,
+          shipping_district: customerDistrict,
+          shipping_zip: customerZip,
           items: items.map((item) => ({
             product_id: item.type === "set" ? null : item.id,
-            name_tr: item.type === "set" ? `[SET] ${item.name_tr}` : item.name_tr,
+            name_tr:
+              item.type === "set" ? `[SET] ${item.name_tr}` : item.name_tr,
             quantity: item.quantity,
             unit_price: item.price,
             original_price: item.originalPrice || null,
@@ -61,28 +95,58 @@ export default function CheckoutPage() {
         }),
       });
 
-      if (res.ok) {
-        setStatus("success");
-        clearCart();
-      } else {
-        setStatus("idle");
+      if (!orderRes.ok) throw new Error(t("orderError"));
+      const { order_id } = await orderRes.json();
+
+      // Step 2: Get PayTR iframe token
+      const user_basket = items.map((item) => [
+        item.name_tr,
+        (item.price * 100).toString(),
+        item.quantity,
+      ]);
+
+      const tokenRes = await fetch("/api/payment/token", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          order_id,
+          email: customerEmail,
+          payment_amount: total,
+          user_name: customerName,
+          user_address: `${customerAddress}, ${customerDistrict}, ${customerCity}`,
+          user_phone: customerPhone,
+          user_basket,
+        }),
+      });
+
+      if (!tokenRes.ok) {
+        const errData = await tokenRes.json();
+        throw new Error(errData.error || t("paymentStartError"));
       }
-    } catch {
-      setStatus("idle");
+
+      const { token } = await tokenRes.json();
+      setPaytrToken(token);
+      setStatus("payment");
+    } catch (err) {
+      setStatus("error");
+      setErrorMessage(
+        err instanceof Error ? err.message : t("generalError")
+      );
     }
   };
 
-  if (items.length === 0 && status !== "success") {
+  // Empty cart
+  if (items.length === 0 && status !== "success" && status !== "payment") {
     return (
       <section className="py-12">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center py-20">
           <ShoppingBag className="mx-auto h-20 w-20 text-muted-foreground/20" />
           <p className="mt-4 text-lg text-muted-foreground">
-            Sepetiniz boş
+            {t("emptyCart")}
           </p>
           <Link href="/magaza">
             <Button className="mt-6 bg-brand-green hover:bg-brand-green-dark text-white">
-              Mağazaya Git
+              {t("goToShop")}
             </Button>
           </Link>
         </div>
@@ -90,6 +154,7 @@ export default function CheckoutPage() {
     );
   }
 
+  // Payment success
   if (status === "success") {
     return (
       <section className="py-12">
@@ -103,14 +168,14 @@ export default function CheckoutPage() {
               <Check className="h-10 w-10 text-brand-green" />
             </div>
             <h2 className="text-2xl font-bold text-brand-dark">
-              Siparişiniz Alındı!
+              {t("paymentSuccess")}
             </h2>
             <p className="mt-2 text-muted-foreground">
-              En kısa sürede sizinle iletişime geçeceğiz.
+              {t("paymentSuccessDesc")}
             </p>
             <Link href="/magaza">
               <Button className="mt-6 bg-brand-green hover:bg-brand-green-dark text-white">
-                Alışverişe Devam Et
+                {t("continueShopping")}
               </Button>
             </Link>
           </motion.div>
@@ -119,6 +184,42 @@ export default function CheckoutPage() {
     );
   }
 
+  // PayTR iframe
+  if (status === "payment" && paytrToken) {
+    return (
+      <section className="py-12">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <ShieldCheck className="h-6 w-6 text-brand-green" />
+              <h1 className="text-2xl font-bold text-brand-dark">
+                {t("securePayment")}
+              </h1>
+            </div>
+            <Card className="border-0 shadow-xl overflow-hidden">
+              <CardContent className="p-0">
+                <iframe
+                  src={`https://www.paytr.com/odeme/guvenli/${paytrToken}`}
+                  className="w-full border-0"
+                  style={{ height: "600px" }}
+                  title="PayTR Güvenli Ödeme"
+                />
+              </CardContent>
+            </Card>
+            <div className="mt-4 flex items-center justify-center gap-2 text-sm text-muted-foreground">
+              <Lock className="h-4 w-4" />
+              {t("sslSecure")}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+    );
+  }
+
+  // Checkout form
   return (
     <section className="py-12">
       <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
@@ -128,6 +229,28 @@ export default function CheckoutPage() {
         >
           <h1 className="text-3xl font-bold text-brand-dark">{t("title")}</h1>
         </motion.div>
+
+        {status === "error" && errorMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-4 rounded-xl bg-red-50 border border-red-200 p-4 flex items-start gap-3"
+          >
+            <AlertCircle className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-red-700 font-medium">{errorMessage}</p>
+              <button
+                onClick={() => {
+                  setStatus("form");
+                  setErrorMessage("");
+                }}
+                className="text-sm text-red-600 underline mt-1"
+              >
+                {t("tryAgain")}
+              </button>
+            </div>
+          </motion.div>
+        )}
 
         <form onSubmit={handleSubmit}>
           <div className="mt-8 grid gap-8 lg:grid-cols-3">
@@ -213,16 +336,15 @@ export default function CheckoutPage() {
                     </div>
                   </div>
 
-                  {/* Payment Notice */}
-                  <div className="mt-8 rounded-xl bg-brand-orange/10 p-4 flex items-start gap-3">
-                    <AlertTriangle className="h-5 w-5 text-brand-orange shrink-0 mt-0.5" />
+                  {/* Secure Payment Notice */}
+                  <div className="mt-8 rounded-xl bg-brand-green/5 border border-brand-green/10 p-4 flex items-start gap-3">
+                    <ShieldCheck className="h-5 w-5 text-brand-green shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-medium text-brand-orange">
-                        {t("paymentNote")}
+                      <p className="font-medium text-brand-green">
+                        {t("securePaymentNote")}
                       </p>
                       <p className="text-sm text-muted-foreground mt-1">
-                        Siparişiniz WhatsApp üzerinden onaylanacak ve ödeme
-                        detayları paylaşılacaktır.
+                        {t("securePaymentDesc")}
                       </p>
                     </div>
                   </div>
@@ -259,7 +381,7 @@ export default function CheckoutPage() {
                   </div>
                   <Separator className="my-4" />
                   <div className="flex justify-between">
-                    <span className="font-semibold">Toplam</span>
+                    <span className="font-semibold">{t("total")}</span>
                     <span className="font-bold text-brand-green">
                       {total.toLocaleString("tr-TR")} TL
                     </span>
@@ -272,13 +394,15 @@ export default function CheckoutPage() {
                     {status === "loading" ? (
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     ) : (
-                      <Lock className="mr-2 h-4 w-4" />
+                      <CreditCard className="mr-2 h-4 w-4" />
                     )}
-                    {t("placeOrder")}
+                    {status === "loading"
+                      ? t("processing")
+                      : t("proceedToPayment")}
                   </Button>
                   <div className="mt-3 flex items-center justify-center gap-1 text-xs text-muted-foreground">
-                    <CreditCard className="h-3 w-3" />
-                    Güvenli sipariş
+                    <Lock className="h-3 w-3" />
+                    {t("sslSecure")}
                   </div>
                 </CardContent>
               </Card>
