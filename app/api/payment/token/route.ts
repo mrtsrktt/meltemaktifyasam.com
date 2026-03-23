@@ -45,26 +45,24 @@ export async function POST(request: NextRequest) {
     // Encode basket: [[name, price_kurus, quantity], ...]
     const user_basket_b64 = Buffer.from(JSON.stringify(user_basket)).toString("base64");
 
-    // PayTR HMAC token
+    // PayTR HMAC token (official formula)
+    // hash_str = merchant_id + user_ip + merchant_oid + email + payment_amount + user_basket + no_installment + max_installment + currency + test_mode
+    // paytr_token = base64(hmac_sha256(hash_str + merchant_salt, merchant_key))
     const hash_str =
       merchant_id +
       user_ip +
       merchant_oid +
       email +
       payment_amount_kurus +
-      payment_type +
-      installment_count +
-      currency +
-      test_mode +
-      non_3d +
+      user_basket_b64 +
       no_installment +
       max_installment +
       currency +
-      merchant_salt;
+      test_mode;
 
     const paytr_token = crypto
       .createHmac("sha256", merchant_key)
-      .update(hash_str)
+      .update(hash_str + merchant_salt)
       .digest("base64");
 
     // POST to PayTR API
