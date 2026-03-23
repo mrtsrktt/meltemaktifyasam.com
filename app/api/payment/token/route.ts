@@ -24,7 +24,8 @@ export async function POST(request: NextRequest) {
       request.headers.get("x-real-ip") ||
       "127.0.0.1";
 
-    const merchant_oid = order_id;
+    // PayTR requires alphanumeric merchant_oid (no dashes)
+    const merchant_oid = order_id.replace(/-/g, "");
     const payment_amount_kurus = Math.round(payment_amount * 100);
     const payment_type = "card";
     const installment_count = "0";

@@ -31,6 +31,12 @@ export async function POST(request: NextRequest) {
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
 
+    // Reconstruct UUID from alphanumeric merchant_oid
+    const uuid = merchant_oid.replace(
+      /^(.{8})(.{4})(.{4})(.{4})(.{12})$/,
+      "$1-$2-$3-$4-$5"
+    );
+
     if (status === "success") {
       await supabase
         .from("orders")
@@ -39,7 +45,7 @@ export async function POST(request: NextRequest) {
           payment_method: "paytr",
           payment_id: merchant_oid,
         })
-        .eq("id", merchant_oid);
+        .eq("id", uuid);
     } else {
       await supabase
         .from("orders")
@@ -48,7 +54,7 @@ export async function POST(request: NextRequest) {
           payment_method: "paytr",
           note: "Ödeme başarısız",
         })
-        .eq("id", merchant_oid);
+        .eq("id", uuid);
     }
 
     // PayTR expects "OK" response
