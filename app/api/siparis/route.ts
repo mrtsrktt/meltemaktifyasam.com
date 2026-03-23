@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createClient as createServerClient } from "@/lib/supabase/server";
+import { createClient } from "@supabase/supabase-js";
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,10 +24,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabase = await createClient();
-
     // Get authenticated user (optional - guest checkout allowed)
-    const { data: { user } } = await supabase.auth.getUser();
+    const serverClient = await createServerClient();
+    const { data: { user } } = await serverClient.auth.getUser();
+
+    // Service role client to bypass RLS (guest checkout support)
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
 
     // Create the order with shipping_address as JSONB
     const { data: order, error: orderError } = await supabase
