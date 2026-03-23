@@ -37,6 +37,7 @@ export default function SiparislerPage() {
     let query = supabase
       .from("orders")
       .select("*")
+      .neq("status", "pending")
       .order("created_at", { ascending: false });
 
     if (statusFilter !== "all") {
@@ -98,7 +99,6 @@ export default function SiparislerPage() {
             className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           >
             <option value="all">Tumu</option>
-            <option value="pending">Bekliyor</option>
             <option value="confirmed">Onaylandi</option>
             <option value="shipped">Kargoda</option>
             <option value="delivered">Teslim</option>
