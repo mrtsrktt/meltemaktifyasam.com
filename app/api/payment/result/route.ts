@@ -4,7 +4,9 @@ function buildResultPage(status: string) {
   const isSuccess = status === "success";
   const message = isSuccess
     ? "Ödeme başarılı, yönlendiriliyorsunuz..."
-    : "Ödeme başarısız oldu.";
+    : "Ödeme başarısız, yönlendiriliyorsunuz...";
+
+  const redirectUrl = `/tr/odeme?payment=${status}`;
 
   const html = `<!DOCTYPE html>
 <html>
@@ -22,23 +24,17 @@ function buildResultPage(status: string) {
       background: #fafafa;
       color: #333;
     }
-    .msg {
-      text-align: center;
-      padding: 2rem;
-    }
+    .msg { text-align: center; padding: 2rem; }
   </style>
 </head>
 <body>
-  <div class="msg">
-    <p>${message}</p>
-  </div>
+  <div class="msg"><p>${message}</p></div>
   <script>
+    // Try postMessage for iframe, then redirect top window
     if (window.parent !== window) {
-      window.parent.postMessage(
-        { type: 'PAYTR_RESULT', status: '${status}' },
-        '*'
-      );
+      window.parent.postMessage({ type: 'PAYTR_RESULT', status: '${status}' }, '*');
     }
+    window.top.location.href = '${redirectUrl}';
   </script>
 </body>
 </html>`;
@@ -48,7 +44,6 @@ function buildResultPage(status: string) {
   });
 }
 
-// PayTR may redirect via GET or POST
 export async function GET(request: NextRequest) {
   const status = new URL(request.url).searchParams.get("status") || "fail";
   return buildResultPage(status);

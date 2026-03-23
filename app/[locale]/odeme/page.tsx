@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { motion } from "framer-motion";
@@ -30,11 +31,24 @@ export default function CheckoutPage() {
     (sum, item) => sum + item.price * item.quantity,
     0
   );
+  const searchParams = useSearchParams();
   const [status, setStatus] = useState<CheckoutStatus>("form");
   const [paytrToken, setPaytrToken] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
 
-  // Listen for PayTR iframe result
+  // Handle redirect from PayTR result page (?payment=success/fail)
+  useEffect(() => {
+    const paymentResult = searchParams.get("payment");
+    if (paymentResult === "success") {
+      setStatus("success");
+      clearCart();
+    } else if (paymentResult === "fail") {
+      setStatus("error");
+      setErrorMessage(t("paymentFailed"));
+    }
+  }, [searchParams, clearCart, t]);
+
+  // Listen for PayTR iframe postMessage (fallback)
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (event.data?.type === "PAYTR_RESULT") {
