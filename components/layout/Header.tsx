@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { useLocale } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
+import Image from "next/image";
 import { Menu, X, ShoppingBag, User, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -92,13 +93,15 @@ export default function Header() {
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
-          <span className="text-xl font-bold font-heading text-brand-dark">
-            Meltem
-          </span>
-          <span className="text-xl font-bold font-heading text-brand-green">
-            Tanık
-          </span>
+        <Link href="/" className="flex items-center">
+          <Image
+            src="/logo.png"
+            alt="Meltem Tanık"
+            width={180}
+            height={48}
+            className="h-10 w-auto"
+            priority
+          />
         </Link>
 
         {/* Desktop Navigation */}
@@ -156,8 +159,14 @@ export default function Header() {
               <Menu className="h-5 w-5" />
             </SheetTrigger>
             <SheetContent side="right" className="w-72">
-              <SheetTitle className="font-heading text-brand-dark">
-                Meltem <span className="text-brand-green">Tanık</span>
+              <SheetTitle>
+                <Image
+                  src="/logo.png"
+                  alt="Meltem Tanık"
+                  width={150}
+                  height={40}
+                  className="h-9 w-auto"
+                />
               </SheetTitle>
               <nav className="mt-8 flex flex-col gap-2">
                 {navLinks.map((link) => (

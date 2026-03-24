@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import Image from "next/image";
 import { Instagram, Phone, Mail } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
@@ -15,14 +16,15 @@ export default function Footer() {
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-5">
           {/* Brand */}
           <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xl font-bold font-heading text-white">
-                Meltem
-              </span>
-              <span className="text-xl font-bold font-heading text-brand-green">
-                Tanık
-              </span>
-            </div>
+            <Link href="/">
+              <Image
+                src="/logo.png"
+                alt="Meltem Tanık"
+                width={180}
+                height={48}
+                className="h-10 w-auto"
+              />
+            </Link>
             <p className="mt-4 text-sm text-gray-400">{t("description")}</p>
             <div className="mt-4 flex gap-3">
               <a
