@@ -95,7 +95,7 @@ export default function Header() {
         {/* Logo */}
         <Link href="/" className="flex items-center">
           <Image
-            src="/logo.png"
+            src="/logo_transparent.png"
             alt="Meltem Tanık"
             width={180}
             height={48}
@@ -161,7 +161,7 @@ export default function Header() {
             <SheetContent side="right" className="w-72">
               <SheetTitle>
                 <Image
-                  src="/logo.png"
+                  src="/logo_transparent.png"
                   alt="Meltem Tanık"
                   width={150}
                   height={40}
