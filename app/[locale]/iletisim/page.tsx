@@ -477,7 +477,7 @@ export default function ContactPage() {
                               </span>
                             )}
                           </div>
-                          <p className="text-sm text-muted-foreground truncate">
+                          <p className="text-sm text-muted-foreground">
                             {card.desc}
                           </p>
                         </div>
