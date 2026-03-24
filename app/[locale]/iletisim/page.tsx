@@ -26,6 +26,7 @@ import {
   Stethoscope,
   Leaf,
   MapPin,
+  Phone,
 } from "lucide-react";
 
 const WHATSAPP_NUMBER =
@@ -66,6 +67,17 @@ const contactCards = [
     external: false,
   },
   {
+    href: "tel:+905412523421",
+    icon: Phone,
+    iconBg: "bg-indigo-500/10",
+    iconColor: "text-indigo-500",
+    borderColor: "border-l-indigo-500",
+    title: "Telefon",
+    desc: "0541 252 34 21",
+    tag: null,
+    external: false,
+  },
+  {
     href: null,
     icon: Clock,
     iconBg: "bg-brand-orange/10",
@@ -82,8 +94,8 @@ const contactCards = [
     iconBg: "bg-blue-500/10",
     iconColor: "text-blue-500",
     borderColor: "border-l-blue-500",
-    title: "Konum",
-    desc: "Online danışmanlık — Türkiye\u2019nin her yerinden hizmet",
+    title: "Adres",
+    desc: "FATİH Mah. ÖRNEK SOKAK B BLOK No: 2 B - FREZYA KONAKLARI Daire: 5, BÜYÜKÇEKMECE / İSTANBUL",
     tag: null,
     external: false,
   },
