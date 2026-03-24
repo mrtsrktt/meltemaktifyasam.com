@@ -89,7 +89,7 @@ export default function Header() {
     <motion.header
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-lg"
+      className="sticky top-0 z-50 w-full border-b border-white/10 bg-brand-dark/95 backdrop-blur-lg"
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
@@ -110,10 +110,10 @@ export default function Header() {
             <Link
               key={link.key}
               href={link.href}
-              className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-brand-green ${
+              className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-white/10 hover:text-brand-green ${
                 pathname === link.href
-                  ? "text-brand-green bg-accent"
-                  : "text-foreground/70"
+                  ? "text-brand-green bg-white/10"
+                  : "text-white/80"
               }`}
             >
               {t(link.key)}
@@ -128,12 +128,13 @@ export default function Header() {
             size="icon"
             onClick={switchLocale}
             title={locale === "tr" ? "English" : "Türkçe"}
+            className="text-white/80 hover:text-white hover:bg-white/10"
           >
             <Globe className="h-4 w-4" />
           </Button>
           <CartIcon />
           <Link href="/hesabim">
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" className="text-white/80 hover:text-white hover:bg-white/10">
               <User className="h-4 w-4" />
             </Button>
           </Link>
@@ -150,6 +151,7 @@ export default function Header() {
             variant="ghost"
             size="icon"
             onClick={switchLocale}
+            className="text-white/80 hover:text-white hover:bg-white/10"
           >
             <Globe className="h-4 w-4" />
           </Button>
