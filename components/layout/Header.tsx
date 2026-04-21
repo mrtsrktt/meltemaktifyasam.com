@@ -47,7 +47,11 @@ function CartIcon() {
 
   return (
     <Link href="/sepet">
-      <Button variant="ghost" size="icon" className="relative">
+      <Button
+        variant="ghost"
+        size="icon"
+        className="relative text-white/80 hover:text-white hover:bg-white/10"
+      >
         <motion.div
           animate={bump ? { scale: [1, 1.4, 0.9, 1.1, 1] } : {}}
           transition={{ duration: 0.5 }}
