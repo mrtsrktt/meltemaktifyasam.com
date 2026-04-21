@@ -35,7 +35,6 @@ const PAYTR_ENABLED = process.env.NEXT_PUBLIC_PAYTR_ENABLED === "true";
 const BANK_NAME = process.env.NEXT_PUBLIC_BANK_NAME || "";
 const BANK_ACCOUNT_HOLDER = process.env.NEXT_PUBLIC_BANK_ACCOUNT_HOLDER || "";
 const BANK_IBAN = process.env.NEXT_PUBLIC_BANK_IBAN || "";
-const BANK_BRANCH = process.env.NEXT_PUBLIC_BANK_BRANCH || "";
 
 export default function CheckoutPage() {
   const t = useTranslations("checkout");
@@ -262,16 +261,6 @@ export default function CheckoutPage() {
                       {BANK_ACCOUNT_HOLDER}
                     </span>
                   </div>
-                  {BANK_BRANCH && (
-                    <div className="flex justify-between items-center pb-3 border-b">
-                      <span className="text-sm text-muted-foreground">
-                        {t("branch")}
-                      </span>
-                      <span className="font-medium text-brand-dark">
-                        {BANK_BRANCH}
-                      </span>
-                    </div>
-                  )}
                   <div className="pb-3 border-b">
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-sm text-muted-foreground">
