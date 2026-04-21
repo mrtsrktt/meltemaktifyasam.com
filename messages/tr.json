@@ -304,11 +304,12 @@
     "sendReceiptWhatsApp": "Dekontunuzu WhatsApp'tan gönderin",
     "confirmationNote": "Ödemeniz hesabımıza ulaştıktan sonra siparişiniz onaylanacak ve WhatsApp/e-posta ile bilgilendirileceksiniz. Sorularınız için WhatsApp üzerinden iletişime geçebilirsiniz.",
     "paymentMadeButton": "Ödemeyi Yaptım",
-    "paymentMadeProcessing": "Bildiriminiz gönderiliyor...",
+    "paymentMadeProcessing": "Siparişiniz oluşturuluyor...",
     "paymentNotifiedTitle": "Ödeme Bildiriminiz Alındı",
     "paymentNotifiedDesc": "Meltem Hanım ödemenizi kontrol edip siparişinizi onaylayacaktır. Dilerseniz dekontunuzu WhatsApp üzerinden de iletebilirsiniz.",
     "paymentNotifyHint": "Havaleyi/EFT'yi yaptıktan sonra bu butona basın.",
-    "paymentNotifyError": "Bildirim gönderilemedi, lütfen tekrar deneyin."
+    "paymentNotifyError": "Bildirim gönderilemedi, lütfen tekrar deneyin.",
+    "transferDescriptionHint": "⚠️ Havale açıklamasına ad-soyad ve telefon numaranızı mutlaka yazın. Bu, ödemenizin siparişinizle eşleştirilmesi için gereklidir."
   },
   "account": {
     "title": "Hesabım",

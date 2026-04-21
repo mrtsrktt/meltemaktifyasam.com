@@ -54,10 +54,22 @@ export default function CheckoutPage() {
   const [errorMessage, setErrorMessage] = useState("");
   const [orderNumber, setOrderNumber] = useState<string | null>(null);
   const [orderTotal, setOrderTotal] = useState<number>(0);
-  const [currentOrderId, setCurrentOrderId] = useState<string | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [notifyLoading, setNotifyLoading] = useState(false);
   const [notifyError, setNotifyError] = useState("");
+  // Havale akışında: form submit'te siparişi OLUŞTURMA.
+  // Müşteri "Ödemeyi Yaptım" butonuna basınca sipariş oluşturulur + bildirim kaydedilir.
+  const [pendingOrderData, setPendingOrderData] = useState<{
+    customer_name: string;
+    customer_email: string;
+    customer_phone: string;
+    shipping_address: string;
+    shipping_city: string;
+    shipping_district: string;
+    shipping_zip: string;
+    items: typeof items;
+    total: number;
+  } | null>(null);
 
   // Handle redirect from PayTR result page (?payment=success/fail)
   useEffect(() => {
@@ -90,21 +102,47 @@ export default function CheckoutPage() {
   }, [clearCart, t]);
 
   const handlePaymentMade = async () => {
-    if (!currentOrderId || notifyLoading) return;
+    if (!pendingOrderData || notifyLoading) return;
     setNotifyLoading(true);
     setNotifyError("");
 
     try {
-      const res = await fetch(
-        `/api/siparis/${currentOrderId}/odeme-bildirim`,
-        { method: "POST" }
-      );
+      // 1. Siparişi şimdi oluştur (müşteri "Ödemeyi Yaptım"a bastığı an)
+      const orderRes = await fetch("/api/siparis", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customer_name: pendingOrderData.customer_name,
+          customer_email: pendingOrderData.customer_email,
+          customer_phone: pendingOrderData.customer_phone,
+          shipping_address: pendingOrderData.shipping_address,
+          shipping_city: pendingOrderData.shipping_city,
+          shipping_district: pendingOrderData.shipping_district,
+          shipping_zip: pendingOrderData.shipping_zip,
+          items: pendingOrderData.items.map((item) => ({
+            product_id: item.type === "set" ? null : item.id,
+            name_tr:
+              item.type === "set" ? `[SET] ${item.name_tr}` : item.name_tr,
+            quantity: item.quantity,
+            unit_price: item.price,
+            original_price: item.originalPrice || null,
+            item_type: item.type || "product",
+          })),
+          total_amount: pendingOrderData.total,
+        }),
+      });
 
-      if (!res.ok) {
-        const data = await res.json().catch(() => null);
-        throw new Error(data?.error || t("paymentNotifyError"));
-      }
+      if (!orderRes.ok) throw new Error(t("orderError"));
+      const { order_id, order_number } = await orderRes.json();
+      setOrderNumber(order_number ? String(order_number) : null);
 
+      // 2. Ödeme bildirimini not olarak ekle
+      await fetch(`/api/siparis/${order_id}/odeme-bildirim`, {
+        method: "POST",
+      });
+
+      clearCart();
+      setPendingOrderData(null);
       setStatus("paymentNotified");
     } catch (err) {
       setNotifyError(
@@ -132,8 +170,28 @@ export default function CheckoutPage() {
     const customerDistrict = fd.get("district") as string;
     const customerZip = fd.get("zipCode") as string;
 
+    // Havale akışı: siparişi henüz OLUŞTURMA. Form verilerini ve sepet
+    // snapshot'ını state'e kaydet; müşteri "Ödemeyi Yaptım" butonuna basınca oluştur.
+    if (!PAYTR_ENABLED) {
+      setPendingOrderData({
+        customer_name: customerName,
+        customer_email: customerEmail,
+        customer_phone: customerPhone,
+        shipping_address: customerAddress,
+        shipping_city: customerCity,
+        shipping_district: customerDistrict,
+        shipping_zip: customerZip,
+        items: [...items],
+        total,
+      });
+      setOrderTotal(total);
+      setOrderNumber(null);
+      setStatus("bankTransfer");
+      return;
+    }
+
+    // PayTR akışı: siparişi oluştur, iframe token al
     try {
-      // Step 1: Create order (pending)
       const orderRes = await fetch("/api/siparis", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -162,16 +220,7 @@ export default function CheckoutPage() {
       const { order_id, order_number } = await orderRes.json();
       setOrderNumber(order_number ? String(order_number) : null);
       setOrderTotal(total);
-      setCurrentOrderId(order_id);
 
-      // PayTR askıya alındığında: sipariş oluşturulur, havale/EFT bilgisi gösterilir
-      if (!PAYTR_ENABLED) {
-        setStatus("bankTransfer");
-        clearCart();
-        return;
-      }
-
-      // Step 2: Get PayTR iframe token
       const user_basket = items.map((item) => [
         item.name_tr,
         (item.price * 100).toString(),
@@ -383,6 +432,10 @@ export default function CheckoutPage() {
                     copyField="iban"
                     mono
                   />
+                </div>
+
+                <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+                  {t("transferDescriptionHint")}
                 </div>
 
                 <button
