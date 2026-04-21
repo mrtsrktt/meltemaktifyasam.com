@@ -300,8 +300,7 @@
     "amountToTransfer": "Amount to Transfer",
     "copy": "Copy",
     "copied": "Copied",
-    "importantNote": "Important",
-    "transferDescriptionNote": "Please write your order number ({orderId}) in the transfer description. Otherwise your payment may not be matched.",
+    "sendReceiptWhatsApp": "Send your receipt via WhatsApp",
     "confirmationNote": "Your order will be confirmed once your payment is received, and you'll be notified via WhatsApp/email. For any questions, feel free to contact us on WhatsApp."
   },
   "account": {

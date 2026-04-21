@@ -20,6 +20,7 @@ import {
   AlertCircle,
   Landmark,
   Copy,
+  MessageCircle,
 } from "lucide-react";
 import { useCartStore } from "@/lib/store/cart";
 
@@ -35,6 +36,8 @@ const PAYTR_ENABLED = process.env.NEXT_PUBLIC_PAYTR_ENABLED === "true";
 const BANK_NAME = process.env.NEXT_PUBLIC_BANK_NAME || "";
 const BANK_ACCOUNT_HOLDER = process.env.NEXT_PUBLIC_BANK_ACCOUNT_HOLDER || "";
 const BANK_IBAN = process.env.NEXT_PUBLIC_BANK_IBAN || "";
+const WHATSAPP_NUMBER =
+  process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "905412523421";
 
 export default function CheckoutPage() {
   const t = useTranslations("checkout");
@@ -49,6 +52,7 @@ export default function CheckoutPage() {
   const [paytrToken, setPaytrToken] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [orderId, setOrderId] = useState<string | null>(null);
+  const [orderTotal, setOrderTotal] = useState<number>(0);
   const [copiedIban, setCopiedIban] = useState(false);
 
   // Handle redirect from PayTR result page (?payment=success/fail)
@@ -127,6 +131,7 @@ export default function CheckoutPage() {
       if (!orderRes.ok) throw new Error(t("orderError"));
       const { order_id } = await orderRes.json();
       setOrderId(order_id);
+      setOrderTotal(total);
 
       // PayTR askıya alındığında: sipariş oluşturulur, havale/EFT bilgisi gösterilir
       if (!PAYTR_ENABLED) {
@@ -283,21 +288,22 @@ export default function CheckoutPage() {
                       {t("amountToTransfer")}
                     </span>
                     <span className="text-xl font-bold text-brand-green">
-                      {total.toLocaleString("tr-TR")} TL
+                      {orderTotal.toLocaleString("tr-TR")} TL
                     </span>
                   </div>
                 </div>
 
-                <div className="mt-6 rounded-xl bg-amber-50 border border-amber-200 p-4">
-                  <p className="text-sm text-amber-900 font-medium mb-1">
-                    {t("importantNote")}
-                  </p>
-                  <p className="text-sm text-amber-800">
-                    {t("transferDescriptionNote", {
-                      orderId: orderId || "",
-                    })}
-                  </p>
-                </div>
+                <a
+                  href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+                    "Sitenizden sipariş verdim, dekontu gönderiyorum."
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-6 flex w-full items-center justify-center gap-2 rounded-md bg-[#25D366] hover:bg-[#1ebe5a] text-white font-medium py-3 px-4 transition-colors"
+                >
+                  <MessageCircle className="h-5 w-5" />
+                  {t("sendReceiptWhatsApp")}
+                </a>
 
                 <div className="mt-4 rounded-xl bg-brand-green/5 border border-brand-green/10 p-4">
                   <p className="text-sm text-brand-dark">

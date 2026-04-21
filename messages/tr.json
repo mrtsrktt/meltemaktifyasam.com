@@ -300,8 +300,7 @@
     "amountToTransfer": "Transfer Edilecek Tutar",
     "copy": "Kopyala",
     "copied": "Kopyalandı",
-    "importantNote": "Önemli",
-    "transferDescriptionNote": "Havale/EFT açıklama alanına sipariş numaranızı ({orderId}) yazmayı unutmayın. Aksi takdirde ödemeniz eşleştirilemeyebilir.",
+    "sendReceiptWhatsApp": "Ödemenizi WhatsApp'tan gönderin",
     "confirmationNote": "Ödemeniz hesabımıza ulaştıktan sonra siparişiniz onaylanacak ve WhatsApp/e-posta ile bilgilendirileceksiniz. Sorularınız için WhatsApp üzerinden iletişime geçebilirsiniz."
   },
   "account": {
