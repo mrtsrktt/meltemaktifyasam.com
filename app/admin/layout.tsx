@@ -40,34 +40,39 @@ export default function AdminLayout({
   const pathname = usePathname();
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [authChecked, setAuthChecked] = useState(false);
+
+  // Auth kontrolünü sadece login sayfası değilse VE henüz yapılmadıysa çalıştır
+  // (Her sayfa geçişinde tekrar auth check yapma)
+  const isLoginPage = pathname === "/admin";
 
   useEffect(() => {
-    if (pathname === "/admin") {
-      setLoading(false);
+    if (isLoginPage) {
+      setAuthChecked(true);
       return;
     }
+    if (authChecked) return;
 
     const supabase = createClient();
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (!user) {
         router.push("/admin");
-      } else {
-        supabase
-          .from("profiles")
-          .select("role")
-          .eq("id", user.id)
-          .single()
-          .then(({ data: profile }) => {
-            if (!profile || profile.role !== "admin") {
-              router.push("/admin");
-            } else {
-              setLoading(false);
-            }
-          });
+        return;
       }
+      supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single()
+        .then(({ data: profile }) => {
+          if (!profile || profile.role !== "admin") {
+            router.push("/admin");
+          } else {
+            setAuthChecked(true);
+          }
+        });
     });
-  }, [pathname, router]);
+  }, [isLoginPage, authChecked, router]);
 
   // Login page - no sidebar
   if (pathname === "/admin") {
@@ -80,7 +85,7 @@ export default function AdminLayout({
     router.push("/admin");
   };
 
-  if (loading) {
+  if (!authChecked) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-emerald-600" />

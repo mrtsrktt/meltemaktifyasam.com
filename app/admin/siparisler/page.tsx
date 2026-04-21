@@ -25,14 +25,17 @@ const statusColors: Record<string, string> = {
 export default function SiparislerPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState("all");
 
   useEffect(() => {
     fetchOrders();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [statusFilter]);
 
   async function fetchOrders() {
     setLoading(true);
+    setFetchError(null);
     const supabase = createClient();
     let query = supabase
       .from("orders")
@@ -47,6 +50,8 @@ export default function SiparislerPage() {
 
     if (error) {
       console.error("Siparişler yüklenirken hata:", error);
+      setFetchError(error.message || "Siparişler yüklenemedi");
+      setOrders([]);
     } else {
       setOrders(data || []);
     }
@@ -111,6 +116,17 @@ export default function SiparislerPage() {
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         {loading ? (
           <div className="p-12 text-center text-gray-500">Yukleniyor...</div>
+        ) : fetchError ? (
+          <div className="p-12 text-center">
+            <p className="text-red-600 font-medium mb-2">Hata</p>
+            <p className="text-sm text-gray-500 mb-4">{fetchError}</p>
+            <button
+              onClick={fetchOrders}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500 text-white text-sm font-medium rounded-lg hover:bg-emerald-600 transition-colors"
+            >
+              Tekrar Dene
+            </button>
+          </div>
         ) : orders.length === 0 ? (
           <div className="p-12 text-center text-gray-500">
             Sipariş bulunamadı.

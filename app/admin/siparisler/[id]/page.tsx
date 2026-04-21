@@ -1,9 +1,9 @@
 "use client";
 
 import { use, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Order, OrderItem } from "@/lib/supabase/types";
-import Link from "next/link";
 import {
   ArrowLeft,
   Package,
@@ -47,12 +47,21 @@ export default function SiparisDetayPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
+  const router = useRouter();
 
   const [order, setOrder] = useState<OrderWithItems | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedStatus, setSelectedStatus] = useState<Order["status"]>("pending");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+
+  const goBack = () => {
+    if (window.history.length > 1) {
+      router.back();
+    } else {
+      router.push("/admin/siparisler");
+    }
+  };
 
   useEffect(() => {
     fetchOrder();
@@ -130,12 +139,12 @@ export default function SiparisDetayPage({
           Sipariş bulunamadı.
         </div>
         <div className="text-center">
-          <Link
-            href="/admin/siparisler"
+          <button
+            onClick={goBack}
             className="text-emerald-600 hover:text-emerald-700 font-medium"
           >
             Siparislere Don
-          </Link>
+          </button>
         </div>
       </div>
     );
@@ -149,13 +158,13 @@ export default function SiparisDetayPage({
   return (
     <div className="p-6 max-w-5xl mx-auto">
       {/* Back Button */}
-      <Link
-        href="/admin/siparisler"
+      <button
+        onClick={goBack}
         className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-emerald-600 mb-6 transition-colors"
       >
         <ArrowLeft className="w-4 h-4" />
         Siparislere Don
-      </Link>
+      </button>
 
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
