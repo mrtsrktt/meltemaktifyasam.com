@@ -53,7 +53,7 @@ export default function CheckoutPage() {
   const [errorMessage, setErrorMessage] = useState("");
   const [orderId, setOrderId] = useState<string | null>(null);
   const [orderTotal, setOrderTotal] = useState<number>(0);
-  const [copiedIban, setCopiedIban] = useState(false);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
 
   // Handle redirect from PayTR result page (?payment=success/fail)
   useEffect(() => {
@@ -203,94 +203,130 @@ export default function CheckoutPage() {
 
   // Bank transfer instructions (PayTR askıda iken)
   if (status === "bankTransfer") {
-    const copyIban = async () => {
+    const copyToClipboard = async (field: string, value: string) => {
       try {
-        await navigator.clipboard.writeText(BANK_IBAN.replace(/\s/g, ""));
-        setCopiedIban(true);
-        setTimeout(() => setCopiedIban(false), 2000);
+        await navigator.clipboard.writeText(value);
+        setCopiedField(field);
+        setTimeout(() => setCopiedField(null), 2000);
       } catch {
         // ignore
       }
     };
 
+    const CopyButton = ({ field, value }: { field: string; value: string }) => (
+      <button
+        type="button"
+        onClick={() => copyToClipboard(field, value)}
+        className="inline-flex items-center gap-1.5 rounded-md border border-brand-green/30 bg-white hover:bg-brand-green/5 text-brand-green text-xs font-medium px-2.5 py-1.5 transition-colors shrink-0"
+      >
+        {copiedField === field ? (
+          <>
+            <Check className="h-3.5 w-3.5" />
+            {t("copied")}
+          </>
+        ) : (
+          <>
+            <Copy className="h-3.5 w-3.5" />
+            {t("copy")}
+          </>
+        )}
+      </button>
+    );
+
+    const InfoRow = ({
+      label,
+      value,
+      copyField,
+      mono = false,
+    }: {
+      label: string;
+      value: string;
+      copyField?: string;
+      mono?: boolean;
+    }) => (
+      <div className="rounded-xl bg-slate-50 border border-slate-100 px-4 py-3">
+        <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">
+          {label}
+        </div>
+        <div className="flex items-center justify-between gap-3">
+          <div
+            className={`font-medium text-brand-dark break-all ${
+              mono ? "font-mono text-sm" : ""
+            }`}
+          >
+            {value}
+          </div>
+          {copyField && <CopyButton field={copyField} value={value} />}
+        </div>
+      </div>
+    );
+
     return (
       <section className="py-12">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
+            {/* Success header */}
             <div className="text-center mb-8">
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-brand-green/10">
                 <Check className="h-8 w-8 text-brand-green" />
               </div>
-              <h1 className="text-2xl font-bold text-brand-dark">
+              <h1 className="text-3xl font-bold text-brand-dark">
                 {t("orderReceived")}
               </h1>
               <p className="mt-2 text-muted-foreground">
                 {t("orderReceivedDesc")}
               </p>
-              {orderId && (
-                <p className="mt-2 text-sm text-muted-foreground">
-                  {t("orderNumber")}:{" "}
-                  <span className="font-mono font-medium text-brand-dark">
-                    {orderId}
-                  </span>
-                </p>
-              )}
             </div>
 
+            {/* Amount hero */}
+            <Card className="border-0 shadow-xl overflow-hidden mb-6">
+              <div className="bg-gradient-to-br from-brand-green to-brand-green-dark px-8 py-8 text-center text-white">
+                <div className="text-xs uppercase tracking-widest opacity-80">
+                  {t("amountToTransfer")}
+                </div>
+                <div className="mt-2 text-5xl font-bold">
+                  {orderTotal.toLocaleString("tr-TR")}{" "}
+                  <span className="text-2xl font-semibold opacity-90">TL</span>
+                </div>
+              </div>
+            </Card>
+
+            {/* Bank details */}
             <Card className="border-0 shadow-xl">
-              <CardContent className="p-8">
-                <div className="flex items-center gap-3 mb-6">
-                  <Landmark className="h-6 w-6 text-brand-green" />
-                  <h2 className="text-xl font-semibold text-brand-dark">
+              <CardContent className="p-6 sm:p-8">
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-green/10">
+                    <Landmark className="h-5 w-5 text-brand-green" />
+                  </div>
+                  <h2 className="text-lg font-semibold text-brand-dark">
                     {t("bankTransferTitle")}
                   </h2>
                 </div>
 
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center pb-3 border-b">
-                    <span className="text-sm text-muted-foreground">
-                      {t("bankName")}
-                    </span>
-                    <span className="font-medium text-brand-dark">
-                      {BANK_NAME}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center pb-3 border-b">
-                    <span className="text-sm text-muted-foreground">
-                      {t("accountHolder")}
-                    </span>
-                    <span className="font-medium text-brand-dark">
-                      {BANK_ACCOUNT_HOLDER}
-                    </span>
-                  </div>
-                  <div className="pb-3 border-b">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm text-muted-foreground">
-                        IBAN
-                      </span>
-                      <button
-                        onClick={copyIban}
-                        className="text-xs text-brand-green hover:text-brand-green-dark flex items-center gap-1"
-                      >
-                        <Copy className="h-3 w-3" />
-                        {copiedIban ? t("copied") : t("copy")}
-                      </button>
-                    </div>
-                    <div className="font-mono text-brand-dark break-all">
-                      {BANK_IBAN}
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">
-                      {t("amountToTransfer")}
-                    </span>
-                    <span className="text-xl font-bold text-brand-green">
-                      {orderTotal.toLocaleString("tr-TR")} TL
-                    </span>
-                  </div>
+                <div className="space-y-3">
+                  <InfoRow label={t("bankName")} value={BANK_NAME} />
+                  <InfoRow
+                    label={t("accountHolder")}
+                    value={BANK_ACCOUNT_HOLDER}
+                    copyField="holder"
+                  />
+                  <InfoRow
+                    label="IBAN"
+                    value={BANK_IBAN}
+                    copyField="iban"
+                    mono
+                  />
+                  {orderId && (
+                    <InfoRow
+                      label={t("orderNumber")}
+                      value={orderId}
+                      copyField="order"
+                      mono
+                    />
+                  )}
                 </div>
 
                 <a
@@ -299,17 +335,15 @@ export default function CheckoutPage() {
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-6 flex w-full items-center justify-center gap-2 rounded-md bg-[#25D366] hover:bg-[#1ebe5a] text-white font-medium py-3 px-4 transition-colors"
+                  className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] hover:bg-[#1ebe5a] text-white font-semibold py-3.5 px-4 shadow-lg shadow-[#25D366]/20 transition-colors"
                 >
                   <MessageCircle className="h-5 w-5" />
                   {t("sendReceiptWhatsApp")}
                 </a>
 
-                <div className="mt-4 rounded-xl bg-brand-green/5 border border-brand-green/10 p-4">
-                  <p className="text-sm text-brand-dark">
-                    {t("confirmationNote")}
-                  </p>
-                </div>
+                <p className="mt-4 text-xs text-center text-muted-foreground leading-relaxed">
+                  {t("confirmationNote")}
+                </p>
               </CardContent>
             </Card>
 
