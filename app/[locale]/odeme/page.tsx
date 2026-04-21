@@ -51,7 +51,7 @@ export default function CheckoutPage() {
   const [status, setStatus] = useState<CheckoutStatus>("form");
   const [paytrToken, setPaytrToken] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
-  const [orderId, setOrderId] = useState<string | null>(null);
+  const [orderNumber, setOrderNumber] = useState<string | null>(null);
   const [orderTotal, setOrderTotal] = useState<number>(0);
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
@@ -129,8 +129,8 @@ export default function CheckoutPage() {
       });
 
       if (!orderRes.ok) throw new Error(t("orderError"));
-      const { order_id } = await orderRes.json();
-      setOrderId(order_id);
+      const { order_id, order_number } = await orderRes.json();
+      setOrderNumber(order_number ? String(order_number) : null);
       setOrderTotal(total);
 
       // PayTR askıya alındığında: sipariş oluşturulur, havale/EFT bilgisi gösterilir
@@ -283,13 +283,15 @@ export default function CheckoutPage() {
 
             {/* Amount hero */}
             <Card className="border-0 shadow-xl overflow-hidden mb-6">
-              <div className="bg-gradient-to-br from-brand-green to-brand-green-dark px-8 py-8 text-center text-white">
-                <div className="text-xs uppercase tracking-widest opacity-80">
+              <div className="relative bg-gradient-to-br from-[#1f6b3e] via-[#17643a] to-[#0f4a2c] px-8 py-10 text-center text-white">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/80">
                   {t("amountToTransfer")}
                 </div>
-                <div className="mt-2 text-5xl font-bold">
-                  {orderTotal.toLocaleString("tr-TR")}{" "}
-                  <span className="text-2xl font-semibold opacity-90">TL</span>
+                <div className="mt-3 text-5xl sm:text-6xl font-black tracking-tight drop-shadow-sm">
+                  {orderTotal.toLocaleString("tr-TR")}
+                  <span className="ml-2 text-2xl sm:text-3xl font-bold text-white/90">
+                    TL
+                  </span>
                 </div>
               </div>
             </Card>
@@ -319,11 +321,10 @@ export default function CheckoutPage() {
                     copyField="iban"
                     mono
                   />
-                  {orderId && (
+                  {orderNumber && (
                     <InfoRow
                       label={t("orderNumber")}
-                      value={orderId}
-                      copyField="order"
+                      value={orderNumber}
                       mono
                     />
                   )}

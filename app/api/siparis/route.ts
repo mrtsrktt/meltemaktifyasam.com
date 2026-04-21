@@ -79,7 +79,11 @@ export async function POST(request: NextRequest) {
       console.error("Order items error:", itemsError);
     }
 
-    return NextResponse.json({ success: true, order_id: order.id });
+    return NextResponse.json({
+      success: true,
+      order_id: order.id,
+      order_number: order.order_number,
+    });
   } catch {
     return NextResponse.json(
       { error: "Internal server error" },
