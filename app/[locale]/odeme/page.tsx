@@ -107,7 +107,7 @@ export default function CheckoutPage() {
     setNotifyError("");
 
     try {
-      // 1. Siparişi şimdi oluştur (müşteri "Ödemeyi Yaptım"a bastığı an)
+      // Tek çağrı: sipariş oluştur + ödeme bildirimi notunu aynı anda ekle
       const orderRes = await fetch("/api/siparis", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -129,17 +129,13 @@ export default function CheckoutPage() {
             item_type: item.type || "product",
           })),
           total_amount: pendingOrderData.total,
+          customer_notified_payment: true,
         }),
       });
 
       if (!orderRes.ok) throw new Error(t("orderError"));
-      const { order_id, order_number } = await orderRes.json();
+      const { order_number } = await orderRes.json();
       setOrderNumber(order_number ? String(order_number) : null);
-
-      // 2. Ödeme bildirimini not olarak ekle
-      await fetch(`/api/siparis/${order_id}/odeme-bildirim`, {
-        method: "POST",
-      });
 
       clearCart();
       setPendingOrderData(null);
@@ -504,9 +500,13 @@ export default function CheckoutPage() {
 
             {orderNumber && (
               <div className="mb-6 flex justify-center">
-                <div className="inline-flex items-center gap-2 rounded-full bg-brand-green/10 px-4 py-1.5 text-sm font-medium text-brand-green ring-1 ring-brand-green/20">
-                  <span className="text-brand-green/70">{t("orderNumber")}:</span>
-                  <span className="font-mono font-semibold">{orderNumber}</span>
+                <div className="inline-flex items-center gap-3 rounded-full bg-brand-green px-6 py-3 text-white shadow-lg shadow-brand-green/30 ring-2 ring-white">
+                  <span className="text-sm font-medium text-white/90 uppercase tracking-wide">
+                    {t("orderNumber")}
+                  </span>
+                  <span className="font-mono text-xl font-bold tracking-wider">
+                    {orderNumber}
+                  </span>
                 </div>
               </div>
             )}
