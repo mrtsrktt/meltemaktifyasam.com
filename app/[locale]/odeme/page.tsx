@@ -486,12 +486,16 @@ export default function CheckoutPage() {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="email">E-posta</Label>
+                        <Label htmlFor="email">
+                          E-posta{" "}
+                          <span className="text-muted-foreground text-xs">
+                            (opsiyonel)
+                          </span>
+                        </Label>
                         <Input
                           id="email"
                           name="email"
                           type="email"
-                          required
                           className="mt-1"
                         />
                       </div>

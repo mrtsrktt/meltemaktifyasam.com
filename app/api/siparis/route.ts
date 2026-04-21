@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
       total_amount,
     } = body;
 
-    if (!customer_name || !customer_email || !customer_phone || !shipping_address || !items?.length) {
+    if (!customer_name || !customer_phone || !shipping_address || !shipping_city || !items?.length) {
       return NextResponse.json(
         { error: "Gerekli alanlar eksik" },
         { status: 400 }
