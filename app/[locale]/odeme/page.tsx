@@ -388,9 +388,12 @@ export default function CheckoutPage() {
                   <Landmark className="h-3 w-3" />
                   {t("amountToPay")}
                 </div>
-                <div className="mt-5 text-6xl sm:text-7xl font-black tracking-tight drop-shadow-md">
-                  {orderTotal.toLocaleString("tr-TR")}
-                  <span className="ml-2 text-3xl sm:text-4xl font-bold text-white/85">
+                <div className="mt-4 text-4xl sm:text-5xl font-black tracking-tight drop-shadow-md">
+                  {orderTotal.toLocaleString("tr-TR", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
+                  <span className="ml-2 text-2xl sm:text-3xl font-bold text-white/85">
                     TL
                   </span>
                 </div>
