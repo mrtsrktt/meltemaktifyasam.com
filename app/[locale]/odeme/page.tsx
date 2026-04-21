@@ -29,6 +29,7 @@ type CheckoutStatus =
   | "loading"
   | "payment"
   | "bankTransfer"
+  | "paymentNotified"
   | "success"
   | "error";
 
@@ -53,7 +54,10 @@ export default function CheckoutPage() {
   const [errorMessage, setErrorMessage] = useState("");
   const [orderNumber, setOrderNumber] = useState<string | null>(null);
   const [orderTotal, setOrderTotal] = useState<number>(0);
+  const [currentOrderId, setCurrentOrderId] = useState<string | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [notifyLoading, setNotifyLoading] = useState(false);
+  const [notifyError, setNotifyError] = useState("");
 
   // Handle redirect from PayTR result page (?payment=success/fail)
   useEffect(() => {
@@ -84,6 +88,32 @@ export default function CheckoutPage() {
     window.addEventListener("message", handleMessage);
     return () => window.removeEventListener("message", handleMessage);
   }, [clearCart, t]);
+
+  const handlePaymentMade = async () => {
+    if (!currentOrderId || notifyLoading) return;
+    setNotifyLoading(true);
+    setNotifyError("");
+
+    try {
+      const res = await fetch(
+        `/api/siparis/${currentOrderId}/odeme-bildirim`,
+        { method: "POST" }
+      );
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        throw new Error(data?.error || t("paymentNotifyError"));
+      }
+
+      setStatus("paymentNotified");
+    } catch (err) {
+      setNotifyError(
+        err instanceof Error ? err.message : t("paymentNotifyError")
+      );
+    } finally {
+      setNotifyLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -132,6 +162,7 @@ export default function CheckoutPage() {
       const { order_id, order_number } = await orderRes.json();
       setOrderNumber(order_number ? String(order_number) : null);
       setOrderTotal(total);
+      setCurrentOrderId(order_id);
 
       // PayTR askıya alındığında: sipariş oluşturulur, havale/EFT bilgisi gösterilir
       if (!PAYTR_ENABLED) {
@@ -182,7 +213,8 @@ export default function CheckoutPage() {
     items.length === 0 &&
     status !== "success" &&
     status !== "payment" &&
-    status !== "bankTransfer"
+    status !== "bankTransfer" &&
+    status !== "paymentNotified"
   ) {
     return (
       <section className="py-12">
@@ -353,13 +385,85 @@ export default function CheckoutPage() {
                   />
                 </div>
 
+                <button
+                  type="button"
+                  onClick={handlePaymentMade}
+                  disabled={notifyLoading}
+                  className="mt-6 flex w-full items-center justify-center gap-2.5 rounded-xl bg-brand-green hover:bg-brand-green-dark text-white font-bold text-base py-4 px-4 shadow-xl shadow-brand-green/30 ring-1 ring-white/10 transition-all hover:shadow-2xl hover:scale-[1.01] disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
+                >
+                  {notifyLoading ? (
+                    <>
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                      {t("paymentMadeProcessing")}
+                    </>
+                  ) : (
+                    <>
+                      <Check className="h-5 w-5" />
+                      {t("paymentMadeButton")}
+                    </>
+                  )}
+                </button>
+
+                <p className="mt-3 text-xs text-center text-muted-foreground">
+                  {t("paymentNotifyHint")}
+                </p>
+
+                {notifyError && (
+                  <p className="mt-3 text-xs text-center text-red-600">
+                    {notifyError}
+                  </p>
+                )}
+
+                <p className="mt-5 text-xs text-center text-muted-foreground leading-relaxed">
+                  {t("confirmationNote")}
+                </p>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </div>
+      </section>
+    );
+  }
+
+  // Payment notified (havale sonrası "Ödemeyi Yaptım" basıldı)
+  if (status === "paymentNotified") {
+    return (
+      <section className="py-12">
+        <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <div className="text-center mb-8">
+              <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-brand-green/10">
+                <Check className="h-10 w-10 text-brand-green" />
+              </div>
+              <h1 className="text-3xl font-bold text-brand-dark">
+                {t("paymentNotifiedTitle")}
+              </h1>
+              <p className="mt-3 text-muted-foreground">
+                {t("paymentNotifiedDesc")}
+              </p>
+            </div>
+
+            {orderNumber && (
+              <div className="mb-6 flex justify-center">
+                <div className="inline-flex items-center gap-2 rounded-full bg-brand-green/10 px-4 py-1.5 text-sm font-medium text-brand-green ring-1 ring-brand-green/20">
+                  <span className="text-brand-green/70">{t("orderNumber")}:</span>
+                  <span className="font-mono font-semibold">{orderNumber}</span>
+                </div>
+              </div>
+            )}
+
+            <Card className="border-0 shadow-xl">
+              <CardContent className="p-6 sm:p-8 space-y-4">
                 <a
                   href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-                    "Sitenizden sipariş verdim, dekontu gönderiyorum."
+                    `Sitenizden sipariş verdim (No: ${orderNumber ?? ""}), dekontu gönderiyorum.`
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group mt-6 flex w-full items-center justify-center gap-2.5 rounded-xl bg-gradient-to-r from-[#128C7E] to-[#075E54] hover:from-[#075E54] hover:to-[#054740] text-white font-bold text-base py-4 px-4 shadow-xl shadow-[#075E54]/30 ring-1 ring-white/10 transition-all hover:shadow-2xl hover:shadow-[#075E54]/40 hover:scale-[1.01]"
+                  className="flex w-full items-center justify-center gap-2.5 rounded-xl bg-gradient-to-r from-[#128C7E] to-[#075E54] hover:from-[#075E54] hover:to-[#054740] text-white font-bold text-base py-4 px-4 shadow-xl shadow-[#075E54]/30 ring-1 ring-white/10 transition-all hover:shadow-2xl hover:shadow-[#075E54]/40 hover:scale-[1.01]"
                 >
                   <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/15">
                     <MessageCircle className="h-4 w-4" />
@@ -367,22 +471,16 @@ export default function CheckoutPage() {
                   {t("sendReceiptWhatsApp")}
                 </a>
 
-                <p className="mt-4 text-xs text-center text-muted-foreground leading-relaxed">
-                  {t("confirmationNote")}
-                </p>
+                <Link href="/magaza" className="block">
+                  <Button
+                    variant="outline"
+                    className="w-full border-brand-green text-brand-green hover:bg-brand-green hover:text-white"
+                  >
+                    {t("continueShopping")}
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
-
-            <div className="mt-6 text-center">
-              <Link href="/magaza">
-                <Button
-                  variant="outline"
-                  className="border-brand-green text-brand-green hover:bg-brand-green hover:text-white"
-                >
-                  {t("continueShopping")}
-                </Button>
-              </Link>
-            </div>
           </motion.div>
         </div>
       </section>

@@ -74,7 +74,7 @@ export default function AdminDashboard() {
           supabase
             .from("orders")
             .select("id", { count: "exact", head: true })
-            .eq("status", "confirmed"),
+            .eq("status", "pending"),
           supabase
             .from("vki_leads")
             .select("id", { count: "exact", head: true })
@@ -90,7 +90,6 @@ export default function AdminDashboard() {
           supabase
             .from("orders")
             .select("id, total_amount, status, created_at, shipping_address")
-            .neq("status", "pending")
             .order("created_at", { ascending: false })
             .limit(5),
           supabase
@@ -124,7 +123,7 @@ export default function AdminDashboard() {
       href: "/admin/urunler",
     },
     {
-      label: "Yeni Siparis",
+      label: "Bekleyen Siparis",
       value: stats.pendingOrders,
       icon: ShoppingCart,
       color: "bg-orange-500",

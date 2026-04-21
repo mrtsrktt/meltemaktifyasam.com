@@ -302,7 +302,13 @@
     "copy": "Copy",
     "copied": "Copied",
     "sendReceiptWhatsApp": "Send your receipt via WhatsApp",
-    "confirmationNote": "Your order will be confirmed once your payment is received, and you'll be notified via WhatsApp/email. For any questions, feel free to contact us on WhatsApp."
+    "confirmationNote": "Your order will be confirmed once your payment is received, and you'll be notified via WhatsApp/email. For any questions, feel free to contact us on WhatsApp.",
+    "paymentMadeButton": "I've Made the Payment",
+    "paymentMadeProcessing": "Sending your notification...",
+    "paymentNotifiedTitle": "Payment Notification Received",
+    "paymentNotifiedDesc": "Meltem will verify your payment and confirm your order. You can also send your receipt via WhatsApp if you'd like.",
+    "paymentNotifyHint": "After completing the bank transfer/EFT, please click this button.",
+    "paymentNotifyError": "Notification could not be sent, please try again."
   },
   "account": {
     "title": "My Account",
