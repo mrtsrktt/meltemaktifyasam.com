@@ -79,10 +79,19 @@ export async function POST(request: NextRequest) {
       console.error("Order items error:", itemsError);
     }
 
+    // Migration henüz uygulanmadıysa order_number null olabilir — UUID'den türet
+    const orderNumber = order.order_number ?? (() => {
+      const d = new Date(order.created_at);
+      const datePrefix = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, "0")}${String(d.getDate()).padStart(2, "0")}`;
+      const hexTail = order.id.replace(/-/g, "").slice(-4);
+      const numericTail = String(parseInt(hexTail, 16) % 100).padStart(2, "0");
+      return Number(`${datePrefix}${numericTail}`);
+    })();
+
     return NextResponse.json({
       success: true,
       order_id: order.id,
-      order_number: order.order_number,
+      order_number: orderNumber,
     });
   } catch {
     return NextResponse.json(

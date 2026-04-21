@@ -336,9 +336,11 @@ export default function CheckoutPage() {
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] hover:bg-[#1ebe5a] text-white font-semibold py-3.5 px-4 shadow-lg shadow-[#25D366]/20 transition-colors"
+                  className="group mt-6 flex w-full items-center justify-center gap-2.5 rounded-xl bg-gradient-to-r from-[#128C7E] to-[#075E54] hover:from-[#075E54] hover:to-[#054740] text-white font-bold text-base py-4 px-4 shadow-xl shadow-[#075E54]/30 ring-1 ring-white/10 transition-all hover:shadow-2xl hover:shadow-[#075E54]/40 hover:scale-[1.01]"
                 >
-                  <MessageCircle className="h-5 w-5" />
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/15">
+                    <MessageCircle className="h-4 w-4" />
+                  </span>
                   {t("sendReceiptWhatsApp")}
                 </a>
 
