@@ -282,19 +282,49 @@ export default function CheckoutPage() {
             </div>
 
             {/* Amount hero */}
-            <Card className="border-0 shadow-xl overflow-hidden mb-6">
-              <div className="relative bg-gradient-to-br from-[#1f6b3e] via-[#17643a] to-[#0f4a2c] px-8 py-10 text-center text-white">
-                <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/80">
-                  {t("amountToTransfer")}
+            <div className="relative mb-6 overflow-hidden rounded-2xl bg-gradient-to-br from-[#1f6b3e] via-[#17643a] to-[#0a3a22] shadow-2xl shadow-[#0a3a22]/25 ring-1 ring-white/10">
+              {/* Decorative blobs */}
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -top-20 -right-20 h-56 w-56 rounded-full bg-white/10 blur-3xl"
+              />
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -bottom-24 -left-16 h-56 w-56 rounded-full bg-emerald-300/15 blur-3xl"
+              />
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-0 opacity-[0.07]"
+                style={{
+                  backgroundImage:
+                    "radial-gradient(circle at 1px 1px, white 1px, transparent 0)",
+                  backgroundSize: "16px 16px",
+                }}
+              />
+
+              <div className="relative px-8 py-10 text-center text-white sm:py-12">
+                <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/90 backdrop-blur-sm">
+                  <Landmark className="h-3 w-3" />
+                  {t("amountToPay")}
                 </div>
-                <div className="mt-3 text-5xl sm:text-6xl font-black tracking-tight drop-shadow-sm">
+                <div className="mt-5 text-6xl sm:text-7xl font-black tracking-tight drop-shadow-md">
                   {orderTotal.toLocaleString("tr-TR")}
-                  <span className="ml-2 text-2xl sm:text-3xl font-bold text-white/90">
+                  <span className="ml-2 text-3xl sm:text-4xl font-bold text-white/85">
                     TL
                   </span>
                 </div>
+                {orderNumber && (
+                  <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur-sm px-4 py-1.5 text-sm font-medium text-white/95 ring-1 ring-white/15">
+                    <span className="text-white/70">
+                      {t("orderNumber")}:
+                    </span>
+                    <span className="font-mono font-semibold">
+                      {orderNumber}
+                    </span>
+                  </div>
+                )}
               </div>
-            </Card>
+            </div>
 
             {/* Bank details */}
             <Card className="border-0 shadow-xl">
@@ -321,13 +351,6 @@ export default function CheckoutPage() {
                     copyField="iban"
                     mono
                   />
-                  {orderNumber && (
-                    <InfoRow
-                      label={t("orderNumber")}
-                      value={orderNumber}
-                      mono
-                    />
-                  )}
                 </div>
 
                 <a

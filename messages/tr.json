@@ -298,6 +298,7 @@
     "bankName": "Banka",
     "accountHolder": "Hesap Sahibi",
     "amountToTransfer": "Transfer Edilecek Tutar",
+    "amountToPay": "Ödeme Tutarı",
     "copy": "Kopyala",
     "copied": "Kopyalandı",
     "sendReceiptWhatsApp": "Dekontunuzu WhatsApp'tan gönderin",

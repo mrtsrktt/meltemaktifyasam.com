@@ -298,6 +298,7 @@
     "bankName": "Bank",
     "accountHolder": "Account Holder",
     "amountToTransfer": "Amount to Transfer",
+    "amountToPay": "Amount to Pay",
     "copy": "Copy",
     "copied": "Copied",
     "sendReceiptWhatsApp": "Send your receipt via WhatsApp",
