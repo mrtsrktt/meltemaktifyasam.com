@@ -66,6 +66,7 @@ export interface BlogPost {
 
 export interface Order {
   id: string;
+  order_number: number | null;
   user_id: string | null;
   status: "pending" | "confirmed" | "shipped" | "delivered" | "cancelled";
   total_amount: number;

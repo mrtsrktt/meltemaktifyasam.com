@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { formatOrderNumber } from "@/lib/utils/order-number";
 import {
   Package,
   ShoppingCart,
@@ -23,6 +24,7 @@ interface DashboardStats {
 
 interface RecentOrder {
   id: string;
+  order_number: number | null;
   total_amount: number;
   status: string;
   created_at: string;
@@ -89,7 +91,7 @@ export default function AdminDashboard() {
             .eq("is_active", true),
           supabase
             .from("orders")
-            .select("id, total_amount, status, created_at, shipping_address")
+            .select("*")
             .order("created_at", { ascending: false })
             .limit(5),
           supabase
@@ -223,6 +225,10 @@ export default function AdminDashboard() {
                       {order.shipping_address?.fullName || "Misafir"}
                     </p>
                     <p className="text-xs text-gray-400">
+                      <span className="font-mono text-emerald-700 font-semibold">
+                        #{formatOrderNumber(order)}
+                      </span>
+                      {" · "}
                       {new Date(order.created_at).toLocaleDateString("tr-TR")}
                     </p>
                   </div>

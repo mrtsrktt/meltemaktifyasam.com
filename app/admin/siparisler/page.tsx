@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Order } from "@/lib/supabase/types";
+import { formatOrderNumber } from "@/lib/utils/order-number";
 import Link from "next/link";
 import { ShoppingCart, Filter, Eye } from "lucide-react";
 
@@ -136,7 +137,7 @@ export default function SiparislerPage() {
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
                 <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                  Siparis ID
+                  Siparis No
                 </th>
                 <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
                   Musteri
@@ -169,8 +170,8 @@ export default function SiparislerPage() {
                     key={order.id}
                     className="hover:bg-gray-50 transition-colors"
                   >
-                    <td className="px-6 py-4 text-sm font-mono text-gray-900">
-                      #{order.id.slice(0, 8)}
+                    <td className="px-6 py-4 text-sm font-mono font-semibold text-emerald-700">
+                      {formatOrderNumber(order)}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-700">
                       {customerName}

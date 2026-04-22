@@ -4,6 +4,7 @@ import { use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Order, OrderItem } from "@/lib/supabase/types";
+import { formatOrderNumber } from "@/lib/utils/order-number";
 import {
   ArrowLeft,
   Package,
@@ -174,7 +175,7 @@ export default function SiparisDetayPage({
           </div>
           <div>
             <h1 className="text-2xl font-bold text-gray-900">
-              Siparis #{order.id.slice(0, 8)}
+              Siparis #{formatOrderNumber(order)}
             </h1>
             <p className="text-sm text-gray-500">{formatDate(order.created_at)}</p>
           </div>
@@ -197,8 +198,14 @@ export default function SiparisDetayPage({
           </h2>
           <div className="space-y-3">
             <div className="flex justify-between">
+              <span className="text-sm text-gray-500">Siparis No</span>
+              <span className="text-sm font-mono font-semibold text-emerald-700">
+                {formatOrderNumber(order)}
+              </span>
+            </div>
+            <div className="flex justify-between">
               <span className="text-sm text-gray-500">Siparis ID</span>
-              <span className="text-sm font-mono text-gray-900">
+              <span className="text-xs font-mono text-gray-500">
                 {order.id}
               </span>
             </div>
