@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
         status: "pending",
         note,
       })
-      .select("id, created_at, order_number")
+      .select()
       .single();
 
     if (orderError || !order) {

@@ -133,7 +133,10 @@ export default function CheckoutPage() {
         }),
       });
 
-      if (!orderRes.ok) throw new Error(t("orderError"));
+      if (!orderRes.ok) {
+        const errData = await orderRes.json().catch(() => null);
+        throw new Error(errData?.error || t("orderError"));
+      }
       const { order_number } = await orderRes.json();
       setOrderNumber(order_number ? String(order_number) : null);
 
