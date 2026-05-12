@@ -13,6 +13,7 @@ import { useCartStore } from "@/lib/store/cart";
 import { toast } from "sonner";
 import type { Category } from "@/lib/supabase/types";
 import { useRef, useCallback } from "react";
+import { isShopierMode, SHOPIER_STORE_URL } from "@/lib/store-mode";
 
 interface ShopSet {
   id: string;
@@ -39,6 +40,13 @@ interface ShopProduct {
 }
 
 export default function ShopPage() {
+  // Shopier modunda mağaza sayfasını dış mağazaya yönlendir
+  useEffect(() => {
+    if (isShopierMode && typeof window !== "undefined") {
+      window.location.replace(SHOPIER_STORE_URL);
+    }
+  }, []);
+
   const t = useTranslations("products");
   const ts = useTranslations("shop");
   const locale = useLocale();
@@ -115,6 +123,8 @@ export default function ShopPage() {
     products.filter((p) =>
       p.product_categories?.some((pc) => pc.category_id === catId)
     ).length;
+
+  if (isShopierMode) return null;
 
   return (
     <section className="py-8 sm:py-12">

@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Link } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Sparkles, Tag, ArrowRight, ArrowLeft, ShoppingBag, Flame } from "lucide-react";
+import { isShopierMode, SHOPIER_STORE_URL } from "@/lib/store-mode";
 
 interface SetProduct {
   price: number;
@@ -29,6 +30,13 @@ export default function SetsListPage() {
   const [sets, setSets] = useState<SetListItem[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Shopier modunda setler sayfasını dış mağazaya yönlendir
+  useEffect(() => {
+    if (isShopierMode && typeof window !== "undefined") {
+      window.location.replace(SHOPIER_STORE_URL);
+    }
+  }, []);
+
   useEffect(() => {
     const supabase = createClient();
     supabase
@@ -43,6 +51,8 @@ export default function SetsListPage() {
         setLoading(false);
       });
   }, []);
+
+  if (isShopierMode) return null;
 
   return (
     <section className="py-8 sm:py-12">

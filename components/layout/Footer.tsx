@@ -5,6 +5,7 @@ import { Link } from "@/i18n/navigation";
 import Image from "next/image";
 import { Instagram, Phone, Mail } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { isShopierMode, SHOPIER_STORE_URL } from "@/lib/store-mode";
 
 export default function Footer() {
   const t = useTranslations("footer");
@@ -64,9 +65,20 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/magaza" className="text-sm text-gray-400 hover:text-white transition-colors">
-                  {nav("shop")}
-                </Link>
+                {isShopierMode ? (
+                  <a
+                    href={SHOPIER_STORE_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-gray-400 hover:text-white transition-colors"
+                  >
+                    {nav("shop")}
+                  </a>
+                ) : (
+                  <Link href="/magaza" className="text-sm text-gray-400 hover:text-white transition-colors">
+                    {nav("shop")}
+                  </Link>
+                )}
               </li>
               <li>
                 <Link href="/hakkimda" className="text-sm text-gray-400 hover:text-white transition-colors">

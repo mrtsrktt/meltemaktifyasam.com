@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { motion } from "framer-motion";
@@ -8,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ShoppingBag, ArrowRight, Trash2, Minus, Plus, Sparkles } from "lucide-react";
 import { useCartStore } from "@/lib/store/cart";
+import { isShopierMode, SHOPIER_STORE_URL } from "@/lib/store-mode";
 
 export default function CartPage() {
   const t = useTranslations("cart");
@@ -15,6 +17,15 @@ export default function CartPage() {
   const updateQuantity = useCartStore((s) => s.updateQuantity);
   const removeItem = useCartStore((s) => s.removeItem);
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  // Shopier modunda sepeti dış mağazaya yönlendir
+  useEffect(() => {
+    if (isShopierMode && typeof window !== "undefined") {
+      window.location.replace(SHOPIER_STORE_URL);
+    }
+  }, []);
+
+  if (isShopierMode) return null;
 
   return (
     <section className="py-12">

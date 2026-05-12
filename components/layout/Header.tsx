@@ -16,8 +16,9 @@ import {
 } from "@/components/ui/sheet";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCartStore } from "@/lib/store/cart";
+import { isShopierMode, SHOPIER_STORE_URL } from "@/lib/store-mode";
 
-const navLinks = [
+const allNavLinks = [
   { href: "/" as const, key: "home" },
   { href: "/magaza" as const, key: "shop" },
   { href: "/hakkimda" as const, key: "about" },
@@ -25,6 +26,11 @@ const navLinks = [
   { href: "/vki-analiz" as const, key: "vki" },
   { href: "/iletisim" as const, key: "contact" },
 ];
+
+// Shopier modunda dahili /magaza linkini kaldır; yerine external Shopier linki ayrıca render edilir.
+const navLinks = isShopierMode
+  ? allNavLinks.filter((l) => l.key !== "shop")
+  : allNavLinks;
 
 function CartIcon() {
   const totalItems = useCartStore((s) => s.totalItems());
@@ -123,6 +129,16 @@ export default function Header() {
               {t(link.key)}
             </Link>
           ))}
+          {isShopierMode && (
+            <a
+              href={SHOPIER_STORE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-lg px-3 py-2 text-sm font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-brand-green"
+            >
+              {t("shop")}
+            </a>
+          )}
         </nav>
 
         {/* Desktop Actions */}
@@ -136,7 +152,7 @@ export default function Header() {
           >
             <Globe className="h-4 w-4" />
           </Button>
-          <CartIcon />
+          {!isShopierMode && <CartIcon />}
           <Link href="/hesabim">
             <Button variant="ghost" size="icon" className="text-white/80 hover:text-white hover:bg-white/10">
               <User className="h-4 w-4" />
@@ -159,7 +175,7 @@ export default function Header() {
           >
             <Globe className="h-4 w-4" />
           </Button>
-          <CartIcon />
+          {!isShopierMode && <CartIcon />}
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger render={<Button variant="ghost" size="icon" />}>
               <Menu className="h-5 w-5" />
@@ -189,6 +205,17 @@ export default function Header() {
                     {t(link.key)}
                   </Link>
                 ))}
+                {isShopierMode && (
+                  <a
+                    href={SHOPIER_STORE_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setOpen(false)}
+                    className="rounded-lg px-4 py-3 text-base font-medium text-foreground/70 transition-colors hover:bg-accent"
+                  >
+                    {t("shop")}
+                  </a>
+                )}
                 <div className="mt-4 border-t pt-4">
                   <Link
                     href="/hesabim"

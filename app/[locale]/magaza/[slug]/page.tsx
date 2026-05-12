@@ -20,6 +20,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useCartStore } from "@/lib/store/cart";
 import { toast } from "sonner";
 import type { Product } from "@/lib/supabase/types";
+import { isShopierMode, SHOPIER_STORE_URL } from "@/lib/store-mode";
 
 export default function ProductDetailPage({
   params,
@@ -34,6 +35,13 @@ export default function ProductDetailPage({
   const [loading, setLoading] = useState(true);
   const [added, setAdded] = useState(false);
   const addItem = useCartStore((s) => s.addItem);
+
+  // Shopier modunda ürün detayını dış mağazaya yönlendir
+  useEffect(() => {
+    if (isShopierMode && typeof window !== "undefined") {
+      window.location.replace(SHOPIER_STORE_URL);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -99,6 +107,8 @@ export default function ProductDetailPage({
     setTimeout(() => setAdded(false), 2000);
     toast.success(`${productName} ${t("addedToCart")} (${quantity})`);
   };
+
+  if (isShopierMode) return null;
 
   return (
     <section className="py-12">

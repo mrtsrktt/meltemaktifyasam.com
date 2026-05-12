@@ -23,22 +23,25 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { useCartStore } from "@/lib/store/cart";
+import { isShopierMode, SHOPIER_STORE_URL } from "@/lib/store-mode";
 
+type PaymentMethod = "bank_transfer" | "shopier";
 type CheckoutStatus =
   | "form"
   | "loading"
-  | "payment"
+  | "redirecting"
   | "bankTransfer"
   | "paymentNotified"
   | "success"
   | "error";
 
-const PAYTR_ENABLED = process.env.NEXT_PUBLIC_PAYTR_ENABLED === "true";
 const BANK_NAME = process.env.NEXT_PUBLIC_BANK_NAME || "";
 const BANK_ACCOUNT_HOLDER = process.env.NEXT_PUBLIC_BANK_ACCOUNT_HOLDER || "";
 const BANK_IBAN = process.env.NEXT_PUBLIC_BANK_IBAN || "";
 const WHATSAPP_NUMBER =
   process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "905412523421";
+const SHOPIER_ENABLED =
+  process.env.NEXT_PUBLIC_SHOPIER_ENABLED === "true";
 
 export default function CheckoutPage() {
   const t = useTranslations("checkout");
@@ -50,7 +53,9 @@ export default function CheckoutPage() {
   );
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<CheckoutStatus>("form");
-  const [paytrToken, setPaytrToken] = useState<string | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(
+    "bank_transfer"
+  );
   const [errorMessage, setErrorMessage] = useState("");
   const [orderNumber, setOrderNumber] = useState<string | null>(null);
   const [orderTotal, setOrderTotal] = useState<number>(0);
@@ -58,7 +63,7 @@ export default function CheckoutPage() {
   const [notifyLoading, setNotifyLoading] = useState(false);
   const [notifyError, setNotifyError] = useState("");
   // Havale akışında: form submit'te siparişi OLUŞTURMA.
-  // Müşteri "Ödemeyi Yaptım" butonuna basınca sipariş oluşturulur + bildirim kaydedilir.
+  // Müşteri "Ödemeyi Yaptım" basınca sipariş oluşturulur + bildirim notu eklenir.
   const [pendingOrderData, setPendingOrderData] = useState<{
     customer_name: string;
     customer_email: string;
@@ -71,7 +76,7 @@ export default function CheckoutPage() {
     total: number;
   } | null>(null);
 
-  // Handle redirect from PayTR result page (?payment=success/fail)
+  // Shopier'dan dönüşte ?payment=success/fail
   useEffect(() => {
     const paymentResult = searchParams.get("payment");
     if (paymentResult === "success") {
@@ -83,23 +88,12 @@ export default function CheckoutPage() {
     }
   }, [searchParams, clearCart, t]);
 
-  // Listen for PayTR iframe postMessage (fallback)
+  // Shopier modunda ödeme sayfasını dış mağazaya yönlendir
   useEffect(() => {
-    const handleMessage = (event: MessageEvent) => {
-      if (event.data?.type === "PAYTR_RESULT") {
-        if (event.data.status === "success") {
-          setStatus("success");
-          clearCart();
-        } else {
-          setStatus("error");
-          setErrorMessage(t("paymentFailed"));
-        }
-      }
-    };
-
-    window.addEventListener("message", handleMessage);
-    return () => window.removeEventListener("message", handleMessage);
-  }, [clearCart, t]);
+    if (isShopierMode && typeof window !== "undefined") {
+      window.location.replace(SHOPIER_STORE_URL);
+    }
+  }, []);
 
   const handlePaymentMade = async () => {
     if (!pendingOrderData || notifyLoading) return;
@@ -107,7 +101,6 @@ export default function CheckoutPage() {
     setNotifyError("");
 
     try {
-      // Tek çağrı: sipariş oluştur + ödeme bildirimi notunu aynı anda ekle
       const orderRes = await fetch("/api/siparis", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -152,6 +145,25 @@ export default function CheckoutPage() {
     }
   };
 
+  const submitToShopier = (
+    url: string,
+    params: Record<string, string>
+  ) => {
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = url;
+    form.style.display = "none";
+    Object.entries(params).forEach(([name, value]) => {
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = name;
+      input.value = String(value);
+      form.appendChild(input);
+    });
+    document.body.appendChild(form);
+    form.submit();
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (items.length === 0) return;
@@ -161,17 +173,23 @@ export default function CheckoutPage() {
     const form = e.currentTarget;
     const fd = new FormData(form);
 
-    const customerName = fd.get("fullName") as string;
-    const customerEmail = fd.get("email") as string;
-    const customerPhone = fd.get("phone") as string;
-    const customerAddress = fd.get("address") as string;
-    const customerCity = fd.get("city") as string;
-    const customerDistrict = fd.get("district") as string;
-    const customerZip = fd.get("zipCode") as string;
+    const customerName = (fd.get("fullName") as string).trim();
+    const customerEmail = ((fd.get("email") as string) || "").trim();
+    const customerPhone = (fd.get("phone") as string).trim();
+    const customerAddress = (fd.get("address") as string).trim();
+    const customerCity = (fd.get("city") as string).trim();
+    const customerDistrict = (fd.get("district") as string).trim();
+    const customerZip = ((fd.get("zipCode") as string) || "").trim();
 
-    // Havale akışı: siparişi henüz OLUŞTURMA. Form verilerini ve sepet
-    // snapshot'ını state'e kaydet; müşteri "Ödemeyi Yaptım" butonuna basınca oluştur.
-    if (!PAYTR_ENABLED) {
+    // Kredi kartı seçildiyse e-posta zorunlu (Shopier makbuzu için)
+    if (paymentMethod === "shopier" && !customerEmail) {
+      setStatus("form");
+      setErrorMessage(t("emailRequiredForCard"));
+      return;
+    }
+
+    // Havale akışı: siparişi henüz OLUŞTURMA. "Ödemeyi Yaptım" butonu yapacak.
+    if (paymentMethod === "bank_transfer") {
       setPendingOrderData({
         customer_name: customerName,
         customer_email: customerEmail,
@@ -189,7 +207,7 @@ export default function CheckoutPage() {
       return;
     }
 
-    // PayTR akışı: siparişi oluştur, iframe token al
+    // Shopier akışı: siparişi oluştur, ödeme parametrelerini al, formu Shopier'a gönder
     try {
       const orderRes = await fetch("/api/siparis", {
         method: "POST",
@@ -216,38 +234,28 @@ export default function CheckoutPage() {
       });
 
       if (!orderRes.ok) throw new Error(t("orderError"));
-      const { order_id, order_number } = await orderRes.json();
-      setOrderNumber(order_number ? String(order_number) : null);
-      setOrderTotal(total);
+      const { order_id } = await orderRes.json();
 
-      const user_basket = items.map((item) => [
-        item.name_tr,
-        (item.price * 100).toString(),
-        item.quantity,
-      ]);
-
-      const tokenRes = await fetch("/api/payment/token", {
+      const payRes = await fetch("/api/payment/shopier", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          order_id,
-          email: customerEmail,
-          payment_amount: total,
-          user_name: customerName,
-          user_address: `${customerAddress}, ${customerDistrict}, ${customerCity}`,
-          user_phone: customerPhone,
-          user_basket,
-        }),
+        body: JSON.stringify({ order_id }),
       });
 
-      if (!tokenRes.ok) {
-        const errData = await tokenRes.json();
-        throw new Error(errData.error || t("paymentStartError"));
+      if (!payRes.ok) {
+        const errData = await payRes.json().catch(() => null);
+        throw new Error(errData?.error || t("paymentStartError"));
       }
 
-      const { token } = await tokenRes.json();
-      setPaytrToken(token);
-      setStatus("payment");
+      const { url, params } = (await payRes.json()) as {
+        url: string;
+        params: Record<string, string>;
+      };
+
+      // Sepeti temizle (Shopier'a gidiyoruz, geri dönüşte temiz olsun)
+      clearCart();
+      setStatus("redirecting");
+      submitToShopier(url, params);
     } catch (err) {
       setStatus("error");
       setErrorMessage(
@@ -256,11 +264,13 @@ export default function CheckoutPage() {
     }
   };
 
+  if (isShopierMode) return null;
+
   // Empty cart
   if (
     items.length === 0 &&
     status !== "success" &&
-    status !== "payment" &&
+    status !== "redirecting" &&
     status !== "bankTransfer" &&
     status !== "paymentNotified"
   ) {
@@ -281,7 +291,7 @@ export default function CheckoutPage() {
     );
   }
 
-  // Bank transfer instructions (PayTR askıda iken)
+  // Bank transfer
   if (status === "bankTransfer") {
     const copyToClipboard = async (field: string, value: string) => {
       try {
@@ -348,7 +358,6 @@ export default function CheckoutPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            {/* Success header */}
             <div className="text-center mb-8">
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-brand-green/10">
                 <Check className="h-8 w-8 text-brand-green" />
@@ -361,9 +370,7 @@ export default function CheckoutPage() {
               </p>
             </div>
 
-            {/* Amount hero */}
             <div className="relative mb-6 overflow-hidden rounded-2xl bg-gradient-to-br from-[#1f6b3e] via-[#17643a] to-[#0a3a22] shadow-2xl shadow-[#0a3a22]/25 ring-1 ring-white/10">
-              {/* Decorative blobs */}
               <div
                 aria-hidden
                 className="pointer-events-none absolute -top-20 -right-20 h-56 w-56 rounded-full bg-white/10 blur-3xl"
@@ -409,7 +416,6 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-            {/* Bank details */}
             <Card className="border-0 shadow-xl">
               <CardContent className="p-6 sm:p-8">
                 <div className="flex items-center gap-3 mb-5">
@@ -480,7 +486,7 @@ export default function CheckoutPage() {
     );
   }
 
-  // Payment notified (havale sonrası "Ödemeyi Yaptım" basıldı)
+  // Bank transfer notified
   if (status === "paymentNotified") {
     return (
       <section className="py-12">
@@ -546,7 +552,24 @@ export default function CheckoutPage() {
     );
   }
 
-  // Payment success
+  // Shopier'a yönlendirme ekranı (form auto-submit ile)
+  if (status === "redirecting") {
+    return (
+      <section className="py-20">
+        <div className="mx-auto max-w-md px-4 text-center">
+          <Loader2 className="mx-auto h-12 w-12 animate-spin text-brand-green" />
+          <h2 className="mt-6 text-xl font-semibold text-brand-dark">
+            {t("redirectingTitle")}
+          </h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {t("redirectingDesc")}
+          </p>
+        </div>
+      </section>
+    );
+  }
+
+  // Shopier ödeme başarılı
   if (status === "success") {
     return (
       <section className="py-12">
@@ -570,41 +593,6 @@ export default function CheckoutPage() {
                 {t("continueShopping")}
               </Button>
             </Link>
-          </motion.div>
-        </div>
-      </section>
-    );
-  }
-
-  // PayTR iframe
-  if (status === "payment" && paytrToken) {
-    return (
-      <section className="py-12">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <div className="flex items-center gap-3 mb-6">
-              <ShieldCheck className="h-6 w-6 text-brand-green" />
-              <h1 className="text-2xl font-bold text-brand-dark">
-                {t("securePayment")}
-              </h1>
-            </div>
-            <Card className="border-0 shadow-xl overflow-hidden">
-              <CardContent className="p-0">
-                <iframe
-                  src={`https://www.paytr.com/odeme/guvenli/${paytrToken}`}
-                  className="w-full border-0"
-                  style={{ height: "600px" }}
-                  title="PayTR Güvenli Ödeme"
-                />
-              </CardContent>
-            </Card>
-            <div className="mt-4 flex items-center justify-center gap-2 text-sm text-muted-foreground">
-              <Lock className="h-4 w-4" />
-              {t("sslSecure")}
-            </div>
           </motion.div>
         </div>
       </section>
@@ -646,11 +634,11 @@ export default function CheckoutPage() {
 
         <form onSubmit={handleSubmit}>
           <div className="mt-8 grid gap-8 lg:grid-cols-3">
-            {/* Shipping Form */}
+            {/* Shipping Form + Payment Method */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="lg:col-span-2"
+              className="lg:col-span-2 space-y-6"
             >
               <Card className="border-0 shadow-xl">
                 <CardContent className="p-8">
@@ -672,13 +660,16 @@ export default function CheckoutPage() {
                         <Label htmlFor="email">
                           E-posta{" "}
                           <span className="text-muted-foreground text-xs">
-                            (opsiyonel)
+                            {paymentMethod === "shopier"
+                              ? "(zorunlu)"
+                              : "(opsiyonel)"}
                           </span>
                         </Label>
                         <Input
                           id="email"
                           name="email"
                           type="email"
+                          required={paymentMethod === "shopier"}
                           className="mt-1"
                         />
                       </div>
@@ -731,10 +722,42 @@ export default function CheckoutPage() {
                       </div>
                     </div>
                   </div>
+                </CardContent>
+              </Card>
 
-                  {/* Payment Method Notice */}
-                  {PAYTR_ENABLED ? (
-                    <div className="mt-8 rounded-xl bg-brand-green/5 border border-brand-green/10 p-4 flex items-start gap-3">
+              {/* Payment Method Selection */}
+              <Card className="border-0 shadow-xl">
+                <CardContent className="p-8">
+                  <h2 className="text-xl font-semibold text-brand-dark mb-6">
+                    {t("paymentMethodTitle")}
+                  </h2>
+
+                  <div
+                    className={`grid gap-4 ${
+                      SHOPIER_ENABLED ? "sm:grid-cols-2" : "sm:grid-cols-1"
+                    }`}
+                  >
+                    <PaymentMethodCard
+                      active={paymentMethod === "bank_transfer"}
+                      onSelect={() => setPaymentMethod("bank_transfer")}
+                      icon={<Landmark className="h-6 w-6" />}
+                      title={t("bankTransferOption")}
+                      desc={t("bankTransferOptionDesc")}
+                    />
+                    {SHOPIER_ENABLED && (
+                      <PaymentMethodCard
+                        active={paymentMethod === "shopier"}
+                        onSelect={() => setPaymentMethod("shopier")}
+                        icon={<CreditCard className="h-6 w-6" />}
+                        title={t("creditCardOption")}
+                        desc={t("creditCardOptionDesc")}
+                        badge={t("creditCardBadge")}
+                      />
+                    )}
+                  </div>
+
+                  {paymentMethod === "shopier" ? (
+                    <div className="mt-5 rounded-xl bg-brand-green/5 border border-brand-green/10 p-4 flex items-start gap-3">
                       <ShieldCheck className="h-5 w-5 text-brand-green shrink-0 mt-0.5" />
                       <div>
                         <p className="font-medium text-brand-green">
@@ -746,7 +769,7 @@ export default function CheckoutPage() {
                       </div>
                     </div>
                   ) : (
-                    <div className="mt-8 rounded-xl bg-brand-green/5 border border-brand-green/10 p-4 flex items-start gap-3">
+                    <div className="mt-5 rounded-xl bg-brand-green/5 border border-brand-green/10 p-4 flex items-start gap-3">
                       <Landmark className="h-5 w-5 text-brand-green shrink-0 mt-0.5" />
                       <div>
                         <p className="font-medium text-brand-green">
@@ -803,18 +826,18 @@ export default function CheckoutPage() {
                   >
                     {status === "loading" ? (
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    ) : PAYTR_ENABLED ? (
+                    ) : paymentMethod === "shopier" ? (
                       <CreditCard className="mr-2 h-4 w-4" />
                     ) : (
                       <Landmark className="mr-2 h-4 w-4" />
                     )}
                     {status === "loading"
                       ? t("processing")
-                      : PAYTR_ENABLED
+                      : paymentMethod === "shopier"
                       ? t("proceedToPayment")
                       : t("placeOrderBankTransfer")}
                   </Button>
-                  {PAYTR_ENABLED && (
+                  {paymentMethod === "shopier" && (
                     <div className="mt-3 flex items-center justify-center gap-1 text-xs text-muted-foreground">
                       <Lock className="h-3 w-3" />
                       {t("sslSecure")}
@@ -827,5 +850,64 @@ export default function CheckoutPage() {
         </form>
       </div>
     </section>
+  );
+}
+
+function PaymentMethodCard({
+  active,
+  onSelect,
+  icon,
+  title,
+  desc,
+  badge,
+}: {
+  active: boolean;
+  onSelect: () => void;
+  icon: React.ReactNode;
+  title: string;
+  desc: string;
+  badge?: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onSelect}
+      className={`relative text-left rounded-2xl border-2 p-5 transition-all ${
+        active
+          ? "border-brand-green bg-brand-green/5 shadow-md"
+          : "border-slate-200 bg-white hover:border-brand-green/40 hover:bg-slate-50"
+      }`}
+      aria-pressed={active}
+    >
+      {badge && (
+        <span className="absolute -top-2 right-4 rounded-full bg-amber-100 text-amber-800 text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 ring-1 ring-amber-200">
+          {badge}
+        </span>
+      )}
+      <div className="flex items-start gap-3">
+        <div
+          className={`flex h-11 w-11 items-center justify-center rounded-xl shrink-0 ${
+            active
+              ? "bg-brand-green text-white"
+              : "bg-slate-100 text-slate-600"
+          }`}
+        >
+          {icon}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <p className="font-semibold text-brand-dark">{title}</p>
+            {active && (
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-brand-green text-white">
+                <Check className="h-3 w-3" />
+              </span>
+            )}
+          </div>
+          <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+            {desc}
+          </p>
+        </div>
+      </div>
+    </button>
   );
 }
