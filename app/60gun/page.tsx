@@ -558,49 +558,25 @@ export default function Campaign60Page() {
             </p>
           </motion.div>
 
-          {/* Placeholder grid */}
+          {/* Before/After galeri */}
           <div className="mt-10 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-            {[
-              { name: "Ayşe K.", detail: "8 Kilo / 12 Hafta", tag: "İnsülin Direnci" },
-              { name: "Zeynep D.", detail: "11 Kilo / 10 Hafta", tag: "Tiroit" },
-              { name: "Selin A.", detail: "6 Kilo / 8 Hafta", tag: "Hormon" },
-              { name: "Merve T.", detail: "9 Kilo / 12 Hafta", tag: "İnsülin Direnci" },
-              { name: "Esra B.", detail: "7 Kilo / 9 Hafta", tag: "Tiroit" },
-              { name: "Gizem Y.", detail: "10 Kilo / 12 Hafta", tag: "Hormon" },
-            ].map((p, i) => (
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n, i) => (
               <motion.div
-                key={p.name}
+                key={n}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.4, delay: (i % 3) * 0.08 }}
                 className="rounded-2xl bg-white border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow"
               >
-                {/* Placeholder photo area */}
-                <div className="grid grid-cols-2 gap-px bg-slate-100">
-                  {["Öncesi", "Sonrası"].map((label) => (
-                    <div
-                      key={label}
-                      className="aspect-square flex flex-col items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 text-slate-400"
-                    >
-                      <Award className="h-7 w-7 mb-1" />
-                      <span className="text-[10px] font-semibold uppercase tracking-wide">
-                        {label}
-                      </span>
-                      <span className="mt-0.5 text-[9px] text-slate-400/70">
-                        foto eklenecek
-                      </span>
-                    </div>
-                  ))}
-                </div>
-                <div className="p-3 sm:p-4">
-                  <div className="text-sm font-bold text-slate-900">
-                    {p.name}
-                  </div>
-                  <div className="text-xs text-slate-600 mt-0.5">{p.detail}</div>
-                  <div className="mt-2 inline-block rounded-full bg-orange-50 text-brand-orange text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 border border-orange-100">
-                    {p.tag}
-                  </div>
+                <div className="relative aspect-square bg-slate-100">
+                  <Image
+                    src={`/before-after/ba-${n}.jpg`}
+                    alt="Önce / Sonra başarı hikayesi"
+                    fill
+                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 33vw"
+                    className="object-cover"
+                  />
                 </div>
               </motion.div>
             ))}
