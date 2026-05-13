@@ -14,6 +14,13 @@ import {
   Loader2,
   AlertCircle,
   Users,
+  Eye,
+  X,
+  Ruler,
+  Weight,
+  Calendar,
+  Target,
+  HeartPulse,
 } from "lucide-react";
 
 type GoalFilter = "all" | "kilo_ver" | "kilo_al" | "form_koru" | "saglikli_beslenme" | "kronik_destek";
@@ -39,6 +46,7 @@ export default function VkiLeadlerPage() {
   const [error, setError] = useState<string | null>(null);
   const [goalFilter, setGoalFilter] = useState<GoalFilter>("all");
   const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [selectedLead, setSelectedLead] = useState<VkiLead | null>(null);
 
   const fetchLeads = async () => {
     setLoading(true);
@@ -86,6 +94,10 @@ export default function VkiLeadlerPage() {
           l.id === lead.id ? { ...l, is_contacted: !l.is_contacted } : l
         )
       );
+
+      if (selectedLead?.id === lead.id) {
+        setSelectedLead({ ...lead, is_contacted: !lead.is_contacted });
+      }
     } catch (err: unknown) {
       const message =
         err instanceof Error ? err.message : "Durum güncellenemedi.";
@@ -223,7 +235,12 @@ export default function VkiLeadlerPage() {
                 {leads.map((lead) => (
                   <tr
                     key={lead.id}
-                    className="hover:bg-gray-50 transition-colors"
+                    onClick={() => setSelectedLead(lead)}
+                    className={`hover:bg-gray-50 transition-colors cursor-pointer ${
+                      lead.health_note
+                        ? "bg-amber-50/30 border-l-4 border-l-amber-300"
+                        : ""
+                    }`}
                   >
                     <td className="px-4 py-3 font-medium text-gray-900">
                       {lead.full_name}
@@ -268,7 +285,10 @@ export default function VkiLeadlerPage() {
                     </td>
                     <td className="px-4 py-3 text-center">
                       <button
-                        onClick={() => toggleContacted(lead)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleContacted(lead);
+                        }}
                         disabled={togglingId === lead.id}
                         className="inline-flex items-center gap-1 disabled:opacity-50"
                         title={
@@ -290,17 +310,30 @@ export default function VkiLeadlerPage() {
                       {formatDate(lead.created_at)}
                     </td>
                     <td className="px-4 py-3 text-center">
-                      {lead.phone && (
+                      <div className="flex items-center justify-center gap-2">
                         <button
-                          onClick={() =>
-                            openWhatsApp(lead.phone!, lead.full_name || "")
-                          }
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-500 text-white rounded-lg text-xs font-medium hover:bg-green-600 transition-colors"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedLead(lead);
+                          }}
+                          className="p-1.5 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
+                          title="Detayi gor"
                         >
-                          <MessageCircle className="w-3.5 h-3.5" />
-                          WhatsApp
+                          <Eye className="w-4 h-4" />
                         </button>
-                      )}
+                        {lead.phone && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openWhatsApp(lead.phone!, lead.full_name || "");
+                            }}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-500 text-white rounded-lg text-xs font-medium hover:bg-green-600 transition-colors"
+                          >
+                            <MessageCircle className="w-3.5 h-3.5" />
+                            WhatsApp
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -309,6 +342,228 @@ export default function VkiLeadlerPage() {
           </div>
         )}
       </div>
+
+      {/* Detay Modal */}
+      {selectedLead && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+          onClick={() => setSelectedLead(null)}
+        >
+          <div
+            className="bg-white rounded-xl border border-gray-200 shadow-xl max-w-2xl w-full max-h-[85vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-5 border-b border-gray-200">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-emerald-100 rounded-lg">
+                  <Activity className="w-5 h-5 text-emerald-600" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900">
+                    {selectedLead.full_name}
+                  </h2>
+                  <p className="text-xs text-gray-500">
+                    {formatDate(selectedLead.created_at)}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setSelectedLead(null)}
+                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-5 space-y-5">
+              {/* İletişim */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <span className="text-xs font-medium text-gray-400 uppercase flex items-center gap-1.5">
+                    <Phone className="w-3 h-3" />
+                    Telefon
+                  </span>
+                  <p className="text-sm text-gray-700 mt-1 font-mono">
+                    {selectedLead.phone || "-"}
+                  </p>
+                </div>
+                <div>
+                  <span className="text-xs font-medium text-gray-400 uppercase flex items-center gap-1.5">
+                    <Mail className="w-3 h-3" />
+                    E-posta
+                  </span>
+                  <p className="text-sm text-gray-700 mt-1 break-all">
+                    {selectedLead.email || "-"}
+                  </p>
+                </div>
+              </div>
+
+              {/* Ölçümler */}
+              <div className="grid grid-cols-3 gap-4 rounded-xl bg-gray-50 border border-gray-100 p-4">
+                <div>
+                  <span className="text-xs font-medium text-gray-400 uppercase flex items-center gap-1.5">
+                    <Calendar className="w-3 h-3" />
+                    Yas
+                  </span>
+                  <p className="text-base font-semibold text-gray-900 mt-1">
+                    {selectedLead.age ?? "-"}
+                  </p>
+                </div>
+                <div>
+                  <span className="text-xs font-medium text-gray-400 uppercase flex items-center gap-1.5">
+                    <Ruler className="w-3 h-3" />
+                    Boy
+                  </span>
+                  <p className="text-base font-semibold text-gray-900 mt-1">
+                    {selectedLead.height_cm != null
+                      ? `${Number(selectedLead.height_cm)} cm`
+                      : "-"}
+                  </p>
+                </div>
+                <div>
+                  <span className="text-xs font-medium text-gray-400 uppercase flex items-center gap-1.5">
+                    <Weight className="w-3 h-3" />
+                    Kilo
+                  </span>
+                  <p className="text-base font-semibold text-gray-900 mt-1">
+                    {selectedLead.weight_kg != null
+                      ? `${Number(selectedLead.weight_kg)} kg`
+                      : "-"}
+                  </p>
+                </div>
+              </div>
+
+              {/* VKİ + Kategori + Hedef */}
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <span className="text-xs font-medium text-gray-400 uppercase">
+                    VKI
+                  </span>
+                  <p className="text-2xl font-bold text-gray-900 font-mono mt-1">
+                    {selectedLead.bmi != null
+                      ? Number(selectedLead.bmi).toFixed(1)
+                      : "-"}
+                  </p>
+                </div>
+                <div>
+                  <span className="text-xs font-medium text-gray-400 uppercase">
+                    Kategori
+                  </span>
+                  <p className="mt-2">
+                    {selectedLead.bmi_category ? (
+                      <span
+                        className={`inline-block px-2.5 py-1 rounded-full text-xs font-semibold border ${
+                          bmiCategoryColors[selectedLead.bmi_category] ||
+                          "text-gray-600 bg-gray-50 border-gray-200"
+                        }`}
+                      >
+                        {selectedLead.bmi_category}
+                      </span>
+                    ) : (
+                      "-"
+                    )}
+                  </p>
+                </div>
+                <div>
+                  <span className="text-xs font-medium text-gray-400 uppercase flex items-center gap-1.5">
+                    <Target className="w-3 h-3" />
+                    Hedef
+                  </span>
+                  <p className="mt-2">
+                    {selectedLead.goal ? (
+                      <span className="inline-block px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        {goalLabels[selectedLead.goal] || selectedLead.goal}
+                      </span>
+                    ) : (
+                      "-"
+                    )}
+                  </p>
+                </div>
+              </div>
+
+              {/* Saglik Notu — VURGULU */}
+              <div>
+                <span className="text-xs font-medium text-amber-700 uppercase flex items-center gap-1.5">
+                  <HeartPulse className="w-3.5 h-3.5" />
+                  Saglik / Rahatsizlik Notu
+                </span>
+                {selectedLead.health_note ? (
+                  <p className="text-sm text-gray-800 mt-2 leading-relaxed whitespace-pre-wrap bg-amber-50 rounded-lg p-4 border border-amber-200">
+                    {selectedLead.health_note}
+                  </p>
+                ) : (
+                  <p className="text-sm text-gray-400 italic mt-2 bg-gray-50 rounded-lg p-4 border border-gray-100">
+                    Saglik notu girilmedi.
+                  </p>
+                )}
+              </div>
+
+              {/* WhatsApp izni */}
+              <div className="flex items-center gap-2 text-xs text-gray-500">
+                <span
+                  className={`inline-block w-2 h-2 rounded-full ${
+                    selectedLead.whatsapp_consent
+                      ? "bg-emerald-500"
+                      : "bg-gray-300"
+                  }`}
+                />
+                {selectedLead.whatsapp_consent
+                  ? "WhatsApp iletisimine onay verildi"
+                  : "WhatsApp iletisimine onay verilmedi"}
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="flex items-center justify-between gap-3 p-5 border-t border-gray-200 bg-gray-50/50">
+              <button
+                onClick={() => toggleContacted(selectedLead)}
+                disabled={togglingId === selectedLead.id}
+                className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 ${
+                  selectedLead.is_contacted
+                    ? "bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`}
+              >
+                {togglingId === selectedLead.id ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : selectedLead.is_contacted ? (
+                  <CheckCircle className="w-4 h-4" />
+                ) : (
+                  <Circle className="w-4 h-4" />
+                )}
+                {selectedLead.is_contacted
+                  ? "Iletisim Kuruldu"
+                  : "Iletisim Kurulmadi Olarak Isaretle"}
+              </button>
+
+              <div className="flex items-center gap-2">
+                {selectedLead.phone && (
+                  <button
+                    onClick={() =>
+                      openWhatsApp(
+                        selectedLead.phone!,
+                        selectedLead.full_name || ""
+                      )
+                    }
+                    className="inline-flex items-center gap-1.5 px-4 py-2 bg-green-500 text-white rounded-lg text-sm font-medium hover:bg-green-600 transition-colors"
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    WhatsApp
+                  </button>
+                )}
+                <button
+                  onClick={() => setSelectedLead(null)}
+                  className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
+                >
+                  Kapat
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
