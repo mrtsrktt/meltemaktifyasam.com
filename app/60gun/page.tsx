@@ -54,11 +54,11 @@ function Countdown() {
   if (!now) {
     // SSR / hydration için boş placeholder
     return (
-      <div className="grid grid-cols-3 gap-3 sm:gap-4">
-        {["GÜN", "SAAT", "DAKİKA"].map((label) => (
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+        {["GÜN", "SAAT", "DAKİKA", "SANİYE"].map((label) => (
           <div
             key={label}
-            className="rounded-2xl bg-white/10 backdrop-blur-sm border border-white/15 px-4 py-4 text-center"
+            className="rounded-2xl bg-white/10 backdrop-blur-sm border border-white/15 px-3 py-4 text-center"
           >
             <div className="text-3xl sm:text-4xl font-black tabular-nums text-white">
               --
@@ -76,19 +76,21 @@ function Countdown() {
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));
   const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
   const minutes = Math.floor((diff / (1000 * 60)) % 60);
+  const seconds = Math.floor((diff / 1000) % 60);
 
   const cells = [
     { label: "GÜN", value: days },
     { label: "SAAT", value: hours },
     { label: "DAKİKA", value: minutes },
+    { label: "SANİYE", value: seconds },
   ];
 
   return (
-    <div className="grid grid-cols-3 gap-3 sm:gap-4">
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
       {cells.map((c) => (
         <div
           key={c.label}
-          className="rounded-2xl bg-white/10 backdrop-blur-sm border border-white/15 px-4 py-4 text-center shadow-lg"
+          className="rounded-2xl bg-white/10 backdrop-blur-sm border border-white/15 px-3 py-4 text-center shadow-lg"
         >
           <div className="text-3xl sm:text-4xl font-black tabular-nums text-white">
             {String(c.value).padStart(2, "0")}
