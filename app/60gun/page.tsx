@@ -110,7 +110,7 @@ function Countdown() {
 const FAQS = [
   {
     q: "Sağlık sorunum var, bu program bana uygun mu?",
-    a: "Tam tersine — bu program özellikle sağlık sorunu, hormon dengesizliği, insülin direnci, tiroit gibi konuları olan kişiler için tasarlandı. Tahlilin görülmeden plan yapılmıyor.",
+    a: "Tam tersine — bu program özellikle sağlık sorunu, hormon dengesizliği, insülin direnci, tiroit gibi konuları olan kişiler için tasarlandı. Senin durumunu detaylı dinleyip, sana özel plan kuruyoruz.",
   },
   {
     q: "60 günde ne kadar kilo verebilirim?",
@@ -130,7 +130,7 @@ const FAQS = [
   },
   {
     q: "Şu an kayıt yaptırsam ne zaman başlıyor?",
-    a: "Başvurun ulaşır ulaşmaz seni arıyoruz. İlk görüşmeden sonra (genellikle 1-3 gün içinde) tahlillerinle birlikte programa başlıyoruz.",
+    a: "Başvurun ulaşır ulaşmaz seni arıyoruz. İlk görüşmeden sonra (genellikle 1-3 gün içinde) sana özel programınla başlıyoruz.",
   },
   {
     q: "Kontenjan dolarsa ne olur?",
@@ -170,7 +170,7 @@ function FaqItem({ q, a }: { q: string; a: string }) {
    Paket avantaj listesi
    ───────────────────────────────────────────────────────────── */
 const PACKAGE_ITEMS = [
-  "Tahlil değerlendirmesi ve kişiye özel beslenme planı",
+  "Detaylı sağlık görüşmesi ve kişiye özel beslenme planı",
   "Haftalık güncellenen menü ve takip",
   "Günlük WhatsApp desteği — sorularına 24 saat içinde cevap",
   "Düzenli online görüşmeler",
@@ -290,7 +290,7 @@ export default function Campaign60Page() {
               <div className="mt-5 flex flex-wrap gap-2">
                 {[
                   "Birebir Takip",
-                  "Tahlil Bazlı Plan",
+                  "Sana Özel Plan",
                   "%95 Başarı",
                 ].map((label) => (
                   <span
@@ -383,8 +383,8 @@ export default function Campaign60Page() {
               </p>
               <p>
                 Sana verilen her diyet, başka birinin başarısının üzerine
-                kuruldu. Senin tahlilin görülmeden, hormonların incelenmeden,
-                alerjilerin sorgulanmadan...
+                kuruldu. Sen tanınmadan, yaşam tarzın anlaşılmadan,
+                ihtiyaçların sorgulanmadan...
               </p>
               <p className="text-slate-900 font-semibold">
                 Senin vücudun, senin parmak izin kadar tek. Bu yüzden senin
@@ -503,8 +503,8 @@ export default function Campaign60Page() {
             {[
               {
                 icon: Microscope,
-                title: "Tahlilini İstiyorum",
-                text: "Program başlamadan önce tahlilini görmek istiyorum. Tiroit, B12, D vitamini, insülin direnci, alerjiler... Sen senin gibisin, bunu bilmeden plan yazmam.",
+                title: "Önce Seni Tanıyorum",
+                text: "Program başlamadan önce seni, hayat tarzını ve hedeflerini detaylı dinlemek istiyorum. Hangi alışkanlıklar, hangi engeller, ne istiyorsun... Sen senin gibisin, bunu bilmeden plan yazmam.",
               },
               {
                 icon: UserCheck,

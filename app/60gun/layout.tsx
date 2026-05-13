@@ -16,7 +16,7 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   title: "60 Günde Hayalini Kurduğun Bedene | Meltem Tanık",
   description:
-    "60 Gün VIP Birebir Danışmanlık — Kampanyaya özel 9.900 ₺. Tahlil bazlı, kişiye özel fonksiyonel beslenme programı. Meltem Tanık ile dönüşümünüzü başlatın.",
+    "60 Gün VIP Birebir Danışmanlık — Kampanyaya özel 9.900 ₺. Sana özel, ihtiyacına göre tasarlanmış fonksiyonel beslenme programı. Meltem Tanık ile dönüşümünüzü başlatın.",
   // Kampanya landing — reklam trafigi disinda organik aramaya cikmasi istenmiyor.
   // Sadece bu sayfayi etkiler; ana sayfa ve diger route'lar [locale]/layout.tsx'teki
   // index: true ayarini kullanmaya devam eder.
