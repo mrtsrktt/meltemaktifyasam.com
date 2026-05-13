@@ -113,6 +113,7 @@ export interface VkiLead {
   health_note: string | null;
   whatsapp_consent: boolean;
   is_contacted: boolean;
+  source: string | null;
   created_at: string;
 }
 

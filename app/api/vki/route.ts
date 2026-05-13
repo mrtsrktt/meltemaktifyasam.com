@@ -18,6 +18,7 @@ export async function POST(request: NextRequest) {
       goal: body.goal,
       health_note: body.health_note || null,
       whatsapp_consent: body.consent || false,
+      source: body.source || null,
     });
 
     if (error) {

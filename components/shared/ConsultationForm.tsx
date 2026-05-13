@@ -11,12 +11,18 @@ interface ConsultationFormProps {
   variant?: "light" | "dark";
   title?: string;
   subtitle?: string;
+  /** Backend'e gönderilecek kampanya/kaynak etiketi. Örn: "60gun_kampanya". */
+  source?: string;
+  /** "Ücretsiz danışmanlık" yerine özel buton etiketi. */
+  submitLabel?: string;
 }
 
 export default function ConsultationForm({
   variant = "light",
   title,
   subtitle,
+  source,
+  submitLabel,
 }: ConsultationFormProps) {
   const t = useTranslations("consultation");
   const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
@@ -64,6 +70,7 @@ export default function ConsultationForm({
           goal: formData.get("goal"),
           health_note: formData.get("health_note") || null,
           consent: true,
+          source: source || null,
         }),
       });
 
@@ -212,7 +219,9 @@ export default function ConsultationForm({
             ) : (
               <Send className="mr-2 h-4 w-4" />
             )}
-            {status === "loading" ? t("submitting") : t("submitButton")}
+            {status === "loading"
+              ? t("submitting")
+              : submitLabel || t("submitButton")}
           </Button>
 
           <p className={`text-center text-[10px] ${isDark ? "text-white/40" : "text-gray-400"}`}>

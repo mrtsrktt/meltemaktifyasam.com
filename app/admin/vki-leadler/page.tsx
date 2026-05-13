@@ -33,6 +33,14 @@ const goalLabels: Record<string, string> = {
   kronik_destek: "Kronik Destek",
 };
 
+const sourceLabels: Record<string, { label: string; className: string }> = {
+  "60gun_kampanya": {
+    label: "60 GUN",
+    className:
+      "bg-orange-50 text-orange-700 border-orange-200",
+  },
+};
+
 const bmiCategoryColors: Record<string, string> = {
   "Zayıf": "text-blue-600 bg-blue-50 border-blue-200",
   Normal: "text-green-600 bg-green-50 border-green-200",
@@ -243,7 +251,19 @@ export default function VkiLeadlerPage() {
                     }`}
                   >
                     <td className="px-4 py-3 font-medium text-gray-900">
-                      {lead.full_name}
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span>{lead.full_name}</span>
+                        {lead.source && sourceLabels[lead.source] && (
+                          <span
+                            className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                              sourceLabels[lead.source].className
+                            }`}
+                            title={`Kaynak: ${lead.source}`}
+                          >
+                            {sourceLabels[lead.source].label}
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td className="px-4 py-3 text-gray-600">
                       <div className="flex items-center gap-1.5">
@@ -360,9 +380,22 @@ export default function VkiLeadlerPage() {
                   <Activity className="w-5 h-5 text-emerald-600" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-gray-900">
-                    {selectedLead.full_name}
-                  </h2>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h2 className="text-lg font-bold text-gray-900">
+                      {selectedLead.full_name}
+                    </h2>
+                    {selectedLead.source &&
+                      sourceLabels[selectedLead.source] && (
+                        <span
+                          className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                            sourceLabels[selectedLead.source].className
+                          }`}
+                          title={`Kaynak: ${selectedLead.source}`}
+                        >
+                          {sourceLabels[selectedLead.source].label}
+                        </span>
+                      )}
+                  </div>
                   <p className="text-xs text-gray-500">
                     {formatDate(selectedLead.created_at)}
                   </p>

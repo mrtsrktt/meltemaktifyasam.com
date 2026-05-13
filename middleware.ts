@@ -34,6 +34,11 @@ export default async function middleware(request: NextRequest) {
     return refreshSession(request, response);
   }
 
+  // Kampanya landing sayfaları i18n dışı, lokalize edilmiyor (/60gun gibi)
+  if (request.nextUrl.pathname.startsWith("/60gun")) {
+    return NextResponse.next();
+  }
+
   const response = intlMiddleware(request);
   return refreshSession(request, response);
 }
@@ -44,5 +49,5 @@ export const config = {
     "/admin",
     "/admin/:path*",
     "/(tr|en)/:path*",
-    "/((?!api|_next|_vercel|.*\\..*).*)"],
+    "/((?!api|_next|_vercel|60gun|.*\\..*).*)"],
 };
