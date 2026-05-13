@@ -257,9 +257,11 @@ export default function Campaign60Page() {
               </h1>
 
               <p className="mt-5 max-w-xl text-base sm:text-lg leading-relaxed text-slate-700">
-                Defalarca denedin ama başaramadın? Kabahat senin değil. Çünkü
-                kimse seni dinlemedi, senin tahlilini istemedi, sana özel plan
-                yapmadı.
+                Defalarca denedin. Kendine söz verdin, sonra kırdın. Kabahat
+                senin değil — yanında doğru kişi yoktu.{" "}
+                <strong className="text-slate-900">
+                  Şimdi birlikteyiz, bu sefer başaracağız.
+                </strong>
               </p>
 
               {/* Fiyat bloğu */}
