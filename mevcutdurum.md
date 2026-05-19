@@ -109,8 +109,6 @@
 | `/api/iletisim` | POST | Iletisim formu mesaj kaydi |
 | `/api/bulten` | POST | Newsletter abone kaydi |
 | `/api/siparis` | POST | Siparis olusturma |
-| `/api/payment/shopier` | POST | Shopier odeme parametrelerini olusturma (HMAC imzali) |
-| `/api/payment/shopier/callback` | POST | Shopier server-to-server odeme bildirimi (imza dogrulamali) |
 
 ---
 
@@ -173,9 +171,7 @@ meltem-tanik/
 - [ ] **Gorseller:** Urun ve blog gorselleri Supabase Storage'a yuklenecek
 
 ### Orta Oncelik
-- [ ] **Shopier Anahtari:** SHOPIER_API_KEY / SHOPIER_API_SECRET .env.local'e ve Vercel'e eklenmeli
-- [ ] **Shopier Geri Donus URL'leri:** Shopier panelinden basari `?payment=success` ve hata `?payment=fail` URL'leri tanimlanmali
-- [ ] **Shopier Callback URL:** Shopier panelinden `/api/payment/shopier/callback` callback olarak tanimlanmali
+- [ ] **Odeme Entegrasyonu:** PayTR entegrasyonu (.env.local'da yorum satiri olarak hazir)
 - [ ] **E-posta Bildirimleri:** Resend entegrasyonu (.env.local'da yorum satiri olarak hazir)
 - [ ] **SEO:** next-sitemap yapilandirmasi tamamlanmali
 - [ ] **Meta Taglari:** Sayfa bazli dinamik meta tag'ler
@@ -220,13 +216,9 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=*** (ayarlandi)
 SUPABASE_SERVICE_ROLE_KEY=*** (ayarlandi)
 NEXT_PUBLIC_WHATSAPP_NUMBER=905412523421
 
-# Aktif:
-SHOPIER_API_KEY=*** (Shopier panelinden alindi, .env.local'a eklenmeli)
-SHOPIER_API_SECRET=*** (Shopier panelinden alindi, .env.local'a eklenmeli)
-NEXT_PUBLIC_BANK_NAME=*** (gercek banka adi)
-NEXT_PUBLIC_BANK_ACCOUNT_HOLDER=Meltem Tanik
-NEXT_PUBLIC_BANK_IBAN=*** (gercek IBAN)
-
 # Henuz aktif degil:
+# PAYTR_MERCHANT_ID=
+# PAYTR_MERCHANT_KEY=
+# PAYTR_MERCHANT_SALT=
 # RESEND_API_KEY=
 ```

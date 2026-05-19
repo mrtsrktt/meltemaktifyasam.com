@@ -7,14 +7,13 @@ import { ArrowRight, Sparkles, ChevronLeft, ChevronRight, Star } from "lucide-re
 import Image from "next/image";
 import { useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
-import { isShopierMode } from "@/lib/store-mode";
 
 export default function HeroSection() {
   const t = useTranslations("hero");
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(1);
 
-  const allSlides = [
+  const slides = [
     {
       image: "/images/profilfoto-1.png",
       badge: t("slide1.badge"),
@@ -49,9 +48,6 @@ export default function HeroSection() {
     },
   ];
 
-  // Shopier modunda mağaza odaklı 2. slide'ı gizle; sadece danışmanlık odaklı 1. slide kalır.
-  const slides = isShopierMode ? [allSlides[0]] : allSlides;
-
   const goTo = useCallback(
     (index: number) => {
       setDirection(index > current ? 1 : -1);
@@ -70,12 +66,11 @@ export default function HeroSection() {
     setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
   }, [slides.length]);
 
-  // Auto-slide (tek slide varken devre dışı)
+  // Auto-slide
   useEffect(() => {
-    if (slides.length <= 1) return;
     const interval = setInterval(goNext, 9000);
     return () => clearInterval(interval);
-  }, [goNext, slides.length]);
+  }, [goNext]);
 
   const slide = slides[current];
 
@@ -238,46 +233,44 @@ export default function HeroSection() {
           </AnimatePresence>
         </div>
 
-        {/* Navigation — sadece birden fazla slide varsa göster */}
-        {slides.length > 1 && (
-          <div className="flex items-center justify-center gap-4 mt-10">
-            <button
-              onClick={goPrev}
-              className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
-                current === 0
-                  ? "bg-white/10 text-white hover:bg-white/20"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-              }`}
-            >
-              <ChevronLeft size={18} />
-            </button>
+        {/* Navigation */}
+        <div className="flex items-center justify-center gap-4 mt-10">
+          <button
+            onClick={goPrev}
+            className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
+              current === 0
+                ? "bg-white/10 text-white hover:bg-white/20"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+            }`}
+          >
+            <ChevronLeft size={18} />
+          </button>
 
-            <div className="flex gap-2">
-              {slides.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => goTo(i)}
-                  className={`h-2 rounded-full transition-all duration-300 ${
-                    i === current
-                      ? `w-8 ${current === 0 ? "bg-emerald-400" : "bg-brand-green"}`
-                      : `w-2 ${current === 0 ? "bg-white/30" : "bg-gray-300"}`
-                  }`}
-                />
-              ))}
-            </div>
-
-            <button
-              onClick={goNext}
-              className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
-                current === 0
-                  ? "bg-white/10 text-white hover:bg-white/20"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-              }`}
-            >
-              <ChevronRight size={18} />
-            </button>
+          <div className="flex gap-2">
+            {slides.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => goTo(i)}
+                className={`h-2 rounded-full transition-all duration-300 ${
+                  i === current
+                    ? `w-8 ${current === 0 ? "bg-emerald-400" : "bg-brand-green"}`
+                    : `w-2 ${current === 0 ? "bg-white/30" : "bg-gray-300"}`
+                }`}
+              />
+            ))}
           </div>
-        )}
+
+          <button
+            onClick={goNext}
+            className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
+              current === 0
+                ? "bg-white/10 text-white hover:bg-white/20"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+            }`}
+          >
+            <ChevronRight size={18} />
+          </button>
+        </div>
       </div>
     </section>
   );

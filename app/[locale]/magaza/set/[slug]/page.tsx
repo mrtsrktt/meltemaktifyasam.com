@@ -18,7 +18,6 @@ import {
 import { createClient } from "@/lib/supabase/client";
 import { useCartStore } from "@/lib/store/cart";
 import { toast } from "sonner";
-import { isShopierMode, SHOPIER_STORE_URL } from "@/lib/store-mode";
 
 interface SetProduct {
   id: string;
@@ -54,13 +53,6 @@ export default function SetDetailPage({
   const [loading, setLoading] = useState(true);
   const [addedAll, setAddedAll] = useState(false);
   const addItem = useCartStore((s) => s.addItem);
-
-  // Shopier modunda set detayını dış mağazaya yönlendir
-  useEffect(() => {
-    if (isShopierMode && typeof window !== "undefined") {
-      window.location.replace(SHOPIER_STORE_URL);
-    }
-  }, []);
 
   useEffect(() => {
     const supabase = createClient();
@@ -139,8 +131,6 @@ export default function SetDetailPage({
     setTimeout(() => setAddedAll(false), 2500);
     toast.success(`${set.name_tr} seti sepete eklendi`);
   };
-
-  if (isShopierMode) return null;
 
   return (
     <section className="py-8 sm:py-12">
