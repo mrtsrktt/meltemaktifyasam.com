@@ -39,7 +39,7 @@ export default function GizlilikPolitikasiPage() {
           aşağıdaki durumlarda sınırlı olarak paylaşılabilir:
         </p>
         <ul>
-          <li><strong>Ödeme kuruluşları:</strong> Ödeme işlemlerinin gerçekleştirilmesi için (iyzico/PayTR)</li>
+          <li><strong>Ödeme kuruluşu:</strong> Ödeme işlemlerinin gerçekleştirilmesi için (PayTR)</li>
           <li><strong>Kargo firmaları:</strong> Ürün teslimatı için gerekli bilgiler</li>
           <li><strong>Yasal zorunluluklar:</strong> Yetkili kamu kurum ve kuruluşlarının talebi halinde</li>
           <li><strong>Hizmet sağlayıcılar:</strong> Hosting (Vercel), veritabanı (Supabase) gibi altyapı sağlayıcıları</li>

@@ -8,8 +8,10 @@ export default function MesafeliSatisSozlesmesiPage() {
         <h2>1. Taraflar</h2>
         <h3>Satıcı Bilgileri</h3>
         <ul>
-          <li><strong>Unvan:</strong> Meltem Tanık</li>
-          <li><strong>Adres:</strong> İstanbul, Türkiye</li>
+          <li><strong>Satıcı:</strong> Meltem Tanık</li>
+          <li><strong>Adres:</strong> Fatih Mah. Örnek Sk. Frezya Konakları B Blok No: 2B İç Kapı No: 5, Büyükçekmece / İstanbul</li>
+          <li><strong>Vergi Dairesi:</strong> Büyükçekmece</li>
+          <li><strong>Vergi Kimlik No:</strong> 2770887528</li>
           <li><strong>E-posta:</strong> info@meltemaktifyasam.com</li>
           <li><strong>Telefon:</strong> +90 541 252 34 21</li>
           <li><strong>Web:</strong> meltemaktifyasam.com</li>
@@ -49,7 +51,7 @@ export default function MesafeliSatisSozlesmesiPage() {
         <h2>5. Ödeme</h2>
         <ul>
           <li>Ürün/hizmet bedeli sipariş sırasında belirtilen tutardır ve KDV dahildir.</li>
-          <li>Ödeme; kredi kartı, banka kartı veya havale/EFT yöntemlerinden biri ile yapılabilir.</li>
+          <li>Ödeme; kredi kartı veya banka kartı ile yapılabilir.</li>
           <li>Kredi kartı ile ödeme yapılması halinde taksit seçenekleri sipariş sırasında gösterilir.</li>
           <li>Ödemeler PCI-DSS uyumlu ödeme altyapısı üzerinden güvenli şekilde gerçekleştirilir.</li>
         </ul>

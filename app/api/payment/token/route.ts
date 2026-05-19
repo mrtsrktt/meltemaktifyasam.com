@@ -12,7 +12,11 @@ export async function POST(request: NextRequest) {
       user_address,
       user_phone,
       user_basket,
+      locale,
     } = body;
+
+    // Ödeme sonrası kullanıcının döneceği dil (varsayılan: tr)
+    const loc = locale === "en" ? "en" : "tr";
 
     const merchant_id = process.env.PAYTR_MERCHANT_ID!;
     const merchant_key = process.env.PAYTR_MERCHANT_KEY!;
@@ -38,8 +42,8 @@ export async function POST(request: NextRequest) {
       process.env.NEXT_PUBLIC_SITE_URL ||
       (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
 
-    const merchant_ok_url = `${base_url}/api/payment/result?status=success`;
-    const merchant_fail_url = `${base_url}/api/payment/result?status=fail`;
+    const merchant_ok_url = `${base_url}/api/payment/result?status=success&loc=${loc}`;
+    const merchant_fail_url = `${base_url}/api/payment/result?status=fail&loc=${loc}`;
     const merchant_notify_url = `${base_url}/api/payment/callback`;
 
     // Encode basket: [[name, price_kurus, quantity], ...]

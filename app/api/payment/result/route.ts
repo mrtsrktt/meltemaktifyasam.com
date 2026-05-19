@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 
-function buildResultPage(status: string) {
+function buildResultPage(status: string, loc: string) {
   const isSuccess = status === "success";
   const message = isSuccess
     ? "Ödeme başarılı, yönlendiriliyorsunuz..."
     : "Ödeme başarısız, yönlendiriliyorsunuz...";
 
-  const redirectUrl = `/tr/odeme?payment=${status}`;
+  // Ödeme sayfası yolu locale'e göre değişir (TR: /odeme, EN: /checkout)
+  const checkoutPath = loc === "en" ? "/en/checkout" : "/tr/odeme";
+  const redirectUrl = `${checkoutPath}?payment=${status}`;
 
   const html = `<!DOCTYPE html>
 <html>
@@ -44,12 +46,19 @@ function buildResultPage(status: string) {
   });
 }
 
+function parseParams(request: NextRequest) {
+  const sp = new URL(request.url).searchParams;
+  const status = sp.get("status") || "fail";
+  const loc = sp.get("loc") === "en" ? "en" : "tr";
+  return { status, loc };
+}
+
 export async function GET(request: NextRequest) {
-  const status = new URL(request.url).searchParams.get("status") || "fail";
-  return buildResultPage(status);
+  const { status, loc } = parseParams(request);
+  return buildResultPage(status, loc);
 }
 
 export async function POST(request: NextRequest) {
-  const status = new URL(request.url).searchParams.get("status") || "fail";
-  return buildResultPage(status);
+  const { status, loc } = parseParams(request);
+  return buildResultPage(status, loc);
 }

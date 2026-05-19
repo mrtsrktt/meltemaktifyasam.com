@@ -13,6 +13,8 @@ export default function KVKKPage() {
         <h2>1. Veri Sorumlusu</h2>
         <p>
           <strong>Meltem Tanık</strong><br />
+          Adres: Fatih Mah. Örnek Sk. Frezya Konakları B Blok No: 2B İç Kapı No: 5, Büyükçekmece / İstanbul<br />
+          Vergi Dairesi / No: Büyükçekmece V.D. — 2770887528<br />
           Web: meltemaktifyasam.com<br />
           E-posta: info@meltemaktifyasam.com<br />
           Telefon: +90 541 252 34 21
