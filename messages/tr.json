@@ -225,7 +225,8 @@
     "goalPlaceholder": "Hedefinizi seçin",
     "submitting": "Gönderiliyor...",
     "submitButton": "Ücretsiz Başvuru Yap",
-    "privacyNote": "Bilgileriniz gizli tutulur ve üçüncü kişilerle paylaşılmaz."
+    "privacyNote": "Bilgileriniz gizli tutulur ve üçüncü kişilerle paylaşılmaz.",
+    "kvkkConsentLabel": "Boy, kilo ve sağlık bilgilerimin danışmanlık amacıyla işlenmesine; <link>KVKK Aydınlatma Metni</link> kapsamında açık rıza veriyorum."
   },
   "consultationSection": {
     "badge": "Ücretsiz Danışmanlık",
@@ -258,6 +259,8 @@
     "continueShopping": "Alışverişe Devam Et",
     "total": "Toplam",
     "checkout": "Ödemeye Geç",
+    "orderViaWhatsApp": "WhatsApp'tan Sipariş Ver",
+    "paymentComingSoonHint": "Online ödeme çok yakında — siparişlerinizi şimdilik WhatsApp üzerinden alıyoruz.",
     "remove": "Kaldır",
     "quantity": "Adet"
   },

@@ -225,7 +225,8 @@
     "goalPlaceholder": "Select your goal",
     "submitting": "Submitting...",
     "submitButton": "Free Consultation",
-    "privacyNote": "Your information is kept confidential and not shared with third parties."
+    "privacyNote": "Your information is kept confidential and not shared with third parties.",
+    "kvkkConsentLabel": "I give explicit consent for my height, weight and health information to be processed for consultation purposes, in accordance with the <link>KVKK Disclosure Statement</link>."
   },
   "consultationSection": {
     "badge": "Free Consultation",
@@ -258,6 +259,8 @@
     "continueShopping": "Continue Shopping",
     "total": "Total",
     "checkout": "Proceed to Checkout",
+    "orderViaWhatsApp": "Order via WhatsApp",
+    "paymentComingSoonHint": "Online payment coming soon — we're currently accepting orders via WhatsApp.",
     "remove": "Remove",
     "quantity": "Quantity"
   },

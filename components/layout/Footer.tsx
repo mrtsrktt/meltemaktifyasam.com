@@ -50,6 +50,9 @@ export default function Footer() {
                 <Mail className="h-4 w-4 shrink-0 text-brand-green" />
                 info@meltemaktifyasam.com
               </a>
+              <p className="pt-1 text-xs text-gray-500">
+                Vergi Dairesi: Büyükçekmece V.D. — Vergi No: 2770887528
+              </p>
             </div>
 
             <div className="mt-4 flex gap-3">

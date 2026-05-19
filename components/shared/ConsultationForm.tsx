@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Send, Check, Loader2, Phone, User, Mail, Target, Ruler, Weight, Calendar } from "lucide-react";
 import { toast } from "sonner";
+import { Link } from "@/i18n/navigation";
 
 interface ConsultationFormProps {
   variant?: "light" | "dark";
@@ -54,6 +55,9 @@ export default function ConsultationForm({
     else if (bmi < 30) bmi_category = "Fazla Kilolu";
     else bmi_category = "Obez";
 
+    // KVKK acik riza — required checkbox, HTML form validation ile zorunlu
+    const consent = formData.get("kvkk_consent") === "on";
+
     try {
       const res = await fetch("/api/vki", {
         method: "POST",
@@ -69,7 +73,7 @@ export default function ConsultationForm({
           bmi_category,
           goal: formData.get("goal"),
           health_note: formData.get("health_note") || null,
-          consent: true,
+          consent,
           source: source || null,
         }),
       });
@@ -204,6 +208,38 @@ export default function ConsultationForm({
               </select>
             </div>
           </div>
+
+          {/* KVKK acik riza */}
+          <label
+            htmlFor="kvkk_consent"
+            className={`flex items-start gap-2.5 cursor-pointer text-[11px] leading-relaxed ${
+              isDark ? "text-white/75" : "text-gray-600"
+            }`}
+          >
+            <input
+              id="kvkk_consent"
+              name="kvkk_consent"
+              type="checkbox"
+              required
+              className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-brand-green"
+            />
+            <span>
+              {t.rich("kvkkConsentLabel", {
+                link: (chunks) => (
+                  <Link
+                    href="/kvkk"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`underline font-medium ${
+                      isDark ? "text-white hover:text-white" : "text-brand-green hover:text-brand-green-dark"
+                    }`}
+                  >
+                    {chunks}
+                  </Link>
+                ),
+              })}
+            </span>
+          </label>
 
           <Button
             type="submit"

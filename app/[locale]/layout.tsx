@@ -19,15 +19,85 @@ const playfair = Playfair_Display({
   subsets: ["latin", "latin-ext"],
 });
 
-export const metadata: Metadata = {
-  title: {
-    template: "%s | Meltem Tanık",
-    default: "Meltem Tanık — Beslenme & Dönüşüm Uzmanı",
-  },
-  description:
-    "Fonksiyonel beslenme danışmanlığı, Herbalife ürünleri ve bütünsel sağlık programları. Girişimci zihinler için beden & yaşam dönüşümü.",
-  robots: { index: true, follow: true },
-};
+const baseUrl =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://meltemaktifyasam.com";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const isEn = locale === "en";
+
+  const title = isEn
+    ? "Meltem Tanık — Functional Nutrition Expert"
+    : "Meltem Tanık — Fonksiyonel Beslenme Uzmanı & Beden Dönüşümü";
+
+  const description = isEn
+    ? "Functional nutrition consulting, Herbalife products and holistic health programs. Personalized nutrition plans for body & life transformation."
+    : "Fonksiyonel beslenme danışmanlığı, Herbalife ürünleri ve bütünsel sağlık programları. Kişiye özel beslenme planları ile sağlıklı yaşamınıza bugün başlayın.";
+
+  return {
+    metadataBase: new URL(baseUrl),
+    title: {
+      template: "%s | Meltem Tanık",
+      default: title,
+    },
+    description,
+    keywords: [
+      "fonksiyonel beslenme",
+      "diyetisyen",
+      "herbalife",
+      "kilo verme",
+      "kişisel beslenme planı",
+      "vki hesaplama",
+      "bmi",
+      "beslenme danışmanlığı",
+      "sağlıklı yaşam",
+      "Meltem Tanık",
+    ],
+    authors: [{ name: "Meltem Tanık" }],
+    creator: "Meltem Tanık",
+    publisher: "Meltem Tanık",
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: { index: true, follow: true, "max-image-preview": "large" },
+    },
+    alternates: {
+      canonical: `${baseUrl}/${locale}`,
+      languages: {
+        "tr-TR": `${baseUrl}/tr`,
+        "en-US": `${baseUrl}/en`,
+        "x-default": `${baseUrl}/tr`,
+      },
+    },
+    openGraph: {
+      type: "website",
+      locale: isEn ? "en_US" : "tr_TR",
+      alternateLocale: isEn ? "tr_TR" : "en_US",
+      url: `${baseUrl}/${locale}`,
+      siteName: "Meltem Tanık",
+      title,
+      description,
+      images: [
+        {
+          url: "/images/profilfoto-1.png",
+          width: 1200,
+          height: 1600,
+          alt: "Meltem Tanık - Fonksiyonel Beslenme Uzmanı",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/images/profilfoto-1.png"],
+    },
+  };
+}
 
 export default async function LocaleLayout({
   children,

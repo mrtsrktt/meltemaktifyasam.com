@@ -43,8 +43,8 @@ export default function IadePolitikasiPage() {
             üzerinden bize ulaşın.
           </li>
           <li>
-            <strong>Kargo:</strong> Onay sonrası ürünü orijinal ambalajı ile kargo ile gönderin.
-            İade kargo ücreti tüketiciye aittir (ayıplı ürün hariç).
+            <strong>Kargo:</strong> Onay sonrası ürünü orijinal ambalajı ile aşağıda belirtilen
+            iade adresine kargo ile gönderin. İade kargo ücreti tüketiciye aittir (ayıplı ürün hariç).
           </li>
           <li>
             <strong>Kontrol:</strong> Ürün tarafımıza ulaştıktan sonra 3 iş günü içinde kontrol edilir.
@@ -55,11 +55,24 @@ export default function IadePolitikasiPage() {
           </li>
         </ol>
 
-        <h2>5. Ödeme İadesi</h2>
+        <h2>5. İade Adresi</h2>
+        <p>
+          Cayma hakkını kullanmak için ürünleri aşağıdaki adrese kargo ile gönderebilirsiniz.
+          <strong> Kargo göndermeden önce mutlaka bizimle iletişime geçiniz</strong> ki
+          iade onayı verelim ve süreci sorunsuz yürütelim.
+        </p>
         <ul>
-          <li><strong>Kredi kartı:</strong> İade tutarı bankanıza 14 gün içinde aktarılır. Kartınıza yansıma süresi bankanıza göre değişiklik gösterebilir.</li>
-          <li><strong>Havale/EFT:</strong> Belirttiğiniz banka hesabına 14 gün içinde iade yapılır.</li>
+          <li><strong>Alıcı:</strong> Meltem Tanık</li>
+          <li><strong>Adres:</strong> Fatih Mah. Örnek Sk. Frezya Konakları B Blok No: 2B İç Kapı No: 5, Büyükçekmece / İstanbul</li>
+          <li><strong>Telefon:</strong> +90 541 252 34 21</li>
         </ul>
+
+        <h2>6. Ödeme İadesi</h2>
+        <p>
+          İade, ürün bedelinin yapıldığı ödeme yöntemine göre gerçekleştirilir.
+          Kredi/banka kartı ile yapılan ödemelerde iade tutarı bankanıza 14 gün içinde aktarılır;
+          kartınıza yansıma süresi bankanıza göre değişiklik gösterebilir.
+        </p>
 
         <h2>6. Ayıplı Ürün</h2>
         <p>

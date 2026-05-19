@@ -6,8 +6,12 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { ShoppingBag, ArrowRight, Trash2, Minus, Plus, Sparkles } from "lucide-react";
+import { ShoppingBag, ArrowRight, Trash2, Minus, Plus, Sparkles, MessageCircle } from "lucide-react";
 import { useCartStore } from "@/lib/store/cart";
+
+const PAYTR_ENABLED = process.env.NEXT_PUBLIC_PAYTR_ENABLED === "true";
+const WHATSAPP_NUMBER =
+  process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "905412523421";
 
 export default function CartPage() {
   const t = useTranslations("cart");
@@ -15,6 +19,20 @@ export default function CartPage() {
   const updateQuantity = useCartStore((s) => s.updateQuantity);
   const removeItem = useCartStore((s) => s.removeItem);
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  // PayTR henüz aktif değilse sipariş özetini WhatsApp mesajına çevir
+  const whatsappOrderUrl = (() => {
+    if (items.length === 0) return `https://wa.me/${WHATSAPP_NUMBER}`;
+    const lines = items.map(
+      (item) =>
+        `• ${item.name_tr} x${item.quantity} — ${(item.price * item.quantity).toLocaleString("tr-TR")} TL`
+    );
+    const message =
+      `Merhaba, web sitenizden sipariş vermek istiyorum:%0A%0A` +
+      `${lines.join("%0A")}%0A%0A` +
+      `Toplam: ${total.toLocaleString("tr-TR")} TL`;
+    return `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
+  })();
 
   return (
     <section className="py-12">
@@ -164,12 +182,29 @@ export default function CartPage() {
                       {total.toLocaleString("tr-TR")} TL
                     </span>
                   </div>
-                  <Link href="/odeme">
-                    <Button className="mt-6 w-full bg-brand-green hover:bg-brand-green-dark text-white">
-                      {t("checkout")}
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </Link>
+                  {PAYTR_ENABLED ? (
+                    <Link href="/odeme">
+                      <Button className="mt-6 w-full bg-brand-green hover:bg-brand-green-dark text-white">
+                        {t("checkout")}
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
+                    </Link>
+                  ) : (
+                    <>
+                      <a
+                        href={whatsappOrderUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-6 flex w-full items-center justify-center gap-2 rounded-md bg-gradient-to-r from-[#128C7E] to-[#075E54] hover:from-[#075E54] hover:to-[#054740] text-white font-semibold py-2.5 px-4 text-sm shadow-md transition-all"
+                      >
+                        <MessageCircle className="h-4 w-4" />
+                        {t("orderViaWhatsApp")}
+                      </a>
+                      <p className="mt-2 text-center text-xs text-muted-foreground">
+                        {t("paymentComingSoonHint")}
+                      </p>
+                    </>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>

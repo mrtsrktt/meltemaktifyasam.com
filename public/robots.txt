@@ -1,0 +1,18 @@
+# *
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api
+Disallow: /60gun
+Disallow: /tr/odeme
+Disallow: /en/checkout
+Disallow: /tr/sepet
+Disallow: /en/cart
+Disallow: /tr/hesabim
+Disallow: /en/my-account
+
+# Host
+Host: https://meltemaktifyasam.com
+
+# Sitemaps
+Sitemap: https://meltemaktifyasam.com/sitemap.xml
