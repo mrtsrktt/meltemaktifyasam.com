@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Order } from "@/lib/supabase/types";
 import { formatOrderNumber } from "@/lib/utils/order-number";
 import Link from "next/link";
-import { ShoppingCart, Filter, Eye } from "lucide-react";
+import { ShoppingCart, Filter, Eye, BellRing } from "lucide-react";
 
 const statusLabels: Record<string, string> = {
   pending: "Bekliyor",
@@ -180,14 +180,23 @@ export default function SiparislerPage() {
                       {formatPrice(order.total_amount)}
                     </td>
                     <td className="px-6 py-4">
-                      <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          statusColors[order.status] ||
-                          "bg-gray-100 text-gray-800"
-                        }`}
-                      >
-                        {statusLabels[order.status] || order.status}
-                      </span>
+                      <div className="flex flex-col items-start gap-1">
+                        <span
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                            statusColors[order.status] ||
+                            "bg-gray-100 text-gray-800"
+                          }`}
+                        >
+                          {statusLabels[order.status] || order.status}
+                        </span>
+                        {order.status === "pending" &&
+                          order.note?.includes("ödeme bildiriminde bulundu") && (
+                            <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-700">
+                              <BellRing className="w-3 h-3" />
+                              Ödeme bildirildi
+                            </span>
+                          )}
+                      </div>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-500">
                       {formatDate(order.created_at)}

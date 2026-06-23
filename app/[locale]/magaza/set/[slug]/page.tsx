@@ -52,7 +52,8 @@ export default function SetDetailPage({
   const [set, setSet] = useState<SetDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [addedAll, setAddedAll] = useState(false);
-  const addItem = useCartStore((s) => s.addItem);
+  const requestAdd = useCartStore((s) => s.requestAdd);
+  const paymentMethod = useCartStore((s) => s.paymentMethod);
 
   useEffect(() => {
     const supabase = createClient();
@@ -118,7 +119,7 @@ export default function SetDetailPage({
   const handleAddAllToCart = () => {
     // Set'i tek bir sepet ogesi olarak ekle (indirimli fiyatiyla)
     const firstImage = set.image_url || items.find((i) => i.products?.image_url)?.products?.image_url || null;
-    addItem({
+    requestAdd({
       id: set.id,
       slug: set.slug,
       name_tr: set.name_tr,
@@ -127,9 +128,12 @@ export default function SetDetailPage({
       image_url: firstImage,
       type: "set",
     });
-    setAddedAll(true);
-    setTimeout(() => setAddedAll(false), 2500);
-    toast.success(`${set.name_tr} seti sepete eklendi`);
+    // Yöntem seçiliyse direkt eklendi; değilse modal açılır (geri bildirimi modal verir)
+    if (paymentMethod === "havale") {
+      setAddedAll(true);
+      setTimeout(() => setAddedAll(false), 2500);
+      toast.success(`${set.name_tr} seti sepete eklendi`);
+    }
   };
 
   return (

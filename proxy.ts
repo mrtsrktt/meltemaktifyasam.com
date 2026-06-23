@@ -27,7 +27,7 @@ async function refreshSession(request: NextRequest, response: NextResponse) {
   return response;
 }
 
-export default async function middleware(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
   // Admin routes bypass i18n middleware
   if (request.nextUrl.pathname.startsWith("/admin")) {
     const response = NextResponse.next();

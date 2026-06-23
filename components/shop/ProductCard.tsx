@@ -20,20 +20,24 @@ interface Product {
 
 export default function ProductCard({ product }: { product: Product }) {
   const t = useTranslations("products");
-  const addItem = useCartStore((s) => s.addItem);
+  const requestAdd = useCartStore((s) => s.requestAdd);
+  const paymentMethod = useCartStore((s) => s.paymentMethod);
   const [added, setAdded] = useState(false);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
-    addItem({
+    requestAdd({
       id: product.id,
       slug: product.slug,
       name_tr: product.name_tr,
       price: Number(product.price),
       image_url: product.image_url,
     });
-    setAdded(true);
-    setTimeout(() => setAdded(false), 1500);
+    // Yöntem seçiliyse direkt eklendi; değilse modal açılır (geri bildirimi modal verir)
+    if (paymentMethod === "havale") {
+      setAdded(true);
+      setTimeout(() => setAdded(false), 1500);
+    }
   };
 
   const categoryLabel =

@@ -33,7 +33,8 @@ export default function ProductDetailPage({
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [added, setAdded] = useState(false);
-  const addItem = useCartStore((s) => s.addItem);
+  const requestAdd = useCartStore((s) => s.requestAdd);
+  const paymentMethod = useCartStore((s) => s.paymentMethod);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -86,18 +87,22 @@ export default function ProductDetailPage({
       : t("vitaminMineral");
 
   const handleAddToCart = () => {
-    for (let i = 0; i < quantity; i++) {
-      addItem({
+    requestAdd(
+      {
         id: product.id,
         slug: product.slug,
         name_tr: product.name_tr,
         price: Number(product.price),
         image_url: product.image_url,
-      });
+      },
+      quantity
+    );
+    // Yöntem seçiliyse direkt eklendi; değilse modal açılır (geri bildirimi modal verir)
+    if (paymentMethod === "havale") {
+      setAdded(true);
+      setTimeout(() => setAdded(false), 2000);
+      toast.success(`${productName} ${t("addedToCart")} (${quantity})`);
     }
-    setAdded(true);
-    setTimeout(() => setAdded(false), 2000);
-    toast.success(`${productName} ${t("addedToCart")} (${quantity})`);
   };
 
   return (

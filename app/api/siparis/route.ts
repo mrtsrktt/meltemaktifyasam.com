@@ -53,6 +53,7 @@ export async function POST(request: NextRequest) {
         },
         total_amount,
         status: "pending",
+        payment_method: "havale",
         note,
       })
       .select()

@@ -171,7 +171,7 @@ meltem-tanik/
 - [ ] **Gorseller:** Urun ve blog gorselleri Supabase Storage'a yuklenecek
 
 ### Orta Oncelik
-- [ ] **Odeme Entegrasyonu:** PayTR entegrasyonu (.env.local'da yorum satiri olarak hazir)
+- [x] **Odeme Entegrasyonu (TAMAM):** Iki yontem aktif. "Sepete Ekle" -> modal (Havale / Kredi Karti). Havale: site ici checkout (form + IBAN + "Odemeyi Yaptim" -> admin onay). Kredi Karti: Shopier magazasina yonlendirme (NEXT_PUBLIC_SHOPIER_STORE_URL). Banka bilgileri .env.local'da (NEXT_PUBLIC_BANK_*). Ilk yontem secimi hatirlanir (cart store paymentMethod). PayTR tamamen kaldirildi.
 - [ ] **E-posta Bildirimleri:** Resend entegrasyonu (.env.local'da yorum satiri olarak hazir)
 - [ ] **SEO:** next-sitemap yapilandirmasi tamamlanmali
 - [ ] **Meta Taglari:** Sayfa bazli dinamik meta tag'ler
@@ -217,8 +217,5 @@ SUPABASE_SERVICE_ROLE_KEY=*** (ayarlandi)
 NEXT_PUBLIC_WHATSAPP_NUMBER=905412523421
 
 # Henuz aktif degil:
-# PAYTR_MERCHANT_ID=
-# PAYTR_MERCHANT_KEY=
-# PAYTR_MERCHANT_SALT=
 # RESEND_API_KEY=
 ```

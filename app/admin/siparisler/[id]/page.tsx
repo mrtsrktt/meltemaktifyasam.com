@@ -12,7 +12,20 @@ import {
   MapPin,
   Save,
   CheckCircle,
+  Landmark,
+  BellRing,
 } from "lucide-react";
+
+const paymentLabels: Record<string, string> = {
+  havale: "Havale / EFT",
+  paytr: "Kredi Kartı (PayTR)",
+  shopier: "Kredi Kartı (Shopier)",
+};
+
+// Havale akışında müşteri "Ödemeyi Yaptım" deyince note'a bu ifade yazılıyor
+function customerNotifiedPayment(note: string | null) {
+  return !!note && note.includes("ödeme bildiriminde bulundu");
+}
 
 const statusLabels: Record<string, string> = {
   pending: "Bekliyor",
@@ -225,6 +238,15 @@ export default function SiparisDetayPage({
                 {statusLabels[order.status] || order.status}
               </span>
             </div>
+            <div className="flex justify-between">
+              <span className="text-sm text-gray-500">Ödeme Yöntemi</span>
+              <span className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-900">
+                <Landmark className="w-4 h-4 text-emerald-500" />
+                {order.payment_method
+                  ? paymentLabels[order.payment_method] || order.payment_method
+                  : "-"}
+              </span>
+            </div>
             <div className="flex justify-between border-t border-gray-100 pt-3">
               <span className="text-sm font-medium text-gray-700">Toplam</span>
               <span className="text-lg font-bold text-emerald-600">
@@ -279,6 +301,36 @@ export default function SiparisDetayPage({
           )}
         </div>
       </div>
+
+      {/* Ödeme Bildirimi Uyarısı (havale: müşteri "Ödemeyi Yaptım" dedi) */}
+      {customerNotifiedPayment(order.note) && order.status === "pending" && (
+        <div className="mb-6 rounded-xl border-2 border-emerald-300 bg-emerald-50 p-5">
+          <div className="flex items-start gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-white">
+              <BellRing className="w-5 h-5" />
+            </div>
+            <div className="flex-1">
+              <p className="font-semibold text-emerald-900">
+                Müşteri ödemeyi yaptığını bildirdi
+              </p>
+              <p className="mt-1 text-sm text-emerald-800">
+                Lütfen banka hesabınıza{" "}
+                <span className="font-semibold">
+                  {formatPrice(order.total_amount)}
+                </span>{" "}
+                tutarındaki havalenin ulaştığını kontrol edin. Ödeme geldiyse
+                durumu <span className="font-semibold">&quot;Onaylandı&quot;</span>{" "}
+                yapın.
+              </p>
+              {order.note && (
+                <p className="mt-2 text-xs text-emerald-700/80 italic">
+                  {order.note}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Status Update */}
       <div className="bg-white rounded-xl border border-gray-200 p-6 mb-8">
