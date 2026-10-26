@@ -55,15 +55,13 @@ export default function IadePolitikasiPage() {
           </li>
         </ol>
 
-        <h2>5. İade Adresi</h2>
+        <h2>5. İade Süreci</h2>
         <p>
-          Cayma hakkını kullanmak için ürünleri aşağıdaki adrese kargo ile gönderebilirsiniz.
-          <strong> Kargo göndermeden önce mutlaka bizimle iletişime geçiniz</strong> ki
-          iade onayı verelim ve süreci sorunsuz yürütelim.
+          Cayma hakkını kullanmak için <strong>kargo göndermeden önce mutlaka bizimle iletişime geçiniz</strong>.
+          İade adresi ve kargo onay süreci hakkında bilgilendirme tarafınıza iletilecektir.
         </p>
         <ul>
           <li><strong>Alıcı:</strong> Meltem Tanık</li>
-          <li><strong>Adres:</strong> Fatih Mah. Örnek Sk. Frezya Konakları B Blok No: 2B İç Kapı No: 5, Büyükçekmece / İstanbul</li>
           <li><strong>Telefon:</strong> +90 541 252 34 21</li>
         </ul>
 

@@ -25,7 +25,6 @@ import {
   Dumbbell,
   Stethoscope,
   Leaf,
-  MapPin,
   Phone,
 } from "lucide-react";
 
@@ -85,17 +84,6 @@ const contactCards = [
     borderColor: "border-l-brand-orange",
     title: "Çalışma Saatleri",
     desc: "Pazartesi - Cumartesi: 09:00 - 18:00",
-    tag: null,
-    external: false,
-  },
-  {
-    href: null,
-    icon: MapPin,
-    iconBg: "bg-blue-500/10",
-    iconColor: "text-blue-500",
-    borderColor: "border-l-blue-500",
-    title: "Adres",
-    desc: "FATİH Mah. ÖRNEK SOKAK B BLOK No: 2 B - FREZYA KONAKLARI Daire: 5, BÜYÜKÇEKMECE / İSTANBUL",
     tag: null,
     external: false,
   },

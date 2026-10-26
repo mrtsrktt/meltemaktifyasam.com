@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
-import { Instagram, Phone, Mail, MapPin } from "lucide-react";
+import { Instagram, Phone, Mail } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
 export default function Footer() {
@@ -29,13 +29,6 @@ export default function Footer() {
 
             {/* İletişim bilgileri */}
             <div className="mt-4 space-y-2 text-sm text-gray-400">
-              <p className="flex items-start gap-2">
-                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-brand-green" />
-                <span>
-                  Fatih Mah. Örnek Sk. Frezya Konakları B Blok No: 2B İç Kapı
-                  No: 5, Büyükçekmece / İstanbul
-                </span>
-              </p>
               <a
                 href="tel:+905412523421"
                 className="flex items-center gap-2 transition-colors hover:text-white"

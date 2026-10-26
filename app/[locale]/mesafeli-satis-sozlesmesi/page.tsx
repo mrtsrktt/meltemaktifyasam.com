@@ -9,7 +9,6 @@ export default function MesafeliSatisSozlesmesiPage() {
         <h3>Satıcı Bilgileri</h3>
         <ul>
           <li><strong>Satıcı:</strong> Meltem Tanık</li>
-          <li><strong>Adres:</strong> Fatih Mah. Örnek Sk. Frezya Konakları B Blok No: 2B İç Kapı No: 5, Büyükçekmece / İstanbul</li>
           <li><strong>Vergi Dairesi:</strong> Büyükçekmece</li>
           <li><strong>Vergi Kimlik No:</strong> 2770887528</li>
           <li><strong>E-posta:</strong> info@meltemaktifyasam.com</li>
